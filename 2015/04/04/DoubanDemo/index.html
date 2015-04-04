@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Kay Wu&#39;s blog</title>
+  <title>打造豆瓣App | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="先简单介绍下三个所使用的开源库。
+ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的滑动产生不同的page。PagerAdapter分为FragmentPagerAdapter, FragmentStatePagerAdapter。唯一的区别是在对不再需">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="打造豆瓣App"/>
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
@@ -42,8 +45,7 @@
 </nav>
 <div class="clearfix"></div></header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -53,7 +55,7 @@
       
       
   
-    <h1 class="title"><a href="/2015/04/04/DoubanDemo/">打造豆瓣App</a></h1>
+    <h1 class="title">打造豆瓣App</h1>
   
 
     </header>
@@ -80,47 +82,11 @@
     <footer>
       
         
-        
-      
-      <div class="clearfix"></div>
-    </footer>
+  
+  <div class="categories">
+    <a href="/categories/Android/">Android</a>
   </div>
-</article>
 
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-04-04T10:47:05.000Z"><a href="/2015/04/04/GoogleMusicPlayer/">2015-04-04</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/04/04/GoogleMusicPlayer/">简单分析下 Google 最近的开源播放器</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。</p>
-<h2 id="总体_UI_分析">总体 UI 分析</h2><p><img src="http://img.blog.csdn.net/20150319113711041" alt="主页面"><br><img src="http://img.blog.csdn.net/20150319115256136" alt="播放页面"><br>UI 比较重要的类有 MusicPlayerActivity, PlaceholderActivity, MediaBrowserFragment, FullScreenPlayerActivity, PlaybackControlsFragment。<br>其中 MusicPlayerActivity, PlaceholderActivity 都是继承 BaseActivity, FullScreenPlayerActivity 是继承 ActionBarCastActivity，而 BaseActivity 是 ActionBarCastActivity 的子类。<br>ActionBarCastActivity 主要实现了 DrawLayout, Toolbar 之类的功能，而 BaseActivity 在此之上又添加了与 PlaybackControlsFragment 交互的功能。</p>
-<h3 id="DrawerLayout">DrawerLayout</h3><p>值得注意的是，这里的 DrawerLayout 是在不同的 Activity 之中进行切换，而不是在 fragment 之间。主要实现的方法主要是通过继承一个含有 DrawLayout 的 Activity，在这里即是 ActionBarCastActivity。可以参考 <a href="http://stackoverflow.com/questions/19451715/same-navigation-drawer-in-different-activities" target="_blank" rel="external">该问题</a> 。<br>还有一个比较奇特的效果是，DrawerLayout 原本被 status bar 和 actionbar 挡住的部分可以显示出来了。<br><img src="http://img.blog.csdn.net/20150319122547034" alt="DrawLayout"><br>具体做法分析可以参考源码和文章 <a href="http://solo.farbox.com/blog/how-do-i-use-drawerlayout-to-display-over-the-actionbar-or-toolbar-and-under-the-status-bar" target="_blank" rel="external">如何将 DrawerLayout 显示在 ActionBar/Toolbar 和 status bar 之间</a> 。</p>
-<h2 id="Animation">Animation</h2><h3 id="Drawble_Animation">Drawble Animation</h3><p><img src="http://img.blog.csdn.net/20150319122336166" alt="Playing Animation"><br>在播放时 listview 图标会有变动的效果。这个主要是在 MediaItemViewHolder.java 通过 Drawble Animation 实现的。<br><a href="http://developer.android.com/guide/topics/graphics/drawable-animation.html" target="_blank" rel="external">官方文档</a><br>主要实现代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AnimationDrawable animation = (AnimationDrawable)activity.getDrawable(R.drawable.ic_equalizer_white_36dp);</span><br><span class="line">holder.mImageView.setImageDrawable(animation);</span><br><span class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</span><br><span class="line">holder.mImageView.setVisibility(View.VISIBLE);</span><br><span class="line">animation.start();</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;animation-list <span class="string">xmlns:</span>android=<span class="string">"http://schemas.android.com/apk/res/android"</span> <span class="string">android:</span>oneshot=<span class="string">"false"</span>&gt;</span><br><span class="line">    &lt;item <span class="string">android:</span>drawable=<span class="string">"@drawable/ic_equalizer1_white_36dp"</span> <span class="string">android:</span>duration=<span class="string">"200"</span>/&gt;</span><br><span class="line">    &lt;item <span class="string">android:</span>drawable=<span class="string">"@drawable/ic_equalizer2_white_36dp"</span> <span class="string">android:</span>duration=<span class="string">"200"</span>/&gt;</span><br><span class="line">    &lt;item <span class="string">android:</span>drawable=<span class="string">"@drawable/ic_equalizer3_white_36dp"</span> <span class="string">android:</span>duration=<span class="string">"200"</span>/&gt;</span><br><span class="line">&lt;/animation-list&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="切换_Drawer_Activity_Fragment_的动画效果">切换 Drawer Activity Fragment 的动画效果</h3><p>ActionBarCastActivity.java<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Bundle extras = ActivityOptions.makeCustomAnimation(ActionBarCastActivity.<span class="keyword">this</span>, R.anim.fade_in, R.anim.fade_out).toBundle();</span><br><span class="line"><span class="keyword">Class</span> activityClass = mDrawerMenuContents.getActivity(position);</span><br><span class="line">startActivity(<span class="keyword">new</span> Intent(ActionBarCastActivity.<span class="keyword">this</span>, activityClass), extras);</span><br></pre></td></tr></table></figure></p>
-<p>MusicPlayerActivity.java<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FragmentTransaction <span class="keyword">transaction</span> = getFragmentManager().beginTransaction();</span><br><span class="line"><span class="keyword">transaction</span>.setCustomAnimations(R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right);</span><br><span class="line"><span class="keyword">transaction</span>.replace(R.<span class="property">id</span>.container, fragment);</span><br></pre></td></tr></table></figure></p>
-<h2 id="小技巧">小技巧</h2><h3 id="tools:xxx">tools:xxx</h3><p>在显示布局时，TextView 可能需要文字填充来看看效果，但是又嫌调试后删去 android:text=”…”麻烦，就可以用 tools:text=”…”。<br>其中 tools:xxx 在用来预览界面方面还是很方便的。比如在看 activity_player.xml 预览时会提示 fragment 可能动态布局，请选择一个布局进行显示。进行选择后，就会在 fragment 里添加 tools:layout=”@layout/fragment_playback_controls”，这样在预览时就可以看到 PlaybackControlsFragment 的具体布局，但对运行时又没有影响。<br>关于 tools:xxx 的用法可参考 <a href="http://tools.android.com/tech-docs/tools-attributes。" target="_blank" rel="external">http://tools.android.com/tech-docs/tools-attributes。</a></p>
-<h3 id="android:tint">android:tint</h3><p>在播放器里，像播放按钮一共有两种颜色，白色和蓝色。我们可以使用两个不同的图标来完成这种效果，也可以通过 android:tint 来使图标简单地变色，有点像 ps 里添加蒙版的感觉。<br>xml 里的用法是 android:tint，可参考 fragment_playback_controls.xml 里的 ImageButton。<br>Java 里的用法 setImageTintList()，可参考 MediaItemViewHolder.java 里相关代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(R.color.media_item_icon_not_playing));</span><br><span class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer>
-      
         
         
       
@@ -130,57 +96,45 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">留言</h1>
 
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-03-21T02:32:02.000Z"><a href="/2015/03/21/hello-world/">2015-03-21</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/03/21/hello-world/">Hello World</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-<nav id="pagination">
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2015/04/04/DoubanDemo/" data-title="打造豆瓣App" data-url="http://kaywu.github.io/http://kaywu.github.io/2015/04/04/DoubanDemo/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
   
   
-  <div class="clearfix"></div>
-</nav></div></div>
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2015/04/04/DoubanDemo/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
