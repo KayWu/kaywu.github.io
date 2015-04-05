@@ -6,8 +6,7 @@
   <title>打造豆瓣App | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="先简单介绍下三个所使用的开源库。
-ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的滑动产生不同的page。PagerAdapter分为FragmentPagerAdapter, FragmentStatePagerAdapter。唯一的区别是在对不再需">
+  <meta name="description" content="使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -40,6 +39,8 @@ ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的
     
       <li><a href="/archives">Archives</a></li>
     
+      <li><a href="/about">About</a></li>
+    
   </ul>
   <div class="clearfix"></div>
 </nav>
@@ -51,7 +52,7 @@ ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-04-04T11:23:22.000Z"><a href="/2015/04/04/DoubanDemo/">2015-04-04</a></time>
+        <time datetime="2015-04-03T11:23:22.000Z"><a href="/2015/04/03/DoubanDemo/">2015-04-03</a></time>
       
       
   
@@ -61,7 +62,8 @@ ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的
     </header>
     <div class="entry">
       
-        <p><img src="http://img.blog.csdn.net/20150221173403265" alt="最终效果"><br>先简单介绍下三个所使用的开源库。</p>
+        <p>使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。<br><img src="http://7xifw0.com1.z0.glb.clouddn.com/20150221173403265.gif" alt="最终效果"><br><a id="more"></a></p>
+<p>先简单介绍下三个所使用的开源库。</p>
 <h2 id="ViewPager">ViewPager</h2><p>ViewPager是v4包里提供的，可以通过PagerAdapter根据左右的滑动产生不同的page。<br>PagerAdapter分为FragmentPagerAdapter, FragmentStatePagerAdapter。<br>唯一的区别是在对不再需要的fragment时所采用的处理方法不同。<br>前者选择detach，后者选择remove并保存状态。<br>ViewPager的使用方法类似ListView, 都是使用Adapter来提供内容。而ListView中getItem返回的是View, 而ViewPager返回的是Fragment。</p>
 <h3 id="使用方法">使用方法</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ViewPager pager = (ViewPager)findViewById(R.id.pager);</span><br><span class="line">pager.setAdapter(<span class="keyword">new</span> PagerAdapter(getSupportFragmentManager()));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承PagerAdapter 必须实现的方法有getCount, 返回列表的总数。 getItem，即根据position返回对应的fragment。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PagerAdapter</span> <span class="keyword">extends</span> <span class="title">FragmentPagerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Fragment();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> NUM_OF_PAGES;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="PagerSlidingTabStrip">PagerSlidingTabStrip</h2><p><a href="https://github.com/astuetz/PagerSlidingTabStrip" target="_blank" rel="external">github地址</a><br>作用是根据ViewPager生成对应的tab 在页面切换时有相应的动画效果<br>其中TestAdapter是FragmentPagerAdapter或FragmentStatePagerAdapter的子类。</p>
@@ -100,7 +102,7 @@ ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  	<div class="ds-thread" data-thread-key="2015/04/04/DoubanDemo/" data-title="打造豆瓣App" data-url="http://kaywu.github.io/2015/04/04/DoubanDemo/"></div>
+  	<div class="ds-thread" data-thread-key="2015/04/03/DoubanDemo/" data-title="打造豆瓣App" data-url="http://kaywu.github.io/2015/04/03/DoubanDemo/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">
@@ -128,7 +130,7 @@ ViewPagerViewPager是v4包里提供的，可以通过PagerAdapter根据左右的
   }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div class="fb-comments" data-href="http://kaywu.github.io/2015/04/04/DoubanDemo/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+<div class="fb-comments" data-href="http://kaywu.github.io/2015/04/03/DoubanDemo/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
       
   
 </section>
