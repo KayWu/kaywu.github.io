@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>代码之髓笔记 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="代码之髓笔记"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-12-12T02:00:41.000Z"><a href="/2015/12/12/Programmming-Language-Concepts/">2015-12-12</a></time>
+      
+      
+  
+    <h1 class="title">代码之髓笔记</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。<br><a id="more"></a></p>
+<p>那么不局限在一门具体的语言，站在一定的高度看其间的异同和发展，就是<code>《代码之髓：编程语言核心概念》</code>要做的事。作者在前言中就指出，在学习中需要做到以下三点：</p>
+<ul>
+<li>在比较中学习</li>
+<li>在历史中学习</li>
+<li>在实践中学习</li>
+</ul>
+<p>具体到编程语言，第一条指通过比较多种语言，总结出某种语言的独有特点，以及多种语言的共有特点。<br>第二条是指通过追溯语言的发展历史，了解语言是如何产生、变化和消失的，探寻语言发展演变的轨迹。<br>第三条是亲自进行程序设计。边实践边思考如何编程，才能深入理解语言设计者的意图，同时也能发现自己原先理解不到位之处。</p>
+<p>书第1、2章分别讲学习方法和语言的诞生历史，从第3章开始介绍编程语言的相关概念。下面摘录自己认为重要的内容以及相关笔记。</p>
+<h2 id="书摘">书摘</h2><h3 id="语法">语法</h3><p>语法就是程序设计者规定的解释程序编写方式的一系列规则。<br>编程语言的描述一般可以分为语法及语义。语法是说明编程语言中，哪些符号或文字的组合方式是正确的，语义则是对于编程的解释。（来源：<a href="https://zh.wikipedia.org/wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80" target="_blank" rel="external">维基百科</a>）</p>
+<p>补充：<a href="https://www.zhihu.com/question/19942085" target="_blank" rel="external">如何自己创建一种编程语言</a></p>
+<h3 id="函数">函数</h3><p>函数的调用是以栈的形式来实现的，具体的实现可见<a href="http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Mips/stack.html" target="_blank" rel="external">UnderStanding the Stack</a>和CSAPP的相关章节。</p>
+<h3 id="错误处理">错误处理</h3><p>错误处理的方法大体可分为两种，使用返回值和异常处理。前者以C语言为代表，如今的大多数语言都支持后者。异常的传递使得其追踪变得困难，Java使用了检查型异常来避免漏查抛出异常的可能，但这种机制并没有得到普及。</p>
+<h3 id="名字和作用域">名字和作用域</h3><p>早期的语言中，整个程序共用一个对照表，即变量名字的有效范围是整个程序。由于全局变量每次被改写都会波及整个程序，我们就得小心翼翼地避免变量名不小心被重复使用。但随着程序规模的扩大，防止名字冲突变得苦难，于是产生了使用作用域的概念。作用域又分动态作用域和静态作用域。动态作用域即把变量原来的值事先保存在函数入口处，在出口处写回变量中。但多个函数仍一张对照表。而静态作用域按函数区分对照表。</p>
+<h3 id="类型">类型</h3><p>对于计算机来说，如果仅仅给定一串比特列，它是不知道这应该解释为整数还是浮点数。因此，需要有表示这个值为何种类型的额外的信息，这就是类型。</p>
+<p>通过将不同类型进行组合得到复杂的类型后，使用中会出现想更改其中一部分却又不想全部重新定义的再利用需求。因此出现了构成要素部分可变的类型，即总称型。想要表现不同的情况时，出现了以类型为参数创建类型的函数。C++语言中的模板、Java语言中的泛型以及Haskell语言中的类型构造器可以说就是这种创建类型的机制。</p>
+<p>把类型的信息和数值看做整体的方式叫动态类型，反之则为静态类型。</p>
+<p>静态类型语言在编译时确定类型，同时编译时也检查了类型的一致性。这一点动态类型语言是无法做到的。<br>既不放弃编译时的类型检查，也想尽量减少麻烦的类型声明，要实现这一要求就要用到计算机自动推论确定类型的方法。</p>
+<h3 id="容器">容器</h3><p>万能的容器是不存在的。根据容器的使用目的、使用方式和操作类型的不同，最适宜的容器类型也会相应地变化。</p>
+<p>补充：<a href="http://sharecore.net/2014/08/10/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E5%B8%B8%E8%AF%86%E5%8F%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90/index.html" target="_blank" rel="external">字符编码常识及问题解析</a></p>
+<h3 id="并发">并发</h3><p>交替的两种方式：</p>
+<ul>
+<li>协作式多任务模式——在合适的节点自发进行交替</li>
+<li>抢占式多任务模式——一定时间后进行交替</li>
+</ul>
+<p>并行执行的两个处理之间出现竞态条件必须同时满足以下三个条件：</p>
+<ul>
+<li>两个处理共享变量</li>
+<li>至少一个处理会对变量进行修改</li>
+<li>一个处理未完成之前另一个处理有可能介入进来</li>
+</ul>
+<p>反之，只要三个条件中有一个不具备，就可以编写适合于并行处理的安全的程序。</p>
+<ul>
+<li>没有共享：进程和actor模型（通过不共享内存而是传递消息的方式来在并行处理时进行信息交互）</li>
+<li>不修改：const、val、Immutable</li>
+<li>不介入：<ul>
+<li>线程的协调——fibre、coroutine、green thread<br>处理介入的原因是抢占式线程，那么使用协调模式的线程就可以解决了。</li>
+<li>表示不便介入的标志——锁、mutex、semaphore</li>
+</ul>
+</li>
+</ul>
+<p>锁的问题：</p>
+<ul>
+<li>死锁——上锁的顺序</li>
+<li>无法组合——借用事务内存来解决</li>
+</ul>
+<h3 id="对象和类">对象和类</h3><p>归集变量与函数建立模型的方法</p>
+<ul>
+<li>模块</li>
+<li>函数和变量放在</li>
+<li>闭包</li>
+<li>类</li>
+</ul>
+<p>像这种不受限制，可以赋值给变量，也可以作为函数的参数传递，又可以作为函数的返回值返回的值被称为first class的值。</p>
+<p>闭包：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。</p>
+<p>类的三大作用：</p>
+<ul>
+<li>实例生成器</li>
+<li>可行操作的功能说明</li>
+<li>代码再利用的单元</li>
+</ul>
+<h3 id="继承与代码再利用">继承与代码再利用</h3><p>继承的实现策略大体可以分为三种</p>
+<ul>
+<li>一般化和专门化</li>
+<li>共享部分的提取</li>
+<li>差异实现</li>
+</ul>
+<p>使用多重继承时该如何解决名字解释的问题？</p>
+<ol>
+<li>禁止多重继承 使用委托 接口</li>
+<li>按顺序进行搜索 深度搜索-&gt;c3线性化确定顺序 （父类不必子类先被检查 如果是从多个类中继承下来则优先检查先书写的类）</li>
+<li>混入式处理 定义仅包含所需功能的类并把它与需要添加这些功能的更大的类糅合在一起</li>
+<li>Trait 当类用于创建实例时，作为再利用单元来说就显得太大了。Trait即是把再利用单元的作用特别化，设定一些更小的结构（特性=方法的组合）。</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/读书笔记/">读书笔记</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2015/12/12/Programmming-Language-Concepts/" data-title="代码之髓笔记" data-url="http://kaywu.github.io/2015/12/12/Programmming-Language-Concepts/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2015/12/12/Programmming-Language-Concepts/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>4</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>1</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2015 Kay Wu
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
