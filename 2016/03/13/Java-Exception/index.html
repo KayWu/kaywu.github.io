@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>聊聊 Java Exception 机制 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。123456789new Thread() &amp;#123;    public void run() &amp;#123;        try &amp;#123;            mRestAdapter.create(Api.class).sendRequst();        &amp;#125; catch (Exception e) &amp;#123;            // handle Exception        &amp;#125;    &amp;#125;&amp;#125;.start();
+但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。123456try &amp;#123;  BufferedReader reader = new BufferedReader(new FileReader(Path));  String firstLine = reader.readLine();&amp;#125; catch (IOException e) &amp;#123;&amp;#125;
+那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="聊聊 Java Exception 机制"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
+      
+      
+  
+    <h1 class="title">聊聊 Java Exception 机制</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mRestAdapter.create(Api.class).sendRequst();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// handle Exception</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;.start();</span><br></pre></td></tr></table></figure></p>
+<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</span><br><span class="line">  String firstLine = reader.readLine();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br><a id="more"></a></p>
+<h2 id="Exception-机制"><a href="#Exception-机制" class="headerlink" title="Exception 机制"></a>Exception 机制</h2><p>这就得从 Java 的 Exception 机制开始说起了。<br><img src="http://7xifw0.com1.z0.glb.clouddn.com/java_throwable.gif" alt=""><br>Throwable 表示任何可以作为异常被抛出的类。Throwable 对象分为两种类型，Error 表示系统级错误，如资源不足、约束失败，或者其他使程序无法继续执行的条件，一般无需我们关心。而 Exception 是所有异常的父类，可分为两大类型。一种是 RuntimeException 及其子类，表示运行时异常。另一种是除了 RuntimeException 及其子类之外的 Exception，称为受检异常。<br>那运行时异常和受检异常有什么区别呢？在使用上最大的区别就是，受检异常强迫调用者使用显式的 catch 语句处理或者将它传播出去。写代码时如果 IDE 提示你使用 catch 语句或者在方法中添加 throws 声明，这种异常都是受检异常，要扼杀在摇篮里，否则编译都无法通过。而运行时异常是不需要被捕获的。<br>除了使用上的差异，两者的使用场景也有区别。《Effective Java》是这样建议的：如果可恢复的情况使用受检异常，对编程错误使用运行时异常。</p>
+<p>让我们回到问题，现在答案已经很明显了。Retrofit 抛出的是运行时异常，而 BufferedReader 抛出的是受检异常。</p>
+<p>那 Retrofit 为什么不抛出受检异常呢？这种情况应该属于可恢复的，并且受检异常能提醒开发者进行处理。<br>不是不想，实是不能啊。Retrofit 是通过动态代理来实现声明的接口的功能。而由于父类方法没有抛出异常,子类方法也不能显式地抛出异常。所以 Retrofit 不能抛出各种异常（如 IO 异常），只能通过捕获异常并转换为 RuntimeException 再抛出。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>Effective Java 第9章 异常</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Java/">Java</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/03/13/Java-Exception/" data-title="聊聊 Java Exception 机制" data-url="http://kaywu.github.io/2016/03/13/Java-Exception/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/03/13/Java-Exception/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>5</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>2</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>1</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
