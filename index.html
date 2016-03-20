@@ -67,6 +67,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-03-20T05:29:15.000Z"><a href="/2016/03/20/Python-LiveReload/">2016-03-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/20/Python-LiveReload/">初识 LiveReload</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。<br>LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 <a href="http://livereload.readthedocs.org/en/latest/" target="_blank" rel="external">LiveReload</a> 介绍其使用。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>首先为浏览器安装 <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei" target="_blank" rel="external">LiveReload 插件</a>。该插件可以和后台的相关服务器通信，当服务器通知该插件后，该插件会自动刷新页面。<br>接着通过<code>pip3 install livereload</code>安装相关 python 包。That’s all~</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>在 html 所在的文件夹，使用<code>livereload</code>命令即可。这时打开浏览器<code>http://127.0.0.1:35729</code>，就会发现网页会实时刷新了。<br>但是，有时候你可能需要在刷新之前做一些操作。如使用 Hexo 写文章时，保存文章后你希望能自动地执行<code>hexo g</code>的命令，然后刷新页面。那 LiveReload 能做到吗？当然可以，只需要一段简短的程序即可。<br>下面是我写的关于上面小需求的代码。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> livereload <span class="keyword">import</span> Server, shell</span><br><span class="line">server = Server()</span><br><span class="line">server.watch(<span class="string">'source/_posts/*'</span>, shell(<span class="string">'hexo g'</span>))</span><br><span class="line">server.serve(root=<span class="string">'public'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>使用 LiveReload 之后，感觉写文章都轻松了很多。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
       
       
@@ -213,45 +250,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-11-30T12:54:10.000Z"><a href="/2015/11/30/The-Way-To-Program/">2015-11-30</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/11/30/The-Way-To-Program/">编程之路</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>转行当程序员也快一年了，这篇给自己的交代硬生生拖了半年，趁着没忘，赶紧写写。</p>
-<p>大三前对编程的印象停留在初中用VB编猜数字游戏，但一直对编程抱有一定的好奇。<br>有数学和逻辑的魅力，又不会过于抽象，可以充分验证自己的想法，所需却不多，仅仅是一台电脑。<br>好奇心加上时间，我开始去学习编程相关的知识。</p>
-<p>那，如何去学呢？可能是因为一直都是按部就班地学习，对基础这块就特别重视，<br>再加上搜索如何学习编程时，经常看到“程序=算法+数据结构”这话，就决定先从算法开始。想来真是初生牛犊不怕虎。<br>幸运的是，那段时间MOOC正好兴起，尤其以计算机相关的课程最多。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2015/11/30/The-Way-To-Program/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -276,6 +274,8 @@
     <li><a href="/categories/Android/">Android</a><small>5</small></li>
   
     <li><a href="/categories/Java/">Java</a><small>2</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
   
     <li><a href="/categories/编程/">编程</a><small>1</small></li>
   

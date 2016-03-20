@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-03-13T13:04:20.000Z</updated>
+  <updated>2016-03-20T06:48:38.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>初识 LiveReload</title>
+    <link href="http://kaywu.github.io/2016/03/20/Python-LiveReload/"/>
+    <id>http://kaywu.github.io/2016/03/20/Python-LiveReload/</id>
+    <published>2016-03-20T05:29:15.000Z</published>
+    <updated>2016-03-20T06:48:38.000Z</updated>
+    
+    <content type="html">&lt;p&gt;LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。&lt;br&gt;LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 &lt;a href=&quot;http://livereload.readthedocs.org/en/latest/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LiveReload&lt;/a&gt; 介绍其使用。&lt;/p&gt;
+&lt;h2 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h2&gt;&lt;p&gt;首先为浏览器安装 &lt;a href=&quot;https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LiveReload 插件&lt;/a&gt;。该插件可以和后台的相关服务器通信，当服务器通知该插件后，该插件会自动刷新页面。&lt;br&gt;接着通过&lt;code&gt;pip3 install livereload&lt;/code&gt;安装相关 python 包。That’s all~&lt;/p&gt;
+&lt;h2 id=&quot;使用&quot;&gt;&lt;a href=&quot;#使用&quot; class=&quot;headerlink&quot; title=&quot;使用&quot;&gt;&lt;/a&gt;使用&lt;/h2&gt;&lt;p&gt;在 html 所在的文件夹，使用&lt;code&gt;livereload&lt;/code&gt;命令即可。这时打开浏览器&lt;code&gt;http://127.0.0.1:35729&lt;/code&gt;，就会发现网页会实时刷新了。&lt;br&gt;但是，有时候你可能需要在刷新之前做一些操作。如使用 Hexo 写文章时，保存文章后你希望能自动地执行&lt;code&gt;hexo g&lt;/code&gt;的命令，然后刷新页面。那 LiveReload 能做到吗？当然可以，只需要一段简短的程序即可。&lt;br&gt;下面是我写的关于上面小需求的代码。&lt;br&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#!/usr/bin/env python3&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# -*- coding: utf-8 -*-&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; livereload &lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; Server, shell&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server = Server()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server.watch(&lt;span class=&quot;string&quot;&gt;&#39;source/_posts/*&#39;&lt;/span&gt;, shell(&lt;span class=&quot;string&quot;&gt;&#39;hexo g&#39;&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server.serve(root=&lt;span class=&quot;string&quot;&gt;&#39;public&#39;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;使用 LiveReload 之后，感觉写文章都轻松了很多。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。&lt;br&gt;LiveReload 通过实时
+    
+    </summary>
+    
+      <category term="Tools" scheme="http://kaywu.github.io/categories/Tools/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>聊聊 Java Exception 机制</title>
