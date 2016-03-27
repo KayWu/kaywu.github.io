@@ -729,6 +729,9 @@ figure.highlight .code {
 figure.highlight .line {
   height: 20px;
 }
+figure.highlight .line.marked {
+  background: #d6d6d6;
+}
 pre .comment,
 pre .template_comment,
 pre .diff .header,

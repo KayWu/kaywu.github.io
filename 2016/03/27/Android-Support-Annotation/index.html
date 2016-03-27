@@ -1,0 +1,210 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Support Annotion 小结 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="Support Annotion 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过compile &amp;#39;com.android.support:support-annotations:22.2.0&amp;#39;就能引入。它可以检验代码潜在的问题并提醒你去修正它。下面简单介绍下我常用的几个注解，更加全面的介绍可以看官方文档。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Support Annotion 小结"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-27T11:28:08.000Z"><a href="/2016/03/27/Android-Support-Annotation/">2016-03-27</a></time>
+      
+      
+  
+    <h1 class="title">Support Annotion 小结</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Support Annotion 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过<code>compile &#39;com.android.support:support-annotations:22.2.0&#39;</code>就能引入。它可以检验代码潜在的问题并提醒你去修正它。<br>下面简单介绍下我常用的几个注解，更加全面的介绍可以看<a href="http://tools.android.com/tech-docs/support-annotations" target="_blank" rel="external">官方文档</a>。<br><a id="more"></a></p>
+<h2 id="Nullable-amp-NonNull"><a href="#Nullable-amp-NonNull" class="headerlink" title="Nullable &amp; NonNull"></a>Nullable &amp; NonNull</h2><p>作为 Android 开发者，看到<code>NullPointer</code>就五味杂成。当它发生时要么后悔这里咋不小心没写个判断，要么就是咒骂这里返回的值怎么可以是<code>Null</code>。<br>如果你碰到这样的情况很多，那么这两个注解就是为你而服务的。<br><code>Nullable</code>表明这里的值可能会空，而<code>NonNull</code>则表示这里的值必须不为空。两者可以使用在<code>Method</code>、<code>Pamameter</code>以及<code>Field</code>上。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        TextView tv = (TextView) findViewById(R.id.tv);</span><br><span class="line">        <span class="comment">// Method invocation 'getContent().getLength() may produce 'java.lang.NullPointerException'</span></span><br><span class="line">        tv.setText(<span class="string">"The length of content is "</span> + getContent().length());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Nullable</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getContent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>举个例子，当你使用<code>Nullable</code>标注的方法并对返回值不加判断直接使用时，IDE 就会高亮有问题的语句，如上段代码中的<code>getContent().length()</code>，并提醒你这里可能会出现<code>NullPointerException</code>。</p>
+<h1 id="IntDef-amp-StringDef"><a href="#IntDef-amp-StringDef" class="headerlink" title="IntDef &amp; StringDef"></a>IntDef &amp; StringDef</h1><p>处于性能的考虑，在 Android 开发中我们会使用<code>Int</code>常量来代替<code>Enum</code>类型，而<code>Int</code>常量缺乏像<code>Enum</code>的类型安全性。但我们可以通过<code>IntDef</code>来达到类似<code>Enum</code>的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.support.annotation.IntDef;</span><br><span class="line">...</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ActionBar</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="annotation">@IntDef</span>(&#123;NAVIGATION_MODE_STANDARD, NAVIGATION_MODE_LIST, NAVIGATION_MODE_TABS&#125;)</span><br><span class="line">    <span class="annotation">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line">    <span class="keyword">public</span> <span class="annotation">@interface</span> NavigationMode &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NAVIGATION_MODE_STANDARD = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NAVIGATION_MODE_LIST = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NAVIGATION_MODE_TABS = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@NavigationMode</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getNavigationMode</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setNavigationMode</span><span class="params">(@NavigationMode <span class="keyword">int</span> mode)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>若我们在<code>setNavigationMode</code>中传入错误的参数，如<code>3</code>，则 IDE 就会报错，并提示可以使用的值。<br><code>IntDef</code>还有个高级属性<code>flag</code>，当设置为<code>true</code>时就可以通过 &amp; 或 | 进行位操作，类似于<code>EnumSet</code>的相关操作。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> android.support.annotation.IntDef;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="annotation">@IntDef</span>(flag=<span class="keyword">true</span>, value=&#123;</span><br><span class="line">        DISPLAY_USE_LOGO,</span><br><span class="line">        DISPLAY_SHOW_HOME,</span><br><span class="line">        DISPLAY_HOME_AS_UP,</span><br><span class="line">        DISPLAY_SHOW_TITLE,</span><br><span class="line">        DISPLAY_SHOW_CUSTOM</span><br><span class="line">&#125;)</span><br><span class="line"><span class="annotation">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line"><span class="keyword">public</span> <span class="annotation">@interface</span> DisplayOptions &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DISPLAY_USE_LOGO = <span class="number">0x1</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DISPLAY_SHOW_HOME = <span class="number">0x2</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DISPLAY_HOME_AS_UP = <span class="number">0x4</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DISPLAY_SHOW_TITLE = <span class="number">0x8</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DISPLAY_SHOW_CUSTOM = <span class="number">0x10</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setDisplayOptions</span><span class="params">(@DisplayOptions <span class="keyword">int</span> options)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line">getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Thread-Annotations"><a href="#Thread-Annotations" class="headerlink" title="Thread Annotations"></a>Thread Annotations</h2><p>Support Library 在 22.2 之后又引入了 Thread Annotations，用来标注方法所需要的线程环境。如果一个类中的所有方法对线程环境的要求都相同，则可以来标注整个类。<br>Thread Annotations 有以下4种，其中 UiThread 和 MainThread 没有本质区别，可以互换。</p>
+<ul>
+<li>@UiThread</li>
+<li>@MainThread</li>
+<li>@WorkerThread</li>
+<li>@BinderThread<br>使用效果如下图所示。<br><img src="http://7xifw0.com1.z0.glb.clouddn.com/support_annotation_img_00.png" alt=""></li>
+</ul>
+<p>除了上面介绍的，还有 Res、Permission 等相关的 Annotations，可参考<a href="http://tools.android.com/tech-docs/support-annotations" target="_blank" rel="external">官方文档</a>进行学习，在此不进行赘述。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://tools.android.com/tech-docs/support-annotations" target="_blank" rel="external">http://tools.android.com/tech-docs/support-annotations</a></li>
+<li><a href="https://developer.android.com/intl/zh-cn/tools/debugging/annotations.html#enum-annotations" target="_blank" rel="external">https://developer.android.com/intl/zh-cn/tools/debugging/annotations.html#enum-annotations</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Android/">Android</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/03/27/Android-Support-Annotation/" data-title="Support Annotion 小结" data-url="http://kaywu.github.io/2016/03/27/Android-Support-Annotation/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/03/27/Android-Support-Annotation/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>6</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>2</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>1</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
