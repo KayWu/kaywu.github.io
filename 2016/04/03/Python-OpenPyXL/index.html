@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>使用 Python 处理 Excel 文件 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="最近在学着使用 Python 解决些重复枯燥的工作，也给自己省些时间。比如每天从网站上摘抄几个数据然后制成 Excel。偶尔倒还好，要是每天都要这样，岂不是很浪费时间？像这种重复性的操作就可以交给不辞辛劳的计算机。解决上面的需求主要分两步，一是从网上摘抄数据，根据不同的情况，摘抄数据的手段也各异。简单的直接curl一下然后正则，复杂点的可能需要抓包，或者爬虫，这里就不做展开（自己还在学……）。二是处理 Excel，今天就着重讲讲怎么处理 Excel。
+Python 关于 Excel 的库主要有两个：Python-Excel（xlrd, xlwt, xlutils）和 OpenPyXL。前者主要用于 xls，后者用于 xlsx。现在多数文件都是 xlsx，且后者维护得很勤快，再加上 Automate the Boring Stuff with Python 也是用的 OpenPyXL，就愉快地决定用它了。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用 Python 处理 Excel 文件"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-03T10:38:09.000Z"><a href="/2016/04/03/Python-OpenPyXL/">2016-04-03</a></time>
+      
+      
+  
+    <h1 class="title">使用 Python 处理 Excel 文件</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近在学着使用 Python 解决些重复枯燥的工作，也给自己省些时间。比如每天从网站上摘抄几个数据然后制成 Excel。偶尔倒还好，要是每天都要这样，岂不是很浪费时间？像这种重复性的操作就可以交给不辞辛劳的计算机。<br>解决上面的需求主要分两步，一是从网上摘抄数据，根据不同的情况，摘抄数据的手段也各异。简单的直接<code>curl</code>一下然后正则，复杂点的可能需要抓包，或者爬虫，这里就不做展开（自己还在学……）。二是处理 Excel，今天就着重讲讲怎么处理 Excel。</p>
+<p>Python 关于 Excel 的库主要有两个：Python-Excel（xlrd, xlwt, xlutils）和 OpenPyXL。前者主要用于 xls，后者用于 xlsx。现在多数文件都是 xlsx，且后者维护得很勤快，再加上 <a href="https://automatetheboringstuff.com/" target="_blank" rel="external">Automate the Boring Stuff with Python</a> 也是用的 OpenPyXL，就愉快地决定用它了。<br><a id="more"></a></p>
+<h2 id="OpenPyXL"><a href="#OpenPyXL" class="headerlink" title="OpenPyXL"></a>OpenPyXL</h2><p>安装一句话，<code>pip3 install openpyxl</code>即可。</p>
+<h3 id="读文件"><a href="#读文件" class="headerlink" title="读文件"></a>读文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> openpyxl</span><br><span class="line"><span class="comment"># 读取 sample.xlsx 文件</span></span><br><span class="line">wb = openpyxl.load_workbook(<span class="string">'sample.xlsx'</span>)</span><br><span class="line"><span class="comment"># 打印 该文件所含有 sheet 的 name</span></span><br><span class="line">print(wb.get_sheet_names())  <span class="comment"># ['Sheet1', 'Sheet2']</span></span><br><span class="line"><span class="comment"># 获取当前使用的 sheet，默认使用第一个 sheet</span></span><br><span class="line">active_sheet = wb.active</span><br><span class="line"><span class="comment"># 打印 A1 单元格的内容</span></span><br><span class="line">print(active_sheet[<span class="string">'A1'</span>].value)  <span class="comment"># Hello, World!</span></span><br></pre></td></tr></table></figure>
+<h3 id="写文件"><a href="#写文件" class="headerlink" title="写文件"></a>写文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新建 Workbook</span></span><br><span class="line">wb = Workbook()</span><br><span class="line">sheet = wb.active</span><br><span class="line"><span class="comment"># 设置单元格 a1 的值</span></span><br><span class="line">sheet[<span class="string">'a1'</span>].value = <span class="number">4</span></span><br><span class="line"><span class="comment"># 保存为 sample.xlsx 文件</span></span><br><span class="line">wb.save(<span class="string">"sample.xlsx"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="字体"><a href="#字体" class="headerlink" title="字体"></a>字体</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置字体大小为24，斜体</span></span><br><span class="line">sheet[<span class="string">'a1'</span>].font = Font(size=<span class="number">24</span>, italic=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="背景色"><a href="#背景色" class="headerlink" title="背景色"></a>背景色</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置背景色为红色</span></span><br><span class="line">sheet[<span class="string">'a1'</span>].fill = PatternFill(start_color=colors.RED, fill_type=fills.FILL_SOLID)</span><br></pre></td></tr></table></figure>
+<h3 id="公式"><a href="#公式" class="headerlink" title="公式"></a>公式</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sheet[<span class="string">'B9'</span>] = <span class="string">'=SUM(B1:B8)'</span></span><br></pre></td></tr></table></figure>
+<h3 id="合并单元格"><a href="#合并单元格" class="headerlink" title="合并单元格"></a>合并单元格</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sheet.merge_cells(<span class="string">'A1:D3'</span>)</span><br></pre></td></tr></table></figure>
+<p>最后，强烈推荐下 <a href="https://automatetheboringstuff.com/" target="_blank" rel="external">Automate the Boring Stuff with Python</a> 这本书，真是形象说明了<code>人生苦短，我用 Python</code>这句口号。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://openpyxl.readthedocs.org/en/2.3.3/" target="_blank" rel="external">OpenPyXL Doc</a><br><a href="https://automatetheboringstuff.com/chapter12/" target="_blank" rel="external">Automate the Boring Stuff with Python - Working with Excel Spreadsheets</a><br><a href="http://www.python-excel.org/" target="_blank" rel="external">Working with Excel Files in Python</a></p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Python/">Python</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/04/03/Python-OpenPyXL/" data-title="使用 Python 处理 Excel 文件" data-url="http://kaywu.github.io/2016/04/03/Python-OpenPyXL/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/04/03/Python-OpenPyXL/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>6</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>2</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>1</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
