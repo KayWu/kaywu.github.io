@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
-  <title>Android最简单的抓包工具Packet Capture | Kay Wu&#39;s blog</title>
+  <title>Android 保持屏幕常亮方法小结 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="抓包是每个App开发人员都必备的技能之一。常见的可使用WireShark，Fiddler(Windows)，Charles(Mac)等软件。这些工具都很强大，可以满足复杂的需求。但是有时候你可能仅仅想查看一两个请求，这时候开机-查看IP-设置代理这些步骤就略显繁琐。这时候你最需要的就是那种一键抓包的工具，而Packet Capture正好能满足需求。">
+  <meta name="description" content="开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Android最简单的抓包工具Packet Capture"/>
+  <meta property="og:title" content="Android 保持屏幕常亮方法小结"/>
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
@@ -67,28 +67,27 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-02-28T01:58:31.000Z"><a href="/2016/02/28/PacketCapture/">2016-02-28</a></time>
+        <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
       
       
   
-    <h1 class="title">Android最简单的抓包工具Packet Capture</h1>
+    <h1 class="title">Android 保持屏幕常亮方法小结</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>抓包是每个App开发人员都必备的技能之一。常见的可使用WireShark，Fiddler(Windows)，Charles(Mac)等软件。这些工具都很强大，可以满足复杂的需求。但是有时候你可能仅仅想查看一两个请求，这时候开机-查看IP-设置代理这些步骤就略显繁琐。这时候你最需要的就是那种一键抓包的工具，而Packet Capture正好能满足需求。<br><a id="more"></a></p>
-<h2 id="Packet-Capture"><a href="#Packet-Capture" class="headerlink" title="Packet Capture"></a>Packet Capture</h2><p><a href="https://play.google.com/store/apps/details?id=app.greyshirts.sslcapture" target="_blank" rel="external">下载地址</a><br>它有以下几个优点：</p>
-<ul>
-<li>仅仅需要一部手机，不需要Root</li>
-<li>操作简便</li>
-<li>可以查看Https流量</li>
-<li>Json格式化预览</li>
+        <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br><a id="more"></a></p>
+<h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>如果使用的是 MediaPlayer 和 SurfaceView 的话，有一个现成的方法可以使用，<code>setScreenOnWhilePlaying(true)</code>。但是项目中采用的是TextureView，不支持这种方法。具体原因看下 <code>setScreenOnWhilePlaying</code> 的源码和 <code>setDisplay</code>的注释就明白了。</p>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>另一种大家比较熟悉的是使用 <code>WAKE_LOCK</code>。<br>首先声明 <code>&lt;uses-permission android:name=&quot;android.permission.WAKE_LOCK&quot; /&gt;</code>这个权限，并添加以下代码，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);</span><br><span class="line">WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, <span class="string">"MyWakelockTag"</span>);</span><br><span class="line">wakeLock.acquire();</span><br></pre></td></tr></table></figure></p>
+<p>并注意在适当的时候调用 <code>wakelock.release()</code>。<br>该方法会影响电池的使用，若不及时释放会有严重的后果。官方文档建议只在必要的时候使用且保持尽量短的时间。<br>相比第一种方法，有点小题大做。</p>
+<h2 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h2><p>该方法不需要额外的权限，只需声明 <code>getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);</code>，或者直接在布局中加上 <code>keepScreenOn=true</code> 即可。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">RelativeLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span></span><br><span class="line">    <span class="attribute">android:keepScreenOn</span>=<span class="value">"true"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>值得注意的是，view 的 keepScreenOn 属性只有在该 View 是 Visible 状态的时候才生效。</p>
+<p>对比来看，方法三简单实用，就选它了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html" target="_blank" rel="external">https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html</a></li>
+<li><a href="http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app" target="_blank" rel="external">http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app</a></li>
 </ul>
-<h3 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h3><p>简单来讲就是傻瓜式操作。打开App，点击头部绿色按钮开始抓包，点击红色按钮停止抓包。<br>之后就可以点击下方列表来查看所抓的包了。</p>
-<h3 id="预览图"><a href="#预览图" class="headerlink" title="预览图"></a>预览图</h3><p><img src="http://7xifw0.com1.z0.glb.clouddn.com/packet_capture_img_01.webp" alt="抓包显示相关应用"><br><img src="http://7xifw0.com1.z0.glb.clouddn.com/packet_capture_img_02.webp" alt="Packet预览"><br><img src="http://7xifw0.com1.z0.glb.clouddn.com/packet_capture_img_00.png" alt="Json格式化预览"></p>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>类似实现手机上直接抓包的应用还有<a href="https://play.google.com/store/apps/details?id=com.evozi.injector&amp;hl=zh" target="_blank" rel="external">Http Injector</a>，它除了可以抓包之外还可以修改请求，但操作起来没有Packet Capture简单。<br>关于更多Android手机上抓包的方法可以见<a href="#参考">参考</a>。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://www.zhihu.com/question/20467503" target="_blank" rel="external">如何在Android手机上实现抓包</a></p>
 
       
     </div>
@@ -113,7 +112,7 @@
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  	<div class="ds-thread" data-thread-key="2016/02/28/PacketCapture/" data-title="Android最简单的抓包工具Packet Capture" data-url="http://kaywu.github.io/2016/02/28/PacketCapture/"></div>
+  	<div class="ds-thread" data-thread-key="2016/04/17/Android-Screen-On/" data-title="Android 保持屏幕常亮方法小结" data-url="http://kaywu.github.io/2016/04/17/Android-Screen-On/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">
@@ -141,7 +140,7 @@
   }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div class="fb-comments" data-href="http://kaywu.github.io/2016/02/28/PacketCapture/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/04/17/Android-Screen-On/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
       
   
 </section>
