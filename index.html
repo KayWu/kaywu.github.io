@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-05-01T11:43:01.000Z"><a href="/2016/05/01/Maven-aar-source/">2016-05-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/01/Maven-aar-source/">为 aar 关联源代码</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>不知大家是否注意过，在使用 aar 时，若是本地的 aar 包，打开相关源码是反编译后的文件。而如果是引用的如 jcenter 的库，就能阅读详尽的源代码。两者的区别是什么呢？<br>如果大家有尝试过上传 library 到 jcenter 或 maven 就会知道，除了 aar 文件之外，还要上传相应的 sources、javadoc 以及 pom 文件，就像 <a href="https://bintray.com/bintray/jcenter/com.yalantis%3Aucrop/1.5.0/view#files/com/yalantis/ucrop/1.5.0">ucrop</a> 所显示的那样。gradle 在下载依赖时，也会包括 sources、javadoc 等文件，而 sources 文件正是使我们能够阅读源代码的真正原因。<br>那么，如何为 aar 文件添加 sources 支持呢？一种方法是添加 aar 的同时手工导入相应的 sources 文件，另一种则是将 aar、sources 上传到仓库然后通过 gradle 导入。这里说明第二种方法的使用。<br>由于上传到 maven、jcenter 都需要额外的步骤，为方便起见，我们搭建一个本地 Maven 仓库来讲解。如何搭建仓库可以参考 <a href="http://jeroenmols.com/blog/2015/08/06/artifactory/">A PRIVATE MAVEN REPOSITORY FOR ANDROID IN 30 MIN</a>，有<a href="http://www.devtf.cn/?p=1079">中文翻译</a>。后续对 build.gradle 的说明会建立在该文章的基础上。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/05/01/Maven-aar-source/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-04-24T06:52:03.000Z"><a href="/2016/04/24/Gradle/">2016-04-24</a></time>
       
       
@@ -209,43 +246,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-03-20T05:29:15.000Z"><a href="/2016/03/20/Python-LiveReload/">2016-03-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/03/20/Python-LiveReload/">初识 LiveReload</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。<br>LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 <a href="http://livereload.readthedocs.org/en/latest/">LiveReload</a> 介绍其使用。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/03/20/Python-LiveReload/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -267,7 +267,7 @@
   <h3 class="title">分类</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Android/">Android</a><small>7</small></li>
+    <li><a href="/categories/Android/">Android</a><small>8</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   
