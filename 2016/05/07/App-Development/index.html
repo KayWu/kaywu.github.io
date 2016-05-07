@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>读《App 研发录》 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。下文是自己在阅读过程中的一些思考和笔记。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="读《App 研发录》"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-07T00:45:29.000Z"><a href="/2016/05/07/App-Development/">2016-05-07</a></time>
+      
+      
+  
+    <h1 class="title">读《App 研发录》</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br><a id="more"></a></p>
+<h2 id="高效-App-框架设计与重构"><a href="#高效-App-框架设计与重构" class="headerlink" title="高效 App 框架设计与重构"></a>高效 App 框架设计与重构</h2><p>这部分讲的是开发规范以及基础库的设计，都是些实际开发会碰到的问题，如项目大了之后混乱的目录、臃肿的 Activity、Html 与 App 之间的跳转等等。每看到一个问题时，最好想想自己是怎么做的，然后对比总结。比如以前自己做项目时 Html 与 App 之间的跳转是通过 int 值来进行判断的，页面越来越多后哪个数字对应于哪个页面就会变得很混乱，每次都要打开文档或代码进行确认，可读性比较差。而书中采取字符串定义协议的方式就清楚很多，要跳转哪个页面一目了然。我们可以再优化一下，协议以 <code>app://</code> 开头，如 <code>app://user_profile</code>，可读性就更强了。<br>现在如网络请求、图片加载都已经有相当成熟的库了，不需要重新造轮子。但是了解其基本原理仍然是很有必要的，方便我们增加新功能。如在后端接口还未好时 App 的开发不能因此停滞，就需要 Mock Api 的数据。这时我们可以将网络库再封装一层，在未好的接口上使用本地假数据来继续开发。</p>
+<h2 id="Crash-异常收集与统计"><a href="#Crash-异常收集与统计" class="headerlink" title="Crash 异常收集与统计"></a>Crash 异常收集与统计</h2><p>异常收集大部分公司都是采用第三方服务，这部分功夫可以省了。作者花了大力气在 Crash 分析这章，对八十多种线上崩溃追根溯源。众所周知，Android App 经常会出现一些诡异的 Bug，大部分情况下都是正常的但总有一定的概率报错，让人百思不得其解。比如 Resources$NotFoundException，明明 apk 里有这个资源文件。书中分析是由于内存溢出，解了长久的疑惑。建议遇到诡异的 Bug 时，就到这章搜寻下，即使没有直接的解决方案，就如上文的 Resources$NotFoundException，但定位了异常的原因，省了不少的功夫。</p>
+<h2 id="App-竞品技术分析"><a href="#App-竞品技术分析" class="headerlink" title="App 竞品技术分析"></a>App 竞品技术分析</h2><p>竞品分析真是相当接地气的章节，分析竞争对手 App 的技术实现，掌握他们先进的思想和技术。别的不说，通过其他 App 包里面的 META_INF 目录下会有一个名为某个渠道的 0 字节的文件，猜测是用来批量打渠道包再加以实践验证，不得不谓之高。当然，美团分享<a href="http://tech.meituan.com/mt-apk-packaging.html" target="_blank" rel="external">多渠道打包方案</a>是后话了。<br>其他如把 HTML5 页面嵌入到 Zip 包中、将 icon 做成 ttf 文件等针对实际问题的解决方案也让人耳目一新。</p>
+<h2 id="项目管理和团队建设"><a href="#项目管理和团队建设" class="headerlink" title="项目管理和团队建设"></a>项目管理和团队建设</h2><p>敏捷开发这节有个很有意思的点，App 在经过几天的集中测试后会进入 Code Freeze，除非发现很严重的 Bug，否则不再改动代码。初看挺没道理的，明明还有时间去修复 Bug 却不做。但要是有过在上线前几个小时还在改 Bug 的经历就能体会到 Code Freeze 的意义。由于急着上线，修复 Bug 时很容易考虑不周，测试也只来得及测相关功能，一个不小心后果就比较严重。所以距离上线一段时间之内最好不要修改代码，也就是 Code Freeze。</p>
+<p>《App 研发录》是本踏实的书，书中没有高大上的技术，只有应对不同场景的具体解决方案，读之颇有“重剑无锋”之感。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Android/">Android</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/05/07/App-Development/" data-title="读《App 研发录》" data-url="http://kaywu.github.io/2016/05/07/App-Development/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/05/07/App-Development/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>9</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>2</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>1</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
