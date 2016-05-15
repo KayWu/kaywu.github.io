@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-05-07T04:31:19.000Z</updated>
+  <updated>2016-05-15T08:22:32.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -16,11 +16,37 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>闭包是什么</title>
+    <link href="http://kaywu.github.io/2016/05/15/Closure/"/>
+    <id>http://kaywu.github.io/2016/05/15/Closure/</id>
+    <published>2016-05-15T06:44:29.000Z</published>
+    <updated>2016-05-15T08:22:32.000Z</updated>
+    
+    <content type="html">&lt;p&gt;闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。下面以一个简单的例子说明。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;iframe width=&quot;800&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&quot;http://pythontutor.com/iframe-embed.html#code=def+make_counter(%29%3A%0A++++count+%3D+0%0A++++def+push(%29%3A%0A++++++++nonlocal+count%0A++++++++count+%2B%3D+1%0A++++++++print(count%29%0A++++return+push%0A%0Ac+%3D+make_counter(%29%0Ac(%29++%23+-%3E+1%0Ac(%29++%23+-%3E+2%0Ac(%29++%23+-%3E+3&amp;origin=opt-frontend.js&amp;cumulative=false&amp;heapPrimitives=false&amp;textReferences=false&amp;py=3&amp;rawInputLstJSON=%5B%5D&amp;curInstr=3&amp;codeDivWidth=350&amp;codeDivHeight=400&quot;&gt; &lt;/iframe&gt;&lt;br&gt;上面是一段简单的 Python 代码，实现了每调用一次显示的数字加 1 的函数 make_counter。函数 make_counter 中定义了变量 count 和 函数 push，并返回函数 push。然后通过调用函数 make_counter 将返回值赋给变量 c。然后调用它三次。每调用一次，显示的值就加 1。注意，每次调用 c 时结果都是不一样的。&lt;br&gt;函数 make_counter 首先创建了名字和值的对照表 f1，可以根据变量名查找到对应的值。把变量 count 的值设为 0，然后定义了函数 push，并将其返回。随后每次被调用时，函数 push 会寻找它定义时的对照表，也就是 f1，查找到变量 count 的值，加 1 然后返回。&lt;br&gt;函数 push 使用了变量 count，但变量 count 并不是在函数 push 中定义的。这种变量被称为自由变量。函数 push 就是一个包含了自由变量的开放函数，也就是闭包。其实可以简单地把闭包想象成带有某种状态的函数。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;代码之髓&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.zhihu.com/question/34210214&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;到底什么是闭包&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。下面以一个简单的例子说明。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="编程" scheme="http://kaywu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
     <title>读《App 研发录》</title>
     <link href="http://kaywu.github.io/2016/05/07/App-Development/"/>
     <id>http://kaywu.github.io/2016/05/07/App-Development/</id>
     <published>2016-05-07T00:45:29.000Z</published>
-    <updated>2016-05-07T04:31:19.000Z</updated>
+    <updated>2016-05-15T06:54:18.000Z</updated>
     
     <content type="html">&lt;p&gt;去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。&lt;br&gt;我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。&lt;br&gt;下文是自己在阅读过程中的一些思考和笔记。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;高效-App-框架设计与重构&quot;&gt;&lt;a href=&quot;#高效-App-框架设计与重构&quot; class=&quot;headerlink&quot; title=&quot;高效 App 框架设计与重构&quot;&gt;&lt;/a&gt;高效 App 框架设计与重构&lt;/h2&gt;&lt;p&gt;这部分讲的是开发规范以及基础库的设计，都是些实际开发会碰到的问题，如项目大了之后混乱的目录、臃肿的 Activity、Html 与 App 之间的跳转等等。每看到一个问题时，最好想想自己是怎么做的，然后对比总结。比如以前自己做项目时 Html 与 App 之间的跳转是通过 int 值来进行判断的，页面越来越多后哪个数字对应于哪个页面就会变得很混乱，每次都要打开文档或代码进行确认，可读性比较差。而书中采取字符串定义协议的方式就清楚很多，要跳转哪个页面一目了然。我们可以再优化一下，协议以 &lt;code&gt;app://&lt;/code&gt; 开头，如 &lt;code&gt;app://user_profile&lt;/code&gt;，可读性就更强了。&lt;br&gt;现在如网络请求、图片加载都已经有相当成熟的库了，不需要重新造轮子。但是了解其基本原理仍然是很有必要的，方便我们增加新功能。如在后端接口还未好时 App 的开发不能因此停滞，就需要 Mock Api 的数据。这时我们可以将网络库再封装一层，在未好的接口上使用本地假数据来继续开发。&lt;/p&gt;
@@ -36,7 +62,7 @@
     
     </summary>
     
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+      <category term="读书笔记" scheme="http://kaywu.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
   </entry>
@@ -80,7 +106,7 @@
     <link href="http://kaywu.github.io/2016/04/24/Gradle/"/>
     <id>http://kaywu.github.io/2016/04/24/Gradle/</id>
     <published>2016-04-24T06:52:03.000Z</published>
-    <updated>2016-05-08T09:19:15.000Z</updated>
+    <updated>2016-05-08T09:37:57.000Z</updated>
     
     <content type="html">&lt;p&gt;刚开始接触 Gradle 时，一头雾水。碰到不会的地方，搜索相关解决方案然后依样画葫芦。至于为什么这么做，这么做的原理是什么，完全不清楚。后来看了 &lt;a href=&quot;http://blog.csdn.net/innost/article/details/48228651&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Gradle 详解&lt;/a&gt;，觉得作者说的十分有道理，得从编程的角度而不是脚本的角度来看 Gradle。下面小结下我在这个过程中的一些收获。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;从-apply-说起&quot;&gt;&lt;a href=&quot;#从-apply-说起&quot; class=&quot;headerlink&quot; title=&quot;从 apply 说起&quot;&gt;&lt;/a&gt;从 apply 说起&lt;/h2&gt;&lt;p&gt;Android 项目的 build.gradle 常有这么一句，&lt;code&gt;apply plugin: &amp;#39;com.android.application&amp;#39;&lt;/code&gt;。&lt;br&gt;它常常给我一种强烈的错觉，以为 &lt;code&gt;apply plugin&lt;/code&gt; 是一部分，&lt;code&gt;&amp;#39;com.android.application&amp;#39;&lt;/code&gt; 是另一个部分。&lt;br&gt;而这得归因于 Groovy 调用方法的时候是可以省略括号的。拿最简单的 &lt;code&gt;println&lt;/code&gt; 来说，你既可以写 &lt;code&gt;println(3)&lt;/code&gt;，也可以使用 &lt;code&gt;println 3&lt;/code&gt;。如果加上省略的括号，这行代码就变成了 &lt;code&gt;apply(plugin: &amp;#39;com.android.application&amp;#39;)&lt;/code&gt;。虽然降低了可读性，但从编程的角度来看更清晰了。&lt;br&gt;但是问题又来了，&lt;code&gt;plugin: &amp;#39;com.android.application&amp;#39;&lt;/code&gt; 又是个什么鬼？这就得提到 Groovy 的 &lt;a href=&quot;http://www.groovy-lang.org/objectorientation.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Named arguments&lt;/a&gt; 机制了。下面拿代码说明。&lt;br&gt;&lt;figure class=&quot;highlight groovy&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; foo(Map args) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	println &lt;span class=&quot;string&quot;&gt;&quot;$&amp;#123;args.name&amp;#125;: $&amp;#123;args.age&amp;#125;&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 调用方法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;foo(&lt;span class=&quot;string&quot;&gt;name:&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&#39;Marie&#39;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;age:&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;

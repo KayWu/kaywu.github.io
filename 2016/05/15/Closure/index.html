@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
-  <title>About me | Kay Wu&#39;s blog</title>
+  <title>闭包是什么 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="半路出家的Androider。兴趣使然的Coder。">
+  <meta name="description" content="闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。下面以一个简单的例子说明。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="About me"/>
+  <meta property="og:title" content="闭包是什么"/>
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
@@ -61,20 +61,28 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="page">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
       
+        <div class="icon"></div>
+        <time datetime="2016-05-15T06:44:29.000Z"><a href="/2016/05/15/Closure/">2016-05-15</a></time>
+      
       
   
-    <h1 class="title">About me</h1>
+    <h1 class="title">闭包是什么</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>半路出家的Androider。<br>兴趣使然的Coder。</p>
+        <p>闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。下面以一个简单的例子说明。<br><a id="more"></a></p>
+<p><iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+make_counter(%29%3A%0A++++count+%3D+0%0A++++def+push(%29%3A%0A++++++++nonlocal+count%0A++++++++count+%2B%3D+1%0A++++++++print(count%29%0A++++return+push%0A%0Ac+%3D+make_counter(%29%0Ac(%29++%23+-%3E+1%0Ac(%29++%23+-%3E+2%0Ac(%29++%23+-%3E+3&origin=opt-frontend.js&cumulative=false&heapPrimitives=false&textReferences=false&py=3&rawInputLstJSON=%5B%5D&curInstr=3&codeDivWidth=350&codeDivHeight=400"> </iframe><br>上面是一段简单的 Python 代码，实现了每调用一次显示的数字加 1 的函数 make_counter。函数 make_counter 中定义了变量 count 和 函数 push，并返回函数 push。然后通过调用函数 make_counter 将返回值赋给变量 c。然后调用它三次。每调用一次，显示的值就加 1。注意，每次调用 c 时结果都是不一样的。<br>函数 make_counter 首先创建了名字和值的对照表 f1，可以根据变量名查找到对应的值。把变量 count 的值设为 0，然后定义了函数 push，并将其返回。随后每次被调用时，函数 push 会寻找它定义时的对照表，也就是 f1，查找到变量 count 的值，加 1 然后返回。<br>函数 push 使用了变量 count，但变量 count 并不是在函数 push 中定义的。这种变量被称为自由变量。函数 push 就是一个包含了自由变量的开放函数，也就是闭包。其实可以简单地把闭包想象成带有某种状态的函数。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>代码之髓</li>
+<li><a href="https://www.zhihu.com/question/34210214" target="_blank" rel="external">到底什么是闭包</a></li>
+</ul>
 
       
     </div>
@@ -82,6 +90,11 @@
       
         
         
+  
+  <div class="tags">
+    <a href="/tags/编程/">编程</a>
+  </div>
+
         
       
       <div class="clearfix"></div>
@@ -94,7 +107,7 @@
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  	<div class="ds-thread" data-thread-key="about/index.html" data-title="About me" data-url="http://kaywu.github.io/about/index.html"></div>
+  	<div class="ds-thread" data-thread-key="2016/05/15/Closure/" data-title="闭包是什么" data-url="http://kaywu.github.io/2016/05/15/Closure/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">
@@ -122,7 +135,7 @@
   }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div class="fb-comments" data-href="http://kaywu.github.io/about/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/05/15/Closure/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
       
   
 </section>
