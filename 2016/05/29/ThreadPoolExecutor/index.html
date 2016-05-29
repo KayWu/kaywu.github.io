@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Java 线程池笔记 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。1new Thread(new Runnable() &amp;#123;&amp;#10;        @Override&amp;#10;        public void run() &amp;#123;&amp;#10;&amp;#10;        &amp;#125;&amp;#10;    &amp;#125;).start();
+这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Java 线程池笔记"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-29T02:58:55.000Z"><a href="/2016/05/29/ThreadPoolExecutor/">2016-05-29</a></time>
+      
+      
+  
+    <h1 class="title">Java 线程池笔记</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new Thread(new Runnable() &#123;&#10;        @Override&#10;        public void run() &#123;&#10;&#10;        &#125;&#10;    &#125;).start();</span><br></pre></td></tr></table></figure></p>
+<p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br><a id="more"></a></p>
+<h2 id="Executors"><a href="#Executors" class="headerlink" title="Executors"></a>Executors</h2><p>Executors 通过静态工厂方法提供了 4 种线程池。</p>
+<ul>
+<li>newFixedThreadPool(int)：一个固定长度的线程池。每当提交一个任务时就创建一个线程，直至达到线程池的最大数量，这时线程池的规模将不再变化。此后有新任务提交时，线程池中若有空闲线程，则立即执行，若没有，则在任务队列等待。</li>
+<li>newCachedThreadPool()：可缓存的无界线程池。当任务超过线程数量时则创建新线程，当线程空闲时间超过 60s 时则自动回收。</li>
+<li>newSingleThreadExecutors()：只有一个线程的线程池，保证任务按照其提交的顺序执行。</li>
+<li>newScheduledThreadPool(int)：创建一个定时或周期性执行任务的线程池，该方法可指定线程池的核心线程个数。</li>
+</ul>
+<h2 id="ThreadPoolExucutor"><a href="#ThreadPoolExucutor" class="headerlink" title="ThreadPoolExucutor"></a>ThreadPoolExucutor</h2><p>上述的简单工厂方法最终都是调用 ThreadPoolExecutor 的构造函数来实现的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span><br><span class="line">                              <span class="keyword">int</span> maximumPoolSize,</span><br><span class="line">                              <span class="keyword">long</span> keepAliveTime,</span><br><span class="line">                              TimeUnit unit,</span><br><span class="line">                              BlockingQueue&lt;Runnable&gt; workQueue,</span><br><span class="line">                              ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">         threadFactory, defaultHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参数说明：</p>
+<ul>
+<li>corePoolSize（线程池基本大小）：当提交一个任务到线程池时，若线程池已创建的线程数小于 corePoolSize，即使存在空闲线程也会创建一个新线程来执行该任务。</li>
+<li>maximumPoolSize（线程池最大大小）：线程池允许创建的最大线程数。如果队列满了，并且已创建的线程数小于 maximumPoolSize，则线程池会创建新的线程去执行任务。</li>
+<li>keepAliveTime（线程活动保持时间）：当线程池的线程个数多于 corePoolSize 时，线程的空闲时间超过 keepAliveTime 则会终止。但调用 allowCoreThreadTimeOut(boolean) 方法也可将此超时策略应用于核心线程。</li>
+<li>TimeUnit（线程活动保持时间的单位）：DAYS、HOURS、MINUTES、SECONDS、MILLISECONDS、MICROSECONDS、NANOSECONDS</li>
+<li>workQueue（任务队列）：用于保存等待执行任务的阻塞队列。主要有以下几种：<ul>
+<li>ArrayBlockingQueue：是一个基于数组结构的有界阻塞队列，此队列按  FIFO（先进先出）原则对元素进行排序。</li>
+<li>LinkedBlockingQueue：一个基于链表结构的阻塞队列，此队列按 FIFO （先进先出） 排序元素。静态工厂方法 Executors.newFixedThreadPool() 使用了这个队列。</li>
+<li>SynchronousQueue：一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态。静态工厂方法Executors.newCachedThreadPool使用了这个队列。</li>
+<li>PriorityBlockingQueue：一个具有优先级的无限阻塞队列。</li>
+</ul>
+</li>
+<li>threadFactory：创建线程的工厂。</li>
+<li>handler（饱和策略）：当任务太多时来不及处理时，如何拒绝任务。</li>
+</ul>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="../../../../img/executors.png" alt="流程"><br>当提交一个新任务到线程池时，线程池的处理流程如下：</p>
+<ol>
+<li>首先线程池判断核心线程池是否已满？没满，创建一个工作线程来执行任务。满了，则进入下个流程。corePoolSize 为 0 时是一种特殊情况, 此时即使工作队列没有饱和, 向线程池第一次提交任务时仍然会创建新的线程。</li>
+<li>其次线程池判断是否有空闲线程？若是，则使用空闲线程来执行任务。否则进入下个流程。</li>
+<li>接着线程池判断工作队列是否已满？没满，则将新提交的任务存储在工作队列里。满了，则进入下个流程。</li>
+<li>最后线程池判断整个线程池是否已满？没满，则创建一个新的工作线程来执行任务，满了，则交给饱和策略来处理这个任务。</li>
+</ol>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>我们分析下 newFixedThreadPool 和 newCachedThreadPool 的构造函数，来验证下整个流程。</p>
+<h4 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br></pre></td></tr></table></figure>
+<p>假设这是一个线程数量为 n 的 newFixedThreadPool，当我们提交 n 个任务到该线程池时，由于此时核心线程池未满，线程池会创建 n 个工作线程来执行任务。当我们再提交新的任务时，由于核心线程池已满且没有空闲线程，就会进入流程 3。由于 LinkedBlockingQueue 是个无界队列，因此之后不管再加多少个任务，都不会走到流程 4.<br>分析可得 newFixedThreadPool 确实是个固定长度的线程池。</p>
+<h4 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                              <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                              <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br></pre></td></tr></table></figure>
+<p>当我们添加第一个任务到 newCachedThreadPool 时，线程池会创建一个线程去执行任务。之后，当我们添加任务时，由于核心线程池大小为 0，且此时线程池中没有空闲线程，再加上 SynchronousQueue 是一个不储存的阻塞队列，会直接进入流程 4 中，会创建一个新的线程来执行任务。由于 maximumPoolSize 为 Integer.MAX_VALUE，线程池无界而走不进饱和策略。之后当线程空闲时间超过 60s 时则自动回收。</p>
+<p>如果我希望 newCacedThreadPool 线程池有个上界，应该怎么做？直接把 maximumPoolSize 改为上界是否可以？<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, <span class="number">3</span>, <span class="number">60L</span>, TimeUnit.SECONDS, <span class="keyword">new</span> SynchronusQueue&lt;Runable&gt;());</span><br></pre></td></tr></table></figure></p>
+<p>这时当你提交 3 个任务时，一切正常。之后再提交任务，就会进入饱和策略。此时确实有了上界，但多余的任务会进入饱和策略，而不是储存到队列里。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue&#60;Runable&#62;());</span><br></pre></td></tr></table></figure></p>
+<p>如果把工作队列改为无界的 LinkedBlockingQueue？情况更糟了，线程池中只有一个线程。因为 LinkedBlockingQueue 是个无界队列，所以会停留在流程 3，而不是去创建新的线程。<br>正确的做法其实是调用 newFixedThreadPool 的构造函数并设置 allowCoreThreadTimeOut(true)。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://gityuan.com/2016/01/16/thread-pool/" target="_blank" rel="external">Java线程池分析</a></li>
+<li><a href="http://www.infoq.com/cn/articles/java-threadPool" target="_blank" rel="external">聊聊并发</a></li>
+<li><a href="http://stackoverflow.com/questions/1800317/impossible-to-make-a-cached-thread-pool-with-a-size-limit" target="_blank" rel="external">Impossible to make a cached thread pool with a size limit?</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Java/">Java</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/05/29/ThreadPoolExecutor/" data-title="Java 线程池笔记" data-url="http://kaywu.github.io/2016/05/29/ThreadPoolExecutor/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/05/29/ThreadPoolExecutor/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-05-16T15:14:42.000Z</updated>
+  <updated>2016-05-29T03:14:05.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -16,11 +16,78 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Java 线程池笔记</title>
+    <link href="http://kaywu.github.io/2016/05/29/ThreadPoolExecutor/"/>
+    <id>http://kaywu.github.io/2016/05/29/ThreadPoolExecutor/</id>
+    <published>2016-05-29T02:58:55.000Z</published>
+    <updated>2016-05-29T03:14:05.000Z</updated>
+    
+    <content type="html">&lt;p&gt;下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;new Thread(new Runnable() &amp;#123;&amp;#10;        @Override&amp;#10;        public void run() &amp;#123;&amp;#10;&amp;#10;        &amp;#125;&amp;#10;    &amp;#125;).start();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Executors&quot;&gt;&lt;a href=&quot;#Executors&quot; class=&quot;headerlink&quot; title=&quot;Executors&quot;&gt;&lt;/a&gt;Executors&lt;/h2&gt;&lt;p&gt;Executors 通过静态工厂方法提供了 4 种线程池。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;newFixedThreadPool(int)：一个固定长度的线程池。每当提交一个任务时就创建一个线程，直至达到线程池的最大数量，这时线程池的规模将不再变化。此后有新任务提交时，线程池中若有空闲线程，则立即执行，若没有，则在任务队列等待。&lt;/li&gt;
+&lt;li&gt;newCachedThreadPool()：可缓存的无界线程池。当任务超过线程数量时则创建新线程，当线程空闲时间超过 60s 时则自动回收。&lt;/li&gt;
+&lt;li&gt;newSingleThreadExecutors()：只有一个线程的线程池，保证任务按照其提交的顺序执行。&lt;/li&gt;
+&lt;li&gt;newScheduledThreadPool(int)：创建一个定时或周期性执行任务的线程池，该方法可指定线程池的核心线程个数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;ThreadPoolExucutor&quot;&gt;&lt;a href=&quot;#ThreadPoolExucutor&quot; class=&quot;headerlink&quot; title=&quot;ThreadPoolExucutor&quot;&gt;&lt;/a&gt;ThreadPoolExucutor&lt;/h2&gt;&lt;p&gt;上述的简单工厂方法最终都是调用 ThreadPoolExecutor 的构造函数来实现的。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;ThreadPoolExecutor&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; corePoolSize,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; maximumPoolSize,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; keepAliveTime,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              TimeUnit unit,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              ThreadFactory threadFactory)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;         threadFactory, defaultHandler);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;参数说明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;corePoolSize（线程池基本大小）：当提交一个任务到线程池时，若线程池已创建的线程数小于 corePoolSize，即使存在空闲线程也会创建一个新线程来执行该任务。&lt;/li&gt;
+&lt;li&gt;maximumPoolSize（线程池最大大小）：线程池允许创建的最大线程数。如果队列满了，并且已创建的线程数小于 maximumPoolSize，则线程池会创建新的线程去执行任务。&lt;/li&gt;
+&lt;li&gt;keepAliveTime（线程活动保持时间）：当线程池的线程个数多于 corePoolSize 时，线程的空闲时间超过 keepAliveTime 则会终止。但调用 allowCoreThreadTimeOut(boolean) 方法也可将此超时策略应用于核心线程。&lt;/li&gt;
+&lt;li&gt;TimeUnit（线程活动保持时间的单位）：DAYS、HOURS、MINUTES、SECONDS、MILLISECONDS、MICROSECONDS、NANOSECONDS&lt;/li&gt;
+&lt;li&gt;workQueue（任务队列）：用于保存等待执行任务的阻塞队列。主要有以下几种：&lt;ul&gt;
+&lt;li&gt;ArrayBlockingQueue：是一个基于数组结构的有界阻塞队列，此队列按  FIFO（先进先出）原则对元素进行排序。&lt;/li&gt;
+&lt;li&gt;LinkedBlockingQueue：一个基于链表结构的阻塞队列，此队列按 FIFO （先进先出） 排序元素。静态工厂方法 Executors.newFixedThreadPool() 使用了这个队列。&lt;/li&gt;
+&lt;li&gt;SynchronousQueue：一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态。静态工厂方法Executors.newCachedThreadPool使用了这个队列。&lt;/li&gt;
+&lt;li&gt;PriorityBlockingQueue：一个具有优先级的无限阻塞队列。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;threadFactory：创建线程的工厂。&lt;/li&gt;
+&lt;li&gt;handler（饱和策略）：当任务太多时来不及处理时，如何拒绝任务。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;流程&quot;&gt;&lt;a href=&quot;#流程&quot; class=&quot;headerlink&quot; title=&quot;流程&quot;&gt;&lt;/a&gt;流程&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;../../../../img/executors.png&quot; alt=&quot;流程&quot;&gt;&lt;br&gt;当提交一个新任务到线程池时，线程池的处理流程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;首先线程池判断核心线程池是否已满？没满，创建一个工作线程来执行任务。满了，则进入下个流程。corePoolSize 为 0 时是一种特殊情况, 此时即使工作队列没有饱和, 向线程池第一次提交任务时仍然会创建新的线程。&lt;/li&gt;
+&lt;li&gt;其次线程池判断是否有空闲线程？若是，则使用空闲线程来执行任务。否则进入下个流程。&lt;/li&gt;
+&lt;li&gt;接着线程池判断工作队列是否已满？没满，则将新提交的任务存储在工作队列里。满了，则进入下个流程。&lt;/li&gt;
+&lt;li&gt;最后线程池判断整个线程池是否已满？没满，则创建一个新的工作线程来执行任务，满了，则交给饱和策略来处理这个任务。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&quot;分析&quot;&gt;&lt;a href=&quot;#分析&quot; class=&quot;headerlink&quot; title=&quot;分析&quot;&gt;&lt;/a&gt;分析&lt;/h2&gt;&lt;p&gt;我们分析下 newFixedThreadPool 和 newCachedThreadPool 的构造函数，来验证下整个流程。&lt;/p&gt;
+&lt;h4 id=&quot;newFixedThreadPool&quot;&gt;&lt;a href=&quot;#newFixedThreadPool&quot; class=&quot;headerlink&quot; title=&quot;newFixedThreadPool&quot;&gt;&lt;/a&gt;newFixedThreadPool&lt;/h4&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ThreadPoolExecutor(nThreads, nThreads,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                      &lt;span class=&quot;number&quot;&gt;0L&lt;/span&gt;, TimeUnit.MILLISECONDS,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                      &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; LinkedBlockingQueue&amp;lt;Runnable&amp;gt;());&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;假设这是一个线程数量为 n 的 newFixedThreadPool，当我们提交 n 个任务到该线程池时，由于此时核心线程池未满，线程池会创建 n 个工作线程来执行任务。当我们再提交新的任务时，由于核心线程池已满且没有空闲线程，就会进入流程 3。由于 LinkedBlockingQueue 是个无界队列，因此之后不管再加多少个任务，都不会走到流程 4.&lt;br&gt;分析可得 newFixedThreadPool 确实是个固定长度的线程池。&lt;/p&gt;
+&lt;h4 id=&quot;newCachedThreadPool&quot;&gt;&lt;a href=&quot;#newCachedThreadPool&quot; class=&quot;headerlink&quot; title=&quot;newCachedThreadPool&quot;&gt;&lt;/a&gt;newCachedThreadPool&lt;/h4&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ThreadPoolExecutor(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, Integer.MAX_VALUE,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              &lt;span class=&quot;number&quot;&gt;60L&lt;/span&gt;, TimeUnit.SECONDS,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                              &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SynchronousQueue&amp;lt;Runnable&amp;gt;());&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;当我们添加第一个任务到 newCachedThreadPool 时，线程池会创建一个线程去执行任务。之后，当我们添加任务时，由于核心线程池大小为 0，且此时线程池中没有空闲线程，再加上 SynchronousQueue 是一个不储存的阻塞队列，会直接进入流程 4 中，会创建一个新的线程来执行任务。由于 maximumPoolSize 为 Integer.MAX_VALUE，线程池无界而走不进饱和策略。之后当线程空闲时间超过 60s 时则自动回收。&lt;/p&gt;
+&lt;p&gt;如果我希望 newCacedThreadPool 线程池有个上界，应该怎么做？直接把 maximumPoolSize 改为上界是否可以？&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; ThreadPoolExecutor(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;3&lt;/span&gt;, &lt;span class=&quot;number&quot;&gt;60L&lt;/span&gt;, TimeUnit.SECONDS, &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SynchronusQueue&amp;lt;Runable&amp;gt;());&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这时当你提交 3 个任务时，一切正常。之后再提交任务，就会进入饱和策略。此时确实有了上界，但多余的任务会进入饱和策略，而不是储存到队列里。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue&amp;#60;Runable&amp;#62;());&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;如果把工作队列改为无界的 LinkedBlockingQueue？情况更糟了，线程池中只有一个线程。因为 LinkedBlockingQueue 是个无界队列，所以会停留在流程 3，而不是去创建新的线程。&lt;br&gt;正确的做法其实是调用 newFixedThreadPool 的构造函数并设置 allowCoreThreadTimeOut(true)。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://gityuan.com/2016/01/16/thread-pool/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Java线程池分析&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.infoq.com/cn/articles/java-threadPool&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;聊聊并发&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://stackoverflow.com/questions/1800317/impossible-to-make-a-cached-thread-pool-with-a-size-limit&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Impossible to make a cached thread pool with a size limit?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;new Thread(new Runnable() &amp;#123;&amp;#10;        @Override&amp;#10;        public void run() &amp;#123;&amp;#10;&amp;#10;        &amp;#125;&amp;#10;    &amp;#125;).start();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Java" scheme="http://kaywu.github.io/categories/Java/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>闭包是什么</title>
     <link href="http://kaywu.github.io/2016/05/15/Closure/"/>
     <id>http://kaywu.github.io/2016/05/15/Closure/</id>
     <published>2016-05-15T06:44:29.000Z</published>
-    <updated>2016-05-16T15:14:42.000Z</updated>
+    <updated>2016-05-29T02:59:35.000Z</updated>
     
     <content type="html">&lt;p&gt;闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。但在理解闭包之前，我们需要知道一些基础性的概念。让我们先从命名说起。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;写程序时，我们对变量和函数命名，使代码更具有可读性和重用性。当需要之前的变量和函数时，我们只需使用它的名字即可。那么运行时程序是怎么知道名字对应的值或者函数呢？&lt;/p&gt;
 &lt;p&gt;&lt;iframe width=&quot;800&quot; height=&quot;500&quot; frameborder=&quot;0&quot; src=&quot;http://pythontutor.com/iframe-embed.html#code=number+%3D+0%0Adef+print_number(%29%3A%0A++++number+%3D+1%0A++++print(number%29%0A%0Aprint(number%29%0Aprint_number(%29%0Aprint(number%29%0A&amp;origin=opt-frontend.js&amp;cumulative=false&amp;heapPrimitives=false&amp;textReferences=false&amp;py=3&amp;rawInputLstJSON=%5B%5D&amp;curInstr=9&amp;codeDivWidth=350&amp;codeDivHeight=400&quot;&gt; &lt;/iframe&gt;&lt;br&gt;实际上，在程序运行时，它会创建一个名字和内容的对照表，类似于 Map。它以变量或函数的名称为键，其内容为值。&lt;br&gt;以上面这段代码为例，运行时它会创建一个全局对照表，&lt;code&gt;{&amp;quot;number&amp;quot;: 0, &amp;quot;print_number&amp;quot;: print_number 函数}&lt;/code&gt;。当调用 &lt;code&gt;print(number)&lt;/code&gt; 时，它首先会查找到 number 对应的值是 0，然后将其打印出来。实际上，一个程序不只有一个对照表，它在每调用一个函数时都会创建新的对照表。在调用 print_number 时，它会创建一个对照表，&lt;code&gt;{&amp;quot;number&amp;quot;: 1}&lt;/code&gt;。注意，这里的 number 不同于全局对照表中的 number，修改它的值并不会影响在全照对照表中的 number，可从最后一次调用 &lt;code&gt;print(number)&lt;/code&gt; 得到 0 来验证。在 print_number 的调用结束后，它所创建的对照表也会被销毁。&lt;/p&gt;
@@ -40,8 +107,8 @@
     
     </summary>
     
+      <category term="编程" scheme="http://kaywu.github.io/categories/%E7%BC%96%E7%A8%8B/"/>
     
-      <category term="编程" scheme="http://kaywu.github.io/tags/%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
