@@ -104,7 +104,7 @@
 <li>threadFactory：创建线程的工厂。</li>
 <li>handler（饱和策略）：当任务太多时来不及处理时，如何拒绝任务。</li>
 </ul>
-<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="../../../../img/executors.png" alt="流程"><br>当提交一个新任务到线程池时，线程池的处理流程如下：</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p><img src="/img/executors.png" alt="流程"><br>当提交一个新任务到线程池时，线程池的处理流程如下：</p>
 <ol>
 <li>首先线程池判断核心线程池是否已满？没满，创建一个工作线程来执行任务。满了，则进入下个流程。corePoolSize 为 0 时是一种特殊情况, 此时即使工作队列没有饱和, 向线程池第一次提交任务时仍然会创建新的线程。</li>
 <li>其次线程池判断是否有空闲线程？若是，则使用空闲线程来执行任务。否则进入下个流程。</li>
