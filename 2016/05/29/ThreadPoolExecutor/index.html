@@ -7,7 +7,7 @@
   <title>Java 线程池笔记 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。1new Thread(new Runnable() &amp;#123;&amp;#10;        @Override&amp;#10;        public void run() &amp;#123;&amp;#10;&amp;#10;        &amp;#125;&amp;#10;    &amp;#125;).start();
+  <meta name="description" content="下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。123456new Thread(new Runnable() &amp;#123;        @Override        public void run() &amp;#123;        &amp;#125;    &amp;#125;).start();
 这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。">
   
   
@@ -78,7 +78,7 @@
     </header>
     <div class="entry">
       
-        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new Thread(new Runnable() &#123;&#10;        @Override&#10;        public void run() &#123;&#10;&#10;        &#125;&#10;    &#125;).start();</span><br></pre></td></tr></table></figure></p>
+        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure></p>
 <p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br><a id="more"></a></p>
 <h2 id="Executors"><a href="#Executors" class="headerlink" title="Executors"></a>Executors</h2><p>Executors 通过静态工厂方法提供了 4 种线程池。</p>
 <ul>
@@ -197,6 +197,8 @@
   <ul class="entry">
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   

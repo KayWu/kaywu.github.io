@@ -77,7 +77,7 @@
     </header>
     <div class="entry">
       
-        <p>使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。<br><img src="http://7xifw0.com1.z0.glb.clouddn.com/20150221173403265.gif" alt="最终效果"><br><a id="more"></a></p>
+        <p>使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。<br><img src="/img/20150221173403265.gif" alt="最终效果"><br><a id="more"></a></p>
 <p>先简单介绍下三个所使用的开源库。</p>
 <h2 id="ViewPager"><a href="#ViewPager" class="headerlink" title="ViewPager"></a>ViewPager</h2><p>ViewPager是v4包里提供的，可以通过PagerAdapter根据左右的滑动产生不同的page。<br>PagerAdapter分为FragmentPagerAdapter, FragmentStatePagerAdapter。<br>唯一的区别是在对不再需要的fragment时所采用的处理方法不同。<br>前者选择detach，后者选择remove并保存状态。<br>ViewPager的使用方法类似ListView, 都是使用Adapter来提供内容。而ListView中getItem返回的是View, 而ViewPager返回的是Fragment。</p>
 <p>###使用方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ViewPager pager = (ViewPager)findViewById(R.id.pager);</span><br><span class="line">pager.setAdapter(<span class="keyword">new</span> PagerAdapter(getSupportFragmentManager()));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承PagerAdapter 必须实现的方法有getCount, 返回列表的总数。 getItem，即根据position返回对应的fragment。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PagerAdapter</span> <span class="keyword">extends</span> <span class="title">FragmentPagerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Fragment <span class="title">getItem</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Fragment();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getCount</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> NUM_OF_PAGES;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -166,6 +166,8 @@
   <ul class="entry">
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   

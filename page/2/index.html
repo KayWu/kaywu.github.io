@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-04-24T06:52:03.000Z"><a href="/2016/04/24/Gradle/">2016-04-24</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/24/Gradle/">从编程的角度理解 Gradle</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>刚开始接触 Gradle 时，一头雾水。碰到不会的地方，搜索相关解决方案然后依样画葫芦。至于为什么这么做，这么做的原理是什么，完全不清楚。后来看了 <a href="http://blog.csdn.net/innost/article/details/48228651">Gradle 详解</a>，觉得作者说的十分有道理，得从编程的角度而不是脚本的角度来看 Gradle。下面小结下我在这个过程中的一些收获。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/24/Gradle/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
       
       
@@ -209,45 +246,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/03/13/Java-Exception/">聊聊 Java Exception 机制</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mRestAdapter.create(Api.class).sendRequst();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// handle Exception</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;.start();</span><br></pre></td></tr></table></figure></p>
-<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</span><br><span class="line">  String firstLine = reader.readLine();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/03/13/Java-Exception/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -272,6 +270,8 @@
   <ul class="entry">
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   

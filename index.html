@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-06-10T05:47:34.000Z"><a href="/2016/06/10/git-submodule-vs-git-subtree/">2016-06-10</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/06/10/git-submodule-vs-git-subtree/">git submodule vs git subtree</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code> 的信息（git diff 显示的结果）。<br>而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。<br>针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/06/10/git-submodule-vs-git-subtree/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-05-29T02:58:55.000Z"><a href="/2016/05/29/ThreadPoolExecutor/">2016-05-29</a></time>
       
       
@@ -76,7 +113,7 @@
     </header>
     <div class="entry">
       
-        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new Thread(new Runnable() &#123;&#10;        @Override&#10;        public void run() &#123;&#10;&#10;        &#125;&#10;    &#125;).start();</span><br></pre></td></tr></table></figure></p>
+        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure></p>
 <p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br>
       
     </div>
@@ -209,43 +246,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-04-24T06:52:03.000Z"><a href="/2016/04/24/Gradle/">2016-04-24</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/04/24/Gradle/">从编程的角度理解 Gradle</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>刚开始接触 Gradle 时，一头雾水。碰到不会的地方，搜索相关解决方案然后依样画葫芦。至于为什么这么做，这么做的原理是什么，完全不清楚。后来看了 <a href="http://blog.csdn.net/innost/article/details/48228651">Gradle 详解</a>，觉得作者说的十分有道理，得从编程的角度而不是脚本的角度来看 Gradle。下面小结下我在这个过程中的一些收获。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/04/24/Gradle/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -268,6 +268,8 @@
   <ul class="entry">
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   

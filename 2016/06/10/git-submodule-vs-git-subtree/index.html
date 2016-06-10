@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>git submodule vs git subtree | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25 的信息（git diff 显示的结果）。而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="git submodule vs git subtree"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-06-10T05:47:34.000Z"><a href="/2016/06/10/git-submodule-vs-git-subtree/">2016-06-10</a></time>
+      
+      
+  
+    <h1 class="title">git submodule vs git subtree</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code> 的信息（git diff 显示的结果）。<br>而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。<br>针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。<br><a id="more"></a></p>
+<h2 id="git-submodule"><a href="#git-submodule" class="headerlink" title="git submodule"></a>git submodule</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 新增 submodule</span><br><span class="line">git submodule add https://github.com/KayWu/ExViewPager child</span><br></pre></td></tr></table></figure>
+<p>会将 git 仓库中的代码拷贝到 child 目录中，同时添加 .gitmodules 配置文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// .gitmodules</span><br><span class="line">[submodule <span class="string">"child"</span>]</span><br><span class="line">    path = child</span><br><span class="line">    url = https://github.com/KayWu/ExViewPager</span><br></pre></td></tr></table></figure></p>
+<p>child 目录被当做一个独立的 Git 仓库，所有的 Git 命令都可以在 child 目录以及上层项目下独立工作。<br>尽管 child 是子目录，当你不在 child 目录时并不记录它的内容。取而代之的是，当你在那个子目录里修改并提交时，子项目会通知那里的 HEAD 已经发生变更并记录你当前正在工作的那个提交。而此时上层项目会显示 child 目录下的改动，将它记录成来自那个仓库的一个特殊的提交，如同上文举例的 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code>。<br>若他人要克隆该项目，会发现 child 目录为空。这时需要执行 <code>git submodule init</code> 来初始化你的本地配置文件，以及 <code>git submodule update</code> 拉取数据并切换到合适的提交。而后每次从主项目拉取子模块的变更时，由于主项目只更新了子模块提交的引用而没有更新子模块目录下的代码，必须执行 <code>git submodule update</code> 来更新子模块代码。</p>
+<h2 id="git-subtree"><a href="#git-subtree" class="headerlink" title="git subtree"></a>git subtree</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 添加 subtree</span><br><span class="line">// git subtree add --prefix=目录 项目地址 分支</span><br><span class="line">git subtree add --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure>
+<p>不同于 git submodule，此时的 child 仅仅是含有相关代码的普通目录，而不是一个独立的 Git 仓库。因此当在 child 进行修改时，上层项目会立刻记录其改动，而不是像之前那样先在子项目中提交才能进行记录。克隆上层仓库时 child 目录也不再为空。但同时，child 也不能再执行独立的 Git 命令，只有 git subtree 相关的操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 提交改动</span><br><span class="line">// git subtree push --prefix=目录 项目地址 分支</span><br><span class="line">git subtree push --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
+<p>提交改动时 Git 会遍历所有的 commit，从中找出 child 相关的修改然后提交到 child 的项目地址上。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 更新改动</span><br><span class="line">// git subtree pull --prefix=目录 项目地址 分支</span><br><span class="line">git subtree pull --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
+<p>更新 child 目录下的代码。<br>简便起见，可将项目地址添加为 remote 方便后续操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加 remote</span><br><span class="line">git add remote child https://github.com/KayWu/ExViewPager</span><br><span class="line">// 用 remote 替换项目地址</span><br><span class="line">git subtree push --prefix-child child master</span><br></pre></td></tr></table></figure></p>
+<p>简单来说，submodule 和 subtree 最大的区别是，submodule 保存的是子仓库的 link，而 subtree 保存的是子仓库的 copy。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://stackoverflow.com/questions/31769820/differences-between-git-submodule-and-subtree" target="_blank" rel="external">Differences between git submodule and subtree</a></li>
+<li><a href="https://git-scm.com/book/zh/v1/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97" target="_blank" rel="external">Git 工具 - 子模块</a></li>
+<li><a href="http://delai.me/code/git-subtree/" target="_blank" rel="external">用 Git Subtree 在多个 Git 项目间双向同步子项目</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Git/">Git</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/06/10/git-submodule-vs-git-subtree/" data-title="git submodule vs git subtree" data-url="http://kaywu.github.io/2016/06/10/git-submodule-vs-git-subtree/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/06/10/git-submodule-vs-git-subtree/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

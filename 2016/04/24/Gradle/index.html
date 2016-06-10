@@ -87,7 +87,7 @@
 <p>在这段代码里，我们先创建了一个非常简单的类 Post，它有 count 属性和 info 方法。然后我们又在脚本中定义了 count 和 info 方法。当第一次调用 printInfo 时，它会直接在这个 Script 中找到 count 的值和 info 方法，count 为 0。而为 printInfo 设置了 Delegate 并且设置了 DELEGATE_FIRST 之后，调用 printInfo 时 count 属性和 info 方法会先在 Post 里面找，而在 Post 中 count 等于 100。<br>因此在执行 Closure 时，它会依赖于它所在的上下文，默认是定义 Closure 的上下文，对 printInfo 来说则是整个 Script，此时调用就会使用 Script 中的 count 和 info。而之后我们将 printInfo 的上下文设成 Post，由于 ResolveStrategy 为 DELEGATE_FIRST，它就会优先使用 Post 里面的属性和方法。<br>若还有不明白的地方，建议大家读下 <a href="http://blog.csdn.net/lzyzsd/article/details/46935063" target="_blank" rel="external">Gradle Tips#2-语法</a> 和 <a href="http://www.cnblogs.com/davenkin/p/gradle-learning-3.html" target="_blank" rel="external">Gradle学习系列之三——读懂Gradle语法</a>，这两篇文章都讲得很清楚。</p>
 <h2 id="Task-amp-Plugin"><a href="#Task-amp-Plugin" class="headerlink" title="Task &amp; Plugin"></a>Task &amp; Plugin</h2><p>在 Java 中，我们习惯于将常用的功能抽象成方法或类，然后在需要的时候 import 使用。<br>但在 Gradle 中，更标准的做法是将功能抽象成 Task 和 Plugin。以 Android 举例，在 build.gradle 通过 <code>apply plugin: &#39;com.android.application&#39;</code> 来引入 Plugin，这样就为 Project 引入了相关 Android 的 Task。如何自定义 Plugin 请参考 <a href="https://docs.gradle.org/current/userguide/custom_plugins.html" target="_blank" rel="external">Writing Custom Plugins</a> 和 <a href="http://www.cnblogs.com/davenkin/p/gradle-learning-10.html" target="_blank" rel="external">Gradle学习系列之十——自定义Plugin</a>。<br>不知大家有没有疑惑，我当时就很纳闷 build.gradle 中那些 Script Block 都哪里来的。 Script Block 指的是以 Closure 为参数的方法，如上文例子的 <code>buildscrpt</code>。其实，我们在创建 Task 或者 Extension (给 Project  添加额外的属性，在自定义 Plugin 时经常使用)时，会在 Project 中额外添加以 Task 或 Extension 名字命名的 Script Block。<br>比如通过 <code>task sayHello</code> 创建了 sayHello 的 task，同时也在 Project 中增加了 <code>sayHello(Closure closure)</code> 的方法。</p>
 <h2 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h2><p>开玩笑，Gradle 还能 Debug？为什么不能。<br>首先在 Terminal 里输入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export GRADLE_OPTS=&#34;-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005&#34;</span><br></pre></td></tr></table></figure></p>
-<p>此时执行 <code>./gradlew</code> 会显示 <code>Listening for transport dt_socket at address: 5005</code>。<br>打开 Android Studio，按下图设置。<br><img src="http://7xifw0.com1.z0.glb.clouddn.com/gradle_debug_0.png" alt=""><br><img src="http://7xifw0.com1.z0.glb.clouddn.com/gradle_debug_1.png" alt=""><br><img src="http://7xifw0.com1.z0.glb.clouddn.com/gradle_debug_2.png" alt=""><br>最后，点击 Debug 按钮就可以开始了。</p>
+<p>此时执行 <code>./gradlew</code> 会显示 <code>Listening for transport dt_socket at address: 5005</code>。<br>打开 Android Studio，按下图设置。<br><img src="/img/gradle_debug_0.png" alt=""><br><img src="/img/gradle_debug_1.png" alt=""><br><img src="/img/gradle_debug_2.png" alt=""><br>最后，点击 Debug 按钮就可以开始了。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://blog.csdn.net/innost/article/details/48228651" target="_blank" rel="external">Gradle 详解</a></li>
 <li><a href="http://www.groovy-lang.org/documentation.html" target="_blank" rel="external">Groovy Doc</a></li>
@@ -172,6 +172,8 @@
   <ul class="entry">
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   
