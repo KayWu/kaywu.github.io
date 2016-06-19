@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-06-10T06:15:41.000Z</updated>
+  <updated>2016-06-19T03:28:51.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 HAProxy 加速  Shadowsocks</title>
+    <link href="http://kaywu.github.io/2016/06/19/Shadowsocks-HAProxy/"/>
+    <id>http://kaywu.github.io/2016/06/19/Shadowsocks-HAProxy/</id>
+    <published>2016-06-19T01:55:12.000Z</published>
+    <updated>2016-06-19T03:28:51.000Z</updated>
+    
+    <content type="html">&lt;p&gt;最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。&lt;br&gt;后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#23458;&amp;#25143;&amp;#31471; &amp;#60; - &amp;#62; &amp;#20013;&amp;#32487;&amp;#26381;&amp;#21153;&amp;#22120; &amp;#60; - &amp;#62; Shadowsocks &amp;#26381;&amp;#21153;&amp;#22120;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在自己电脑上 ping 中继服务器，中继服务器 ping ss 服务器，延迟分别为 10+ ms、60+ ms。阿里云的出口带宽果然不一样。加速条件满足，开始进入安装配置。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;h2 id=&quot;HAProxy&quot;&gt;&lt;a href=&quot;#HAProxy&quot; class=&quot;headerlink&quot; title=&quot;HAProxy&quot;&gt;&lt;/a&gt;HAProxy&lt;/h2&gt;&lt;p&gt;简单介绍下 HAProxy，HAProxy 是一个高效的负载均衡软件，可以实现 TCP/HTTP 的代理。这里使用它将我们发给它的请求转发给 ss 服务器。&lt;/p&gt;
+&lt;h3 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;// 以 CentOS &lt;span class=&quot;number&quot;&gt;7&lt;/span&gt; 为例&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;yum install haproxy&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;配置&quot;&gt;&lt;a href=&quot;#配置&quot; class=&quot;headerlink&quot; title=&quot;配置&quot;&gt;&lt;/a&gt;配置&lt;/h3&gt;&lt;p&gt;编辑 &lt;code&gt;/etc/haproxy/haproxy.cfg&lt;/code&gt;，保存以下内容&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;global&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;ulimit&lt;/span&gt;-n  &lt;span class=&quot;number&quot;&gt;51200&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;defaults&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;log&lt;/span&gt; global&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mode    tcp&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        option  dontlognull&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        contimeout &lt;span class=&quot;number&quot;&gt;1000&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        clitimeout &lt;span class=&quot;number&quot;&gt;150000&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        srvtimeout &lt;span class=&quot;number&quot;&gt;150000&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;frontend ss-in&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;built_in&quot;&gt;bind&lt;/span&gt; *:&lt;span class=&quot;number&quot;&gt;8388&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        default_backend ss-out&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;backend ss-out&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        server server1 &lt;span class=&quot;number&quot;&gt;222.222&lt;/span&gt;.&lt;span class=&quot;number&quot;&gt;222.222&lt;/span&gt;:&lt;span class=&quot;number&quot;&gt;2222&lt;/span&gt; maxconn &lt;span class=&quot;number&quot;&gt;20480&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;其中，&lt;code&gt;*:8388&lt;/code&gt; 中的 8388 是中继服务器接受请求的端口，&lt;code&gt;222.222.222.222:2222&lt;/code&gt; 是 ss 服务器的 IP 地址加端口号。&lt;br&gt;然后执行&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;service haproxy restart&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;HAProxy 就会在后台进行启动。可以使用 &lt;code&gt;ps -ef&lt;/code&gt; 查看进程，&lt;code&gt;lsof -i&lt;/code&gt; 查看端口占用情况来验证 HAProxy 是否已经运行。若无法连接中继服务器，使用 &lt;code&gt;iptables -L&lt;/code&gt; 查看防火墙规则是否有问题。&lt;/p&gt;
+&lt;p&gt;客户端的配置，只要将原来配置的 ip 地址和端口更换成中继服务器的 ip 地址和端口号就可以了。&lt;/p&gt;
+&lt;h3 id=&quot;未解之迷&quot;&gt;&lt;a href=&quot;#未解之迷&quot; class=&quot;headerlink&quot; title=&quot;未解之迷&quot;&gt;&lt;/a&gt;未解之迷&lt;/h3&gt;&lt;p&gt;加速之后，公司电脑和手机使用都没问题，个人电脑却死活连不上去，一直显示 &lt;code&gt;ERR_CONNECTION_CLOSED&lt;/code&gt;，将原来的 Shadowsocks Mac 客户端替换成 &lt;code&gt;Shadowsocks-libev&lt;/code&gt; 之后才行，但明明公司电脑使用的客户端是一样的。&lt;/p&gt;
+&lt;h2 id=&quot;其他加速方法&quot;&gt;&lt;a href=&quot;#其他加速方法&quot; class=&quot;headerlink&quot; title=&quot;其他加速方法&quot;&gt;&lt;/a&gt;其他加速方法&lt;/h2&gt;&lt;p&gt;除 HAProxy 加速之外，还可以使用微林加速，具体可以参考代码家的&lt;a href=&quot;http://www.jianshu.com/p/475182d8c503&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;提速 Shadowsocks&lt;/a&gt;。还有个更偷懒的方法，直接购买 CN2 线路的 Shadowsocks。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/shadowsocks/shadowsocks/wiki/Setup-a-Shadowsocks-relay&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方文档&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。&lt;br&gt;后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#23458;&amp;#25143;&amp;#31471; &amp;#60; - &amp;#62; &amp;#20013;&amp;#32487;&amp;#26381;&amp;#21153;&amp;#22120; &amp;#60; - &amp;#62; Shadowsocks &amp;#26381;&amp;#21153;&amp;#22120;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在自己电脑上 ping 中继服务器，中继服务器 ping ss 服务器，延迟分别为 10+ ms、60+ ms。阿里云的出口带宽果然不一样。加速条件满足，开始进入安装配置。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Tools" scheme="http://kaywu.github.io/categories/Tools/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>git submodule vs git subtree</title>
