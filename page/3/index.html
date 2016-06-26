@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <meta charset="utf-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>第 3 页 | Kay Wu&#39;s blog</title>
@@ -31,14 +31,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script>
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 
 
 </head>
 
 
 <body>
-  <header id="header" class="inner"><div class="alignleft">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -60,6 +60,43 @@
 </header>
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper">
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-27T11:28:08.000Z"><a href="/2016/03/27/Android-Support-Annotation/">2016-03-27</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/27/Android-Support-Annotation/">Support Annotion 小结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Support Annotion 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过<code>compile &#39;com.android.support:support-annotations:22.2.0&#39;</code>就能引入。它可以检验代码潜在的问题并提醒你去修正它。<br>下面简单介绍下我常用的几个注解，更加全面的介绍可以看<a href="http://tools.android.com/tech-docs/support-annotations">官方文档</a>。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/27/Android-Support-Annotation/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
   <article class="post">
   
   <div class="post-content">
@@ -212,43 +249,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-12-12T02:00:41.000Z"><a href="/2015/12/12/Programmming-Language-Concepts/">2015-12-12</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/12/12/Programmming-Language-Concepts/">代码之髓笔记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2015/12/12/Programmming-Language-Concepts/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -271,6 +271,8 @@
 <div class="widget tag">
   <h3 class="title">分类</h3>
   <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>1</small></li>
   
     <li><a href="/categories/Android/">Android</a><small>8</small></li>
   
@@ -319,7 +321,24 @@
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
 
 
 </body>
