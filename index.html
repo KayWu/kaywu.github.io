@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-03T07:30:27.000Z"><a href="/2016/07/03/fragment/">2016-07-03</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/03/fragment/">Fragment 源码笔记</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
+<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</span><br></pre></td></tr></table></figure>
+<p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
+<h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-06-26T06:12:18.000Z"><a href="/2016/06/26/Longest-Palindromic-Substring/">2016-06-26</a></time>
       
       
@@ -247,6 +287,154 @@
 
 
 
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-07T00:45:29.000Z"><a href="/2016/05/07/App-Development/">2016-05-07</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/07/App-Development/">读《App 研发录》</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/05/07/App-Development/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-01T11:43:01.000Z"><a href="/2016/05/01/Maven-aar-source/">2016-05-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/01/Maven-aar-source/">为 aar 关联源代码</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>不知大家是否注意过，在使用 aar 时，若是本地的 aar 包，打开相关源码是反编译后的文件。而如果是引用的如 jcenter 的库，就能阅读详尽的源代码。两者的区别是什么呢？<br>如果大家有尝试过上传 library 到 jcenter 或 maven 就会知道，除了 aar 文件之外，还要上传相应的 sources、javadoc 以及 pom 文件，就像 <a href="https://bintray.com/bintray/jcenter/com.yalantis%3Aucrop/1.5.0/view#files/com/yalantis/ucrop/1.5.0">ucrop</a> 所显示的那样。gradle 在下载依赖时，也会包括 sources、javadoc 等文件，而 sources 文件正是使我们能够阅读源代码的真正原因。<br>那么，如何为 aar 文件添加 sources 支持呢？一种方法是添加 aar 的同时手工导入相应的 sources 文件，另一种则是将 aar、sources 上传到仓库然后通过 gradle 导入。这里说明第二种方法的使用。<br>由于上传到 maven、jcenter 都需要额外的步骤，为方便起见，我们搭建一个本地 Maven 仓库来讲解。如何搭建仓库可以参考 <a href="http://jeroenmols.com/blog/2015/08/06/artifactory/">A PRIVATE MAVEN REPOSITORY FOR ANDROID IN 30 MIN</a>，有<a href="http://www.devtf.cn/?p=1079">中文翻译</a>。后续对 build.gradle 的说明会建立在该文章的基础上。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/05/01/Maven-aar-source/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-24T06:52:03.000Z"><a href="/2016/04/24/Gradle/">2016-04-24</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/24/Gradle/">从编程的角度理解 Gradle</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>刚开始接触 Gradle 时，一头雾水。碰到不会的地方，搜索相关解决方案然后依样画葫芦。至于为什么这么做，这么做的原理是什么，完全不清楚。后来看了 <a href="http://blog.csdn.net/innost/article/details/48228651">Gradle 详解</a>，觉得作者说的十分有道理，得从编程的角度而不是脚本的角度来看 Gradle。下面小结下我在这个过程中的一些收获。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/24/Gradle/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/17/Android-Screen-On/">Android 保持屏幕常亮方法小结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/17/Android-Screen-On/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
 
 <nav id="pagination">
   
@@ -270,7 +458,7 @@
   
     <li><a href="/categories/Algorithms/">Algorithms</a><small>1</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>8</small></li>
+    <li><a href="/categories/Android/">Android</a><small>9</small></li>
   
     <li><a href="/categories/Git/">Git</a><small>1</small></li>
   

@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-06-26T07:10:44.000Z</updated>
+  <updated>2016-07-03T09:02:55.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -16,11 +16,38 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Fragment 源码笔记</title>
+    <link href="http://kaywu.github.io/2016/07/03/fragment/"/>
+    <id>http://kaywu.github.io/2016/07/03/fragment/</id>
+    <published>2016-07-03T07:30:27.000Z</published>
+    <updated>2016-07-03T09:02:55.000Z</updated>
+    
+    <content type="html">&lt;p&gt;说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了&lt;a href=&quot;http://www.jianshu.com/p/f2fcc670afd6&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;通过源码解析 Fragment 启动过程&lt;/a&gt;，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。&lt;/p&gt;
+&lt;h2 id=&quot;Transaction-commit-是异步操作&quot;&gt;&lt;a href=&quot;#Transaction-commit-是异步操作&quot; class=&quot;headerlink&quot; title=&quot;Transaction commit 是异步操作&quot;&gt;&lt;/a&gt;Transaction commit 是异步操作&lt;/h2&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;上面是常常使用的一段代码。&lt;code&gt;beginTransacton()&lt;/code&gt; 返回的是 BackStackRecord。BackStackRecord 的 &lt;code&gt;commit()&lt;/code&gt; 最终调用的是 &lt;code&gt;mHandler.post()&lt;/code&gt;。&lt;code&gt;post()&lt;/code&gt; 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。&lt;/p&gt;
+&lt;h2 id=&quot;Fragment-的状态同步&quot;&gt;&lt;a href=&quot;#Fragment-的状态同步&quot; class=&quot;headerlink&quot; title=&quot;Fragment 的状态同步&quot;&gt;&lt;/a&gt;Fragment 的状态同步&lt;/h2&gt;&lt;p&gt;依旧是上面那句代码，&lt;code&gt;beginTransaction.add(R.id.container, fragment)&lt;/code&gt; 最终会调用 &lt;code&gt;mManager.addFragment(f, false)&lt;/code&gt;。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。&lt;br&gt;当下一次 FragmentManagerImpl 的 &lt;code&gt;moveToState(int, boolean)&lt;/code&gt; 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 &lt;code&gt;moveToState(f, newState, transit, transitStyle, false)&lt;/code&gt;，使 fragment 的状态和最新的状态同步。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.jianshu.com/p/f2fcc670afd6&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;通过源码解析 Fragment 启动过程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了&lt;a href=&quot;http://www.jianshu.com/p/f2fcc670afd6&quot; t
+    
+    </summary>
+    
+      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Longest Palindromic Substring</title>
     <link href="http://kaywu.github.io/2016/06/26/Longest-Palindromic-Substring/"/>
     <id>http://kaywu.github.io/2016/06/26/Longest-Palindromic-Substring/</id>
     <published>2016-06-26T06:12:18.000Z</published>
-    <updated>2016-06-26T07:10:44.000Z</updated>
+    <updated>2016-06-26T07:12:49.000Z</updated>
     
     <content type="html">&lt;p&gt;&lt;a href=&quot;https://leetcode.com/problems/longest-palindromic-substring/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LeetCode 5. Longest Palindromic Substring&lt;/a&gt;&lt;br&gt;Given a string S, find the longest palindromic substring in S.&lt;br&gt;给定一个字符串 S，找到其中最长的连续回文串。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;最先想到的是暴力法，找到所有可能的字符串然后判断是否是回文。可能的字符串一共有 $n(n-1)/2$，判断一个字符串是否为回文所需时间为 $O(n)$，则时间复杂度为 $O(n^3)$，效率太低。&lt;/p&gt;
@@ -754,35 +781,6 @@
     <summary type="html">
     
       &lt;p&gt;LayoutInflater 是我们用来加载布局的类，经常用于 Adapter 的 getView，Fragment 的 onCreateView 方法中。但我在使用时，经常有些疑惑，比如 inflater 方法参数的数目有时候为 2 个，有时候 3 个。第 2 个参数经常为 null，而第 3 个参数在第 2 个参数不为 null 的情况下常为 false。这些到底有什么区别？通过一段时间的实践，稍微有了些体会，写文章来总结下。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>简单分析下 Google 最近的开源播放器</title>
-    <link href="http://kaywu.github.io/2015/04/04/GoogleMusicPlayer/"/>
-    <id>http://kaywu.github.io/2015/04/04/GoogleMusicPlayer/</id>
-    <published>2015-04-04T10:47:05.000Z</published>
-    <updated>2016-06-10T03:54:48.000Z</updated>
-    
-    <content type="html">&lt;p&gt; &lt;a href=&quot;https://github.com/googlesamples/android-UniversalMusicPlayer&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;项目地址&lt;/a&gt;&lt;br&gt;Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。&lt;br&gt;而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;总体-UI-分析&quot;&gt;&lt;a href=&quot;#总体-UI-分析&quot; class=&quot;headerlink&quot; title=&quot;总体 UI 分析&quot;&gt;&lt;/a&gt;总体 UI 分析&lt;/h2&gt;&lt;p&gt;&lt;img src=&quot;/img/20150319113711041.jpg&quot; alt=&quot;主页面&quot;&gt;&lt;br&gt;&lt;img src=&quot;/img/20150319115256136.jpg&quot; alt=&quot;播放页面&quot;&gt;&lt;br&gt;UI 比较重要的类有 MusicPlayerActivity, PlaceholderActivity, MediaBrowserFragment, FullScreenPlayerActivity, PlaybackControlsFragment。&lt;br&gt;其中 MusicPlayerActivity, PlaceholderActivity 都是继承 BaseActivity, FullScreenPlayerActivity 是继承 ActionBarCastActivity，而 BaseActivity 是 ActionBarCastActivity 的子类。&lt;br&gt;ActionBarCastActivity 主要实现了 DrawLayout, Toolbar 之类的功能，而 BaseActivity 在此之上又添加了与 PlaybackControlsFragment 交互的功能。&lt;/p&gt;
-&lt;h3 id=&quot;DrawerLayout&quot;&gt;&lt;a href=&quot;#DrawerLayout&quot; class=&quot;headerlink&quot; title=&quot;DrawerLayout&quot;&gt;&lt;/a&gt;DrawerLayout&lt;/h3&gt;&lt;p&gt;值得注意的是，这里的 DrawerLayout 是在不同的 Activity 之中进行切换，而不是在 fragment 之间。主要实现的方法主要是通过继承一个含有 DrawLayout 的 Activity，在这里即是 ActionBarCastActivity。可以参考 &lt;a href=&quot;http://stackoverflow.com/questions/19451715/same-navigation-drawer-in-different-activities&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;该问题&lt;/a&gt; 。&lt;br&gt;还有一个比较奇特的效果是，DrawerLayout 原本被 status bar 和 actionbar 挡住的部分可以显示出来了。&lt;br&gt;&lt;img src=&quot;/img/20150319122547034.jpg&quot; alt=&quot;DrawLayout&quot;&gt;&lt;br&gt;具体做法分析可以参考源码和文章 &lt;a href=&quot;http://solo.farbox.com/blog/how-do-i-use-drawerlayout-to-display-over-the-actionbar-or-toolbar-and-under-the-status-bar&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;如何将 DrawerLayout 显示在 ActionBar/Toolbar 和 status bar 之间&lt;/a&gt; 。&lt;/p&gt;
-&lt;h2 id=&quot;Animation&quot;&gt;&lt;a href=&quot;#Animation&quot; class=&quot;headerlink&quot; title=&quot;Animation&quot;&gt;&lt;/a&gt;Animation&lt;/h2&gt;&lt;h3 id=&quot;Drawble-Animation&quot;&gt;&lt;a href=&quot;#Drawble-Animation&quot; class=&quot;headerlink&quot; title=&quot;Drawble Animation&quot;&gt;&lt;/a&gt;Drawble Animation&lt;/h3&gt;&lt;p&gt;&lt;img src=&quot;/img/20150319122336166.gif&quot; alt=&quot;Playing Animation&quot;&gt;&lt;br&gt;在播放时 listview 图标会有变动的效果。这个主要是在 MediaItemViewHolder.java 通过 Drawble Animation 实现的。&lt;br&gt;&lt;a href=&quot;http://developer.android.com/guide/topics/graphics/drawable-animation.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方文档&lt;/a&gt;&lt;br&gt;主要实现代码：&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;AnimationDrawable animation = (AnimationDrawable)activity.getDrawable(R.drawable.ic_equalizer_white_36dp);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;holder.mImageView.setImageDrawable(animation);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;holder.mImageView.setImageTintList(sColorStatePlaying);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;holder.mImageView.setVisibility(View.VISIBLE);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;animation.start();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#60;animation-list xmlns:android=&amp;#34;http://schemas.android.com/apk/res/android&amp;#34; android:oneshot=&amp;#34;false&amp;#34;&amp;#62;&amp;#10;    &amp;#60;item android:drawable=&amp;#34;@drawable/ic_equalizer1_white_36dp&amp;#34; android:duration=&amp;#34;200&amp;#34;/&amp;#62;&amp;#10;    &amp;#60;item android:drawable=&amp;#34;@drawable/ic_equalizer2_white_36dp&amp;#34; android:duration=&amp;#34;200&amp;#34;/&amp;#62;&amp;#10;    &amp;#60;item android:drawable=&amp;#34;@drawable/ic_equalizer3_white_36dp&amp;#34; android:duration=&amp;#34;200&amp;#34;/&amp;#62;&amp;#10;&amp;#60;/animation-list&amp;#62;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;切换-Drawer-Activity-Fragment-的动画效果&quot;&gt;&lt;a href=&quot;#切换-Drawer-Activity-Fragment-的动画效果&quot; class=&quot;headerlink&quot; title=&quot;切换 Drawer Activity Fragment 的动画效果&quot;&gt;&lt;/a&gt;切换 Drawer Activity Fragment 的动画效果&lt;/h3&gt;&lt;p&gt;ActionBarCastActivity.java&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Bundle extras = ActivityOptions.makeCustomAnimation(ActionBarCastActivity.this, R.anim.fade_in, R.anim.fade_out).toBundle();&amp;#10;Class activityClass = mDrawerMenuContents.getActivity(position);&amp;#10;startActivity(new Intent(ActionBarCastActivity.this, activityClass), extras);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;MusicPlayerActivity.java&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;FragmentTransaction transaction = getFragmentManager().beginTransaction();&amp;#10;transaction.setCustomAnimations(R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right);&amp;#10;transaction.replace(R.id.container, fragment);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;h2 id=&quot;小技巧&quot;&gt;&lt;a href=&quot;#小技巧&quot; class=&quot;headerlink&quot; title=&quot;小技巧&quot;&gt;&lt;/a&gt;小技巧&lt;/h2&gt;&lt;h3 id=&quot;tools-xxx&quot;&gt;&lt;a href=&quot;#tools-xxx&quot; class=&quot;headerlink&quot; title=&quot;tools:xxx&quot;&gt;&lt;/a&gt;tools:xxx&lt;/h3&gt;&lt;p&gt;在显示布局时，TextView 可能需要文字填充来看看效果，但是又嫌调试后删去 android:text=”…”麻烦，就可以用 tools:text=”…”。&lt;br&gt;其中 tools:xxx 在用来预览界面方面还是很方便的。比如在看 activity_player.xml 预览时会提示 fragment 可能动态布局，请选择一个布局进行显示。进行选择后，就会在 fragment 里添加 tools:layout=”@layout/fragment_playback_controls”，这样在预览时就可以看到 PlaybackControlsFragment 的具体布局，但对运行时又没有影响。&lt;br&gt;关于 tools:xxx 的用法可参考 &lt;a href=&quot;http://tools.android.com/tech-docs/tools-attributes。&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://tools.android.com/tech-docs/tools-attributes。&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;android-tint&quot;&gt;&lt;a href=&quot;#android-tint&quot; class=&quot;headerlink&quot; title=&quot;android:tint&quot;&gt;&lt;/a&gt;android:tint&lt;/h3&gt;&lt;p&gt;在播放器里，像播放按钮一共有两种颜色，白色和蓝色。我们可以使用两个不同的图标来完成这种效果，也可以通过 android:tint 来使图标简单地变色，有点像 ps 里添加蒙版的感觉。&lt;br&gt;xml 里的用法是 android:tint，可参考 fragment_playback_controls.xml 里的 ImageButton。&lt;br&gt;Java 里的用法 setImageTintList()，可参考 MediaItemViewHolder.java 里相关代码。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(R.color.media_item_icon_not_playing));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;holder.mImageView.setImageTintList(sColorStatePlaying);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt; &lt;a href=&quot;https://github.com/googlesamples/android-UniversalMusicPlayer&quot;&gt;项目地址&lt;/a&gt;&lt;br&gt;Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。&lt;br&gt;而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。&lt;br&gt;
     
     </summary>
     
