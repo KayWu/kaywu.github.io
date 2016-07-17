@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-07-03T09:02:59.000Z</updated>
+  <updated>2016-07-17T12:19:33.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Android 存储笔记</title>
+    <link href="http://kaywu.github.io/2016/07/17/Android-Storage-Note/"/>
+    <id>http://kaywu.github.io/2016/07/17/Android-Storage-Note/</id>
+    <published>2016-07-17T11:52:03.000Z</published>
+    <updated>2016-07-17T12:19:33.000Z</updated>
+    
+    <content type="html">&lt;p&gt;一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。&lt;br&gt;以包名为 com.kay.example 为例。&lt;/p&gt;
+&lt;h3 id=&quot;内部储存&quot;&gt;&lt;a href=&quot;#内部储存&quot; class=&quot;headerlink&quot; title=&quot;内部储存&quot;&gt;&lt;/a&gt;内部储存&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;context.getCacheDir /data/data/com.kay.example/cache&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getFileDir /data/data/com.kay.example/files&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getDir /data/data/com.kay.example&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;外部存储&quot;&gt;&lt;a href=&quot;#外部存储&quot; class=&quot;headerlink&quot; title=&quot;外部存储&quot;&gt;&lt;/a&gt;外部存储&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Environment.getExternalStorageDirectory /sdcard/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;p&gt;外置存储这方面没太多接触，有兴趣的人可以看下 &lt;a href=&quot;http://blog.desmondyao.com/2016/05/04/android-storage/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android 存储挖坑记&lt;/a&gt;，这方面讲解得挺详细的。&lt;/p&gt;
+&lt;h3 id=&quot;缓存清理&quot;&gt;&lt;a href=&quot;#缓存清理&quot; class=&quot;headerlink&quot; title=&quot;缓存清理&quot;&gt;&lt;/a&gt;缓存清理&lt;/h3&gt;&lt;p&gt;做下载功能时，发现下载记录经常被清。研究了下，推测有两个原因。&lt;br&gt;一是把下载记录存到了 &lt;code&gt;/data/data/com.kay.example/cache&lt;/code&gt; 下，而 Android 自带的清除缓存功能会把内部储存和外部储存的缓存文件夹同时清除，也就是 &lt;code&gt;/data/data/com.example.kay/cache&lt;/code&gt; 以及 &lt;code&gt;/sdcard/Android/data/com.example/cache&lt;/code&gt;。除此之外，像腾讯管家、百度管家等软件在空间清理时也会调动系统的清除缓存功能。&lt;br&gt;二是把下载的文件放到了 &lt;code&gt;/sdcard/Android/data/com.example.kay/files&lt;/code&gt; 下。而 360 手机管家清理空间时会自动把该文件夹识别为日志文件然后清除。清理时该文件夹是默认勾选的，且隐藏得很深。当时发现这一点时我真是一脸懵逼，然后试了下某个大厂的 App，发现它家该文件夹倒是被视为重要文件，不默认勾选。竟然还区别待遇，只好乖乖地修改了下载的位置。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.desmondyao.com/2016/05/04/android-storage/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android 存储挖坑记&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/ZhaoKaiQiang/AndroidDifficultAnalysis/blob/master/06.%E7%BC%93%E5%AD%98%E6%96%87%E4%BB%B6%E5%8F%AF%E4%BB%A5%E6%94%BE%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F%E5%AE%83%E4%BB%AC%E5%90%84%E8%87%AA%E7%9A%84%E7%89%B9%E7%82%B9%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F.md&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;缓存文件可以放在哪里？它们各自的特点是什么？&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。&lt;br&gt;以包名为 com.kay.example 为例。&lt;/p&gt;
+&lt;h3 id=&quot;内部储存&quot;&gt;&lt;a href=&quot;#内部储存&quot; class=&quot;headerlink&quot; title=&quot;内部储存&quot;&gt;&lt;/a&gt;内部储存&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;context.getCacheDir /data/data/com.kay.example/cache&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getFileDir /data/data/com.kay.example/files&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getDir /data/data/com.kay.example&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;外部存储&quot;&gt;&lt;a href=&quot;#外部存储&quot; class=&quot;headerlink&quot; title=&quot;外部存储&quot;&gt;&lt;/a&gt;外部存储&lt;/h3&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Environment.getExternalStorageDirectory /sdcard/&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Fragment 源码笔记</title>
@@ -747,46 +779,6 @@
       &lt;p&gt;简单介绍下，非计算机专业，14年开始接触编程，陆续学习了些Android知识。然后年底的时候辞职开始专心学习Android开发。那时候其实差不多把《第一行代码》看完了，对Android基础的知识有了一定的了解。&lt;/p&gt;
 &lt;h2 id=&quot;自学过程&quot;&gt;&lt;a href=&quot;#自学过程&quot; class=&quot;headerlink&quot; title=&quot;自学过程&quot;&gt;&lt;/a&gt;自学过程&lt;/h2&gt;&lt;p&gt;由于自己习惯把做过的一些demo放到github上，正好可以借此回顾下自学的过程。&lt;/p&gt;
 &lt;p&gt;其实android入门的教程是很多的，比如我看的《第一行代码》（强推），官方教程（强推），极客学院的视频课程等资料。&lt;br&gt;但是，我在学完了之后其实很困惑，四大组件学完了然后呢？我只能根据书上的例子敲demo，做不出什么实际的东西来。&lt;br&gt;然后想到要自己做出个App来，现在想来这虽然有用，但不是一个高效的方法。&lt;br&gt;因为做一个App不是一件容易的事，除了代码方面的工作，设计和功能都是要进行构思的，而这两项工作都很费功夫。&lt;br&gt;所以，我决定从模仿一个App的UI开始。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>从 LayoutInflater 谈起</title>
-    <link href="http://kaywu.github.io/2015/04/05/LayoutInfalter/"/>
-    <id>http://kaywu.github.io/2015/04/05/LayoutInfalter/</id>
-    <published>2015-04-05T10:00:02.000Z</published>
-    <updated>2015-04-05T13:35:23.000Z</updated>
-    
-    <content type="html">&lt;p&gt;LayoutInflater 是我们用来加载布局的类，经常用于 Adapter 的 getView，Fragment 的 onCreateView 方法中。但我在使用时，经常有些疑惑，比如 inflater 方法参数的数目有时候为 2 个，有时候 3 个。第 2 个参数经常为 null，而第 3 个参数在第 2 个参数不为 null 的情况下常为 false。这些到底有什么区别？通过一段时间的实践，稍微有了些体会，写文章来总结下。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;获取-LayoutInflater-实例&quot;&gt;&lt;a href=&quot;#获取-LayoutInflater-实例&quot; class=&quot;headerlink&quot; title=&quot;获取 LayoutInflater 实例&quot;&gt;&lt;/a&gt;获取 LayoutInflater 实例&lt;/h2&gt;&lt;p&gt;我们首先从简单的说起，如何获取 LayoutInflater 的实例。&lt;br&gt;比较常用的方法有 3 种：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;LayoutInflater inflater = getLayoutInflater(); // 调用 Activity 的 getLayoutInflater()&lt;/li&gt;
-&lt;li&gt;LayoutInflater inflater = LayoutInflater.from(context);&lt;/li&gt;
-&lt;li&gt;LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;前两种看起来简单，第三种看起来最繁琐。但实质上前两种都是调用的第三种。&lt;/p&gt;
-&lt;h2 id=&quot;inflate-int-resource-ViewGroup-root-boolean-attachToRoot&quot;&gt;&lt;a href=&quot;#inflate-int-resource-ViewGroup-root-boolean-attachToRoot&quot; class=&quot;headerlink&quot; title=&quot;inflate(int resource, ViewGroup root, boolean attachToRoot)&quot;&gt;&lt;/a&gt;inflate(int resource, ViewGroup root, boolean attachToRoot)&lt;/h2&gt;&lt;p&gt;然后来到我们的重点，LayoutInflater.inflate 的方法。&lt;/p&gt;
-&lt;h3 id=&quot;参数的数量&quot;&gt;&lt;a href=&quot;#参数的数量&quot; class=&quot;headerlink&quot; title=&quot;参数的数量&quot;&gt;&lt;/a&gt;参数的数量&lt;/h3&gt;&lt;p&gt;inflate 方法有 2 个参数的，也有 3 个参数的。但本质上来讲 2 个参数只是 3 个参数的缩略形式。&lt;br&gt;inflate(resource, root) &amp;lt;=&amp;gt; inflate(resource, root, true)&lt;br&gt;inflate(resource, null) &amp;lt;=&amp;gt; inflate(resource, root, false)&lt;br&gt;通过判断 root == null 来添加第 3 个参数，若是 null 则为 false， 反之则为 true。&lt;/p&gt;
-&lt;h3 id=&quot;参数的意义&quot;&gt;&lt;a href=&quot;#参数的意义&quot; class=&quot;headerlink&quot; title=&quot;参数的意义&quot;&gt;&lt;/a&gt;参数的意义&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;http://developer.android.com/reference/android/view/LayoutInflater.html#inflate(int, android.view.ViewGroup, boolean&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;官方文档&lt;/a&gt;&lt;br&gt;第 1 个参数大家都很清楚，是要加载的布局 id。&lt;br&gt;而第 2 个参数从直观但不准确的意义上来讲，有两种作用。在 attachToRoot 为 false 的情况下，root 使得要加载的布局文件最外层的布局的 layout_height、layout_width 等属性生效。在 attachToRoot 为 true 的情况下，root 为加载的布局的父布局。&lt;br&gt;第 3 个参数如上所述，是用来控制 root 参数所发挥的作用。&lt;/p&gt;
-&lt;h3 id=&quot;例子&quot;&gt;&lt;a href=&quot;#例子&quot; class=&quot;headerlink&quot; title=&quot;例子&quot;&gt;&lt;/a&gt;例子&lt;/h3&gt;&lt;p&gt;例子来源&lt;a href=&quot;http://blog.csdn.net/guolin_blog/article/details/12921889&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android LayoutInflater原理分析，带你一步步深入了解View&lt;/a&gt;。&lt;/p&gt;
-&lt;h4 id=&quot;activity-main-xml&quot;&gt;&lt;a href=&quot;#activity-main-xml&quot; class=&quot;headerlink&quot; title=&quot;activity_main.xml&quot;&gt;&lt;/a&gt;activity_main.xml&lt;/h4&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#60;LinearLayout xmlns:android=&amp;#34;http://schemas.android.com/apk/res/android&amp;#34;  &amp;#10;    android:id=&amp;#34;@+id/main_layout&amp;#34;  &amp;#10;    android:layout_width=&amp;#34;match_parent&amp;#34;  &amp;#10;    android:layout_height=&amp;#34;match_parent&amp;#34; &amp;#62;  &amp;#10;&amp;#60;/LinearLayout&amp;#62;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h4 id=&quot;button-layout-xml&quot;&gt;&lt;a href=&quot;#button-layout-xml&quot; class=&quot;headerlink&quot; title=&quot;button_layout.xml&quot;&gt;&lt;/a&gt;button_layout.xml&lt;/h4&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;#60;Button xmlns:android=&amp;#34;http://schemas.android.com/apk/res/android&amp;#34;  &amp;#10;    android:layout_width=&amp;#34;80dp&amp;#34;  &amp;#10;    android:layout_height=&amp;#34;80dp&amp;#34;  &amp;#10;    android:text=&amp;#34;Button&amp;#34; &amp;#62;  &amp;#10;&amp;#60;/Button&amp;#62;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h4 id=&quot;MainActivity-java&quot;&gt;&lt;a href=&quot;#MainActivity-java&quot; class=&quot;headerlink&quot; title=&quot;MainActivity.java&quot;&gt;&lt;/a&gt;MainActivity.java&lt;/h4&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;public class MainActivity extends Activity &amp;#123;  &amp;#10;  &amp;#10;    private LinearLayout mainLayout;  &amp;#10;  &amp;#10;    @Override  &amp;#10;    protected void onCreate(Bundle savedInstanceState) &amp;#123;  &amp;#10;        super.onCreate(savedInstanceState);  &amp;#10;        setContentView(R.layout.activity_main);  &amp;#10;        mainLayout = (LinearLayout) findViewById(R.id.main_layout);  &amp;#10;        LayoutInflater layoutInflater = LayoutInflater.from(this);  &amp;#10;        View buttonLayout = layoutInflater.inflate(R.layout.button_layout, null);  &amp;#10;        mainLayout.addView(buttonLayout);  &amp;#10;    &amp;#125;  &amp;#10;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;当运行程序时，我们会发现，button 的大小和我们的设定不一致。这是因为 root 设为 null，使得加载的布局的最外层，这里也就是 Button，它的layout_width，layout_height 等都会失效。&lt;br&gt;那怎么解决这个问题？参考的文章中采用了在 Button 外面再套一层 RelatvieLayout 的方法。但是，这显然不是好方法。因为 RelativeLayout 这个布局几乎没什么作用。那如何做到优化呢？其实我们只要简单修改下 inflate 的参数就可以了。&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt; protected void onCreate(Bundle savedInstanceState) &amp;#123;  &amp;#10;        super.onCreate(savedInstanceState);  &amp;#10;        setContentView(R.layout.activity_main);  &amp;#10;        mainLayout = (LinearLayout) findViewById(R.id.main_layout);  &amp;#10;        LayoutInflater layoutInflater = LayoutInflater.from(this);  &amp;#10;        // &amp;#23558; null &amp;#25913;&amp;#20026; mainLayout&amp;#65292;&amp;#30456;&amp;#24403;&amp;#20110; inflate(R.layout.button_layout, mainLayout, true)  &amp;#10;        // &amp;#20063;&amp;#30456;&amp;#24403;&amp;#20110; View view = layoutInflater.inflate(R.layout.button_layout, mianLayout, false);&amp;#10;        // &amp;#21152;&amp;#19978; mainLayout.addView(view);&amp;#10;        layoutInflater.inflate(R.layout.button_layout, mainLayout);&amp;#10;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h2 id=&quot;使用&quot;&gt;&lt;a href=&quot;#使用&quot; class=&quot;headerlink&quot; title=&quot;使用&quot;&gt;&lt;/a&gt;使用&lt;/h2&gt;&lt;p&gt;那么问题来了，我们平时应该如何使用 inflate 呢？&lt;br&gt;我个人的看法是，在类似 adapter 的 getView 和 fragment 的 onCreateView 等方法中，应该使用 inflate(resource, root, false) 而不是 inflate(resource, null)。后者会使得布局最外层的 layout_width, layout_height 等属性失效。&lt;/p&gt;
-&lt;p&gt;另外值得注意的是自定义 view。自定义 view 的构造方法中（特指参考文中的组合控件），我们应该使用 inflate(resource, root) 或 infalte(resource, root, true)。&lt;br&gt;参考&lt;a href=&quot;http://blog.csdn.net/guolin_blog/article/details/17357967&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android自定义View的实现方法，带你一步步深入了解View&lt;/a&gt;中的组合控件。&lt;br&gt;在你的应用中有自定义的导航栏，你想在多处使用，那你就可以自定义一个导航栏。&lt;br&gt;但是这样做，有一个不好的地方。你继承的是 FrameLayout, 然后通过 inflate 返回 LiearnLayout。这样，外层的 FrameLayout 就基本没什么用。&lt;br&gt;正确的做法应该是，直接继承 LinearLayout, 然后读取的布局文件以 merge 作为根布局，可以参考&lt;a href=&quot;http://www.vogella.com/tutorials/AndroidCustomViews/article.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Creating custom and compound Views in Android - Tutorial&lt;/a&gt;。&lt;/p&gt;
-&lt;h2 id=&quot;题外话&quot;&gt;&lt;a href=&quot;#题外话&quot; class=&quot;headerlink&quot; title=&quot;题外话&quot;&gt;&lt;/a&gt;题外话&lt;/h2&gt;&lt;p&gt;写了才知道写博客真的挺难的，我深刻感受到了自己的词不达意。&lt;br&gt;上面参考的两篇文章都来自郭霖大神的博客。该博客有大量干货，而且写得浅显易懂。&lt;br&gt;其实参数 root 起到的作用是为 view 添加 LayoutParams, 而这 LayoutParams 会在 addView(view) 中发挥作用，大家可以参照源码，但直观来讲就是使最外层布局的相关 layout 属性生效。&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;LayoutInflater 是我们用来加载布局的类，经常用于 Adapter 的 getView，Fragment 的 onCreateView 方法中。但我在使用时，经常有些疑惑，比如 inflater 方法参数的数目有时候为 2 个，有时候 3 个。第 2 个参数经常为 null，而第 3 个参数在第 2 个参数不为 null 的情况下常为 false。这些到底有什么区别？通过一段时间的实践，稍微有了些体会，写文章来总结下。&lt;br&gt;
     
     </summary>
     

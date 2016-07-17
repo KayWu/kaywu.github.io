@@ -66,6 +66,45 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-17T11:52:03.000Z"><a href="/2016/07/17/Android-Storage-Note/">2016-07-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/17/Android-Storage-Note/">Android 存储笔记</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。<br>以包名为 com.kay.example 为例。</p>
+<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context.getCacheDir /data/data/com.kay.example/cache</span><br><span class="line">context.getFileDir /data/data/com.kay.example/files</span><br><span class="line">context.getDir /data/data/com.kay.example</span><br></pre></td></tr></table></figure>
+<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</span><br><span class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</span><br><span class="line">Environment.getExternalStorageDirectory /sdcard/</span><br><span class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/07/17/Android-Storage-Note/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-03T07:30:27.000Z"><a href="/2016/07/03/fragment/">2016-07-03</a></time>
       
       
@@ -398,43 +437,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/04/17/Android-Screen-On/">Android 保持屏幕常亮方法小结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/04/17/Android-Screen-On/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -458,7 +460,7 @@
   
     <li><a href="/categories/Algorithms/">Algorithms</a><small>1</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>9</small></li>
+    <li><a href="/categories/Android/">Android</a><small>10</small></li>
   
     <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
