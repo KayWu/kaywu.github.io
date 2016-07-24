@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-07-17T12:19:33.000Z</updated>
+  <updated>2016-07-24T10:21:10.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Android 性能优化实践小记</title>
+    <link href="http://kaywu.github.io/2016/07/24/Performance-Improvement/"/>
+    <id>http://kaywu.github.io/2016/07/24/Performance-Improvement/</id>
+    <published>2016-07-24T07:34:37.000Z</published>
+    <updated>2016-07-24T10:21:10.000Z</updated>
+    
+    <content type="html">&lt;p&gt;说来惭愧，看过那么多 Android 性能优化的文章，但这块实战经验微乎其微。抱着已经看过猪跑了，怎么着也得吃上猪肉的心态，尝试去解决某页面的卡顿。实践下来觉得是一次不错的经验，写文章记录下。&lt;/p&gt;
+&lt;h2 id=&quot;发现卡顿&quot;&gt;&lt;a href=&quot;#发现卡顿&quot; class=&quot;headerlink&quot; title=&quot;发现卡顿&quot;&gt;&lt;/a&gt;发现卡顿&lt;/h2&gt;&lt;p&gt;在解决卡顿之前，你得发现哪里卡顿。这里多亏了 &lt;a href=&quot;https://github.com/markzhai/AndroidPerformanceMonitor&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockCanary&lt;/a&gt;，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。&lt;br&gt;下面是 BlockCanary 显示卡顿信息的截图。&lt;br&gt;&lt;img src=&quot;/img/performance_improve_0.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;可以看出，卡顿是由于 DateHelper.parseString 而引起的。&lt;br&gt;那接下来让我们看看 parseString 的具体代码。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Date &lt;span class=&quot;title&quot;&gt;parseString&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String dateString)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    SimpleDateFormat dateFormat = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SimpleDateFormat(&lt;span class=&quot;string&quot;&gt;&quot;yyyy-MM-dd&quot;&lt;/span&gt;, Locale.getDefault());&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; dateFormat.parse(dateString);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (ParseException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;很简单的一段代码，将规定格式的 String 转换为 Date 对象，简单到貌似没有可以出错及优化的空间。&lt;br&gt;至此我们陷入了一个死胡同。我们查找到了疑似卡顿的原因，但是无法确认也不知如何优化。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;TraceView&quot;&gt;&lt;a href=&quot;#TraceView&quot; class=&quot;headerlink&quot; title=&quot;TraceView&quot;&gt;&lt;/a&gt;TraceView&lt;/h2&gt;&lt;p&gt;这时候，我们就要借助 TraceView 的力量了。TraceView 是一个性能分析的工具，记录了应用程序中每个函数的执行时间。具体使用方法可以参考&lt;a href=&quot;http://blog.csdn.net/yanbober/article/details/48394201&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android应用开发性能优化完全分析&lt;/a&gt;。&lt;br&gt;&lt;img src=&quot;/img/performance_improve_1.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;上图是 TraceView 部分结果的截图。Excl CPU Time 指当前方法（不包含内部调运的子方法）执行占用的CPU时间，这里我们可以看到一个非常显眼的数据 16.6%。由 NativeDecimalFormat.open 向上层层查找调用它的方法，我们可以查找到 SimpleDateFormat.&amp;lt;init&amp;gt;，最终查找到 DateHelper.parseString，终于露出马脚了。从 Calls+Recur Calls/Total 的数值来分析，我们可以看出 DateHelper.parseString 被调用了上百次，而每一次调用都会新建 SimpleDateFormat 对象，使得调用了 NativeDecimalFormat.open 方法，从而造成了卡顿。&lt;/p&gt;
+&lt;h2 id=&quot;解决方法&quot;&gt;&lt;a href=&quot;#解决方法&quot; class=&quot;headerlink&quot; title=&quot;解决方法&quot;&gt;&lt;/a&gt;解决方法&lt;/h2&gt;&lt;p&gt;既然卡顿的原因是因为每次调用都会新建 SimpleDateFormat 对象，那么只要重用对象就可以解决。注意，最好在修改之前先添加一下单元测试，养成一个好习惯。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; DateFormat DEFAULT_FORMAT = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SimpleDateFormat(&lt;span class=&quot;string&quot;&gt;&quot;yyyy-MM-dd&quot;&lt;/span&gt;, Locale.getDefault());&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Date &lt;span class=&quot;title&quot;&gt;parseString&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String dateString)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;         &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; DEFAULT_FORMAT.parse(dateString);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (ParseException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;         &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;之后再通过 TraceView 进行了对比，就发现前几十项中 DateHelper.parseString 的身影消失不见了。&lt;/p&gt;
+&lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;在优化之前，我完全想不到卡顿的原因竟然是这样。因此，运用工具来快速、准确地定位卡顿的原因就显得很关键了，如 BlockCanary、TraceView 等。找准了原因，优化就是水到渠成的事了。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/markzhai/AndroidPerformanceMonitor&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;BlockCanary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.csdn.net/yanbober/article/details/48394201&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Android应用开发性能优化完全分析&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;说来惭愧，看过那么多 Android 性能优化的文章，但这块实战经验微乎其微。抱着已经看过猪跑了，怎么着也得吃上猪肉的心态，尝试去解决某页面的卡顿。实践下来觉得是一次不错的经验，写文章记录下。&lt;/p&gt;
+&lt;h2 id=&quot;发现卡顿&quot;&gt;&lt;a href=&quot;#发现卡顿&quot; class=&quot;headerlink&quot; title=&quot;发现卡顿&quot;&gt;&lt;/a&gt;发现卡顿&lt;/h2&gt;&lt;p&gt;在解决卡顿之前，你得发现哪里卡顿。这里多亏了 &lt;a href=&quot;https://github.com/markzhai/AndroidPerformanceMonitor&quot;&gt;BlockCanary&lt;/a&gt;，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。&lt;br&gt;下面是 BlockCanary 显示卡顿信息的截图。&lt;br&gt;&lt;img src=&quot;/img/performance_improve_0.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;可以看出，卡顿是由于 DateHelper.parseString 而引起的。&lt;br&gt;那接下来让我们看看 parseString 的具体代码。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Date &lt;span class=&quot;title&quot;&gt;parseString&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(String dateString)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    SimpleDateFormat dateFormat = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; SimpleDateFormat(&lt;span class=&quot;string&quot;&gt;&quot;yyyy-MM-dd&quot;&lt;/span&gt;, Locale.getDefault());&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; dateFormat.parse(dateString);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (ParseException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;很简单的一段代码，将规定格式的 String 转换为 Date 对象，简单到貌似没有可以出错及优化的空间。&lt;br&gt;至此我们陷入了一个死胡同。我们查找到了疑似卡顿的原因，但是无法确认也不知如何优化。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Android 存储笔记</title>
@@ -737,52 +770,6 @@
     </summary>
     
       <category term="编程" scheme="http://kaywu.github.io/categories/%E7%BC%96%E7%A8%8B/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>Android的自学之路</title>
-    <link href="http://kaywu.github.io/2015/05/14/Experience/"/>
-    <id>http://kaywu.github.io/2015/05/14/Experience/</id>
-    <published>2015-05-14T02:01:00.000Z</published>
-    <updated>2016-06-10T03:54:48.000Z</updated>
-    
-    <content type="html">&lt;p&gt;简单介绍下，非计算机专业，14年开始接触编程，陆续学习了些Android知识。然后年底的时候辞职开始专心学习Android开发。那时候其实差不多把《第一行代码》看完了，对Android基础的知识有了一定的了解。&lt;/p&gt;
-&lt;h2 id=&quot;自学过程&quot;&gt;&lt;a href=&quot;#自学过程&quot; class=&quot;headerlink&quot; title=&quot;自学过程&quot;&gt;&lt;/a&gt;自学过程&lt;/h2&gt;&lt;p&gt;由于自己习惯把做过的一些demo放到github上，正好可以借此回顾下自学的过程。&lt;/p&gt;
-&lt;p&gt;其实android入门的教程是很多的，比如我看的《第一行代码》（强推），官方教程（强推），极客学院的视频课程等资料。&lt;br&gt;但是，我在学完了之后其实很困惑，四大组件学完了然后呢？我只能根据书上的例子敲demo，做不出什么实际的东西来。&lt;br&gt;然后想到要自己做出个App来，现在想来这虽然有用，但不是一个高效的方法。&lt;br&gt;因为做一个App不是一件容易的事，除了代码方面的工作，设计和功能都是要进行构思的，而这两项工作都很费功夫。&lt;br&gt;所以，我决定从模仿一个App的UI开始。&lt;/p&gt;
-&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
-&lt;h3 id=&quot;豆瓣Demo&quot;&gt;&lt;a href=&quot;#豆瓣Demo&quot; class=&quot;headerlink&quot; title=&quot;豆瓣Demo&quot;&gt;&lt;/a&gt;豆瓣Demo&lt;/h3&gt;&lt;p&gt;我首先做的是一个非常粗略地模仿豆瓣UI的demo。&lt;br&gt;&lt;img src=&quot;/img/20150221173403265.gif&quot; alt=&quot;豆瓣demo&quot;&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/KayWu/Douban&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;github地址&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://kaywu.github.io/2015/04/03/DoubanDemo/&quot;&gt;demo详细介绍&lt;/a&gt;&lt;br&gt;这个demo虽然简单，但是用到了几个非常常用的控件，如ViewPager(居家必备)， SwipeRefreshLayout(官方下拉刷新), PagerSlidingTabStrip(常用的ViewPager Indicator)。我也是在这个demo中第一次使用到了开源库，体会到了gradle导库的爽感。&lt;/p&gt;
-&lt;h3 id=&quot;简易知乎日报&quot;&gt;&lt;a href=&quot;#简易知乎日报&quot; class=&quot;headerlink&quot; title=&quot;简易知乎日报&quot;&gt;&lt;/a&gt;简易知乎日报&lt;/h3&gt;&lt;p&gt;第一个demo完成了之后，挺开心。但是想想，光滑来滑去也没太多意思。总得来些网络请求之类的吧，但是自己又没有api，正巧这时候发现了&lt;a href=&quot;https://github.com/izzyleung/ZhihuDailyPurify&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;纯净知乎日报&lt;/a&gt;，既是个开源的App，wiki还有针对知乎Api的分析。于是就先拿来玩耍了下，然后学到了不少东西，如java文件的包设计，一些自定义的drawable的使用，如layer-list, shape等等。&lt;br&gt;学完了的东西就得用起来，于是我就做了自己的知乎日报。&lt;br&gt;&lt;img src=&quot;/img/zhihudaily.gif&quot; alt=&quot;知乎日报&quot;&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/KayWu/Zhihu&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;github地址&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;这个App在很大程度上参考了纯净知乎日报，比如网络请求同样是用asynctask封装，gson解析，图片加载用的是universal-image-loader等等。&lt;br&gt;但是又加了自己的一些东西，比如webview+css样式的运用，以及收藏功能的实现。前者是通过google+stackoverflow，后者只是简单的数据库的应用。&lt;/p&gt;
-&lt;h3 id=&quot;仿堆糖UI&quot;&gt;&lt;a href=&quot;#仿堆糖UI&quot; class=&quot;headerlink&quot; title=&quot;仿堆糖UI&quot;&gt;&lt;/a&gt;仿堆糖UI&lt;/h3&gt;&lt;p&gt;现在终于可以做出一个比较简易的App了，虽然是在大量借鉴的情况下，但起码又是一个大的进步。&lt;br&gt;接下来我又做了一个高仿堆糖UI的App，纯UI，没有网络交互。&lt;br&gt;&lt;img src=&quot;/img/duitang_welcome.gif&quot; alt=&quot;堆糖首页&quot;&gt;&lt;br&gt;&lt;img src=&quot;/img/duitang_person.gif&quot; alt=&quot;堆糖个人页&quot;&gt;&lt;br&gt;&lt;a href=&quot;https://github.com/KayWu/Duitang&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;github地址&lt;/a&gt;&lt;br&gt;这个阶段UI的仿照就比较细致了，而且随着UI复杂度的提升，可能会出现Touch事件冲突的现象。&lt;br&gt;比如热门页那里，ViewPager的左右滑动和下拉刷新是有冲突的，我采取的解决方法可以看github里面的介绍。&lt;br&gt;瀑布流、actionbar透明度的变化，都是通过google+stackoverflow一步步解决的。&lt;br&gt;这个App是手工通过玩正版App一步步拷下来的，基本是看图写代码。大量的看、写、比、改，布局写法的熟练度迅速上升。&lt;br&gt;做下来之后，不是太过复杂的界面基本可以Hold住了。&lt;/p&gt;
-&lt;h3 id=&quot;上线App&quot;&gt;&lt;a href=&quot;#上线App&quot; class=&quot;headerlink&quot; title=&quot;上线App&quot;&gt;&lt;/a&gt;上线App&lt;/h3&gt;&lt;p&gt;接下来就跑到一家创业公司做App去了。独立开发的App已在各大市场上架。但是感觉做的一般，就不上图了。&lt;br&gt;App包含了第三方分享，第三方登录，自动更新，这部分都是友盟的插件来实现的，没什么技术含量。&lt;br&gt;在这个App里我实现了网络的封装，可以通过发送请求，然后自动解析json，返回java对象。&lt;br&gt;看起来好像很高大上的样子，其实就是使用了Volley库，实现里自己的request，并在parseNetworkResponse里使用gson对数据进行了处理而已。&lt;/p&gt;
-&lt;h2 id=&quot;经验总结&quot;&gt;&lt;a href=&quot;#经验总结&quot; class=&quot;headerlink&quot; title=&quot;经验总结&quot;&gt;&lt;/a&gt;经验总结&lt;/h2&gt;&lt;p&gt;回顾结束，下面讲讲一些经验总结。&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;从简单的东西做起，然后一步步加深&lt;br&gt;我刚开始的仿豆瓣其实非常的粗略，但是通过它熟悉了Viewpager，SwipeRefreshLayout，而这两项又在后面的项目中大量运用到。自己做的东西也从以前的只有UI，到加入网络请求，再到封装网络。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;如果没有具体的App的点子，从模仿开始&lt;br&gt;比如可以简单的模仿一个App的UI，或者学习一个简单的开源App，然后通过学习自己制作一个类似的，尝试增加一些小功能。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;遇到瓶颈的时候，不要想太多，只管努力就是了&lt;br&gt;虽然上面的经历回顾写的好像顺风顺水的样子，其实完全不是，经常几天都没有啥进展。&lt;br&gt;在那时候也会对自己有些怀疑，但是不要想太多，努力下去就是了。&lt;br&gt;因为编程需要积累，而积累的反馈是具有延迟性的，一点点的量变引起质变。&lt;br&gt;比较常见的情况是，可能好几天都没有啥突破，然后过了一段时间后，突然发现自己已经进步了不少。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;多想想有没有更好的实现方法&lt;br&gt;比如学会用asynctask来进行网路请求后，可以想想有没有更好的实现方式。这时就可以找下相关的网络库，比如volley, retrofit之类的进行学习。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;学会使用开源库&lt;br&gt;Android现在的开源库已经比较强大了，比如图片加载库有picasso，universal-image-loader，glide等等。&lt;br&gt;开源库的总结可以看看 &lt;a href=&quot;https://github.com/Trinea/android-open-project&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;andoird open project&lt;/a&gt;，整理的比较全面了。&lt;br&gt;程度上升了之后可以去看看 &lt;a href=&quot;https://github.com/android-cn/android-open-project-analysis&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;android open project analysis&lt;/a&gt;，了解下开源库的实现原理。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;把英语练好，学会翻墙&lt;br&gt;大部分碰到的问题都可以通过google+stackoverflow解决。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;简单介绍下，非计算机专业，14年开始接触编程，陆续学习了些Android知识。然后年底的时候辞职开始专心学习Android开发。那时候其实差不多把《第一行代码》看完了，对Android基础的知识有了一定的了解。&lt;/p&gt;
-&lt;h2 id=&quot;自学过程&quot;&gt;&lt;a href=&quot;#自学过程&quot; class=&quot;headerlink&quot; title=&quot;自学过程&quot;&gt;&lt;/a&gt;自学过程&lt;/h2&gt;&lt;p&gt;由于自己习惯把做过的一些demo放到github上，正好可以借此回顾下自学的过程。&lt;/p&gt;
-&lt;p&gt;其实android入门的教程是很多的，比如我看的《第一行代码》（强推），官方教程（强推），极客学院的视频课程等资料。&lt;br&gt;但是，我在学完了之后其实很困惑，四大组件学完了然后呢？我只能根据书上的例子敲demo，做不出什么实际的东西来。&lt;br&gt;然后想到要自己做出个App来，现在想来这虽然有用，但不是一个高效的方法。&lt;br&gt;因为做一个App不是一件容易的事，除了代码方面的工作，设计和功能都是要进行构思的，而这两项工作都很费功夫。&lt;br&gt;所以，我决定从模仿一个App的UI开始。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
     
     
   </entry>
