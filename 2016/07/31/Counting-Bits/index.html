@@ -4,15 +4,15 @@
   <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
-  <title>读《App 研发录》 | Kay Wu&#39;s blog</title>
+  <title>Counting Bits | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。下文是自己在阅读过程中的一些思考和笔记。">
+  <meta name="description" content="Counting BitsGiven a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="读《App 研发录》"/>
+  <meta property="og:title" content="Counting Bits"/>
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
@@ -67,22 +67,23 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-05-07T00:45:29.000Z"><a href="/2016/05/07/App-Development/">2016-05-07</a></time>
+        <time datetime="2016-07-31T08:48:06.000Z"><a href="/2016/07/31/Counting-Bits/">2016-07-31</a></time>
       
       
   
-    <h1 class="title">读《App 研发录》</h1>
+    <h1 class="title">Counting Bits</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br><a id="more"></a></p>
-<h2 id="高效-App-框架设计与重构"><a href="#高效-App-框架设计与重构" class="headerlink" title="高效 App 框架设计与重构"></a>高效 App 框架设计与重构</h2><p>这部分讲的是开发规范以及基础库的设计，都是些实际开发会碰到的问题，如项目大了之后混乱的目录、臃肿的 Activity、Html 与 App 之间的跳转等等。每看到一个问题时，最好想想自己是怎么做的，然后对比总结。比如以前自己做项目时 Html 与 App 之间的跳转是通过 int 值来进行判断的，页面越来越多后哪个数字对应于哪个页面就会变得很混乱，每次都要打开文档或代码进行确认，可读性比较差。而书中采取字符串定义协议的方式就清楚很多，要跳转哪个页面一目了然。我们可以再优化一下，协议以 <code>app://</code> 开头，如 <code>app://user_profile</code>，可读性就更强了。<br>现在如网络请求、图片加载都已经有相当成熟的库了，不需要重新造轮子。但是了解其基本原理仍然是很有必要的，方便我们增加新功能。如在后端接口还未好时 App 的开发不能因此停滞，就需要 Mock Api 的数据。这时我们可以将网络库再封装一层，在未好的接口上使用本地假数据来继续开发。</p>
-<h2 id="Crash-异常收集与统计"><a href="#Crash-异常收集与统计" class="headerlink" title="Crash 异常收集与统计"></a>Crash 异常收集与统计</h2><p>异常收集大部分公司都是采用第三方服务，这部分功夫可以省了。作者花了大力气在 Crash 分析这章，对八十多种线上崩溃追根溯源。众所周知，Android App 经常会出现一些诡异的 Bug，大部分情况下都是正常的但总有一定的概率报错，让人百思不得其解。比如 Resources$NotFoundException，明明 apk 里有这个资源文件。书中分析是由于内存溢出，解了长久的疑惑。建议遇到诡异的 Bug 时，就到这章搜寻下，即使没有直接的解决方案，就如上文的 Resources$NotFoundException，但定位了异常的原因，省了不少的功夫。</p>
-<h2 id="App-竞品技术分析"><a href="#App-竞品技术分析" class="headerlink" title="App 竞品技术分析"></a>App 竞品技术分析</h2><p>竞品分析真是相当接地气的章节，分析竞争对手 App 的技术实现，掌握他们先进的思想和技术。别的不说，通过其他 App 包里面的 META_INF 目录下会有一个名为某个渠道的 0 字节的文件，猜测是用来批量打渠道包再加以实践验证，不得不谓之高。当然，美团分享<a href="http://tech.meituan.com/mt-apk-packaging.html" target="_blank" rel="external">多渠道打包方案</a>是后话了。<br>其他如把 HTML5 页面嵌入到 Zip 包中、将 icon 做成 ttf 文件等针对实际问题的解决方案也让人耳目一新。</p>
-<h2 id="项目管理和团队建设"><a href="#项目管理和团队建设" class="headerlink" title="项目管理和团队建设"></a>项目管理和团队建设</h2><p>敏捷开发这节有个很有意思的点，App 在经过几天的集中测试后会进入 Code Freeze，除非发现很严重的 Bug，否则不再改动代码。初看挺没道理的，明明还有时间去修复 Bug 却不做。但要是有过在上线前几个小时还在改 Bug 的经历就能体会到 Code Freeze 的意义。由于急着上线，修复 Bug 时很容易考虑不周，测试也只来得及测相关功能，一个不小心后果就比较严重。所以距离上线一段时间之内最好不要修改代码，也就是 Code Freeze。</p>
-<p>《App 研发录》是本踏实的书，书中没有高大上的技术，只有应对不同场景的具体解决方案，读之颇有“重剑无锋”之感。</p>
+        <p><a href="https://leetcode.com/problems/counting-bits/" target="_blank" rel="external">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br><a id="more"></a></p>
+<p>首先，求二进制表示中 1 的个数是比较简单的。只要把这个数不断地除 2，再把得到的余数相加即可。<br>拿 5 来说，<br>$ 5 ÷ 2 = 2 … 1 $<br>$ 2 ÷ 2 = 1 … 0 $<br>$ 1 ÷ 2 = 0 … 1 $<br>因此二进制 101 中的 1 的个数为 2。</p>
+<p>但若是求 0 到 num 之间所有数的 1 的个数，每个数都这么算就太慢了。我们找找看有什么规律可以让我们省掉一些计算。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16&#10;0 1 1 2 1 2 2 3 1 2  2  3  2  3  3  4  1</span><br></pre></td></tr></table></figure></p>
+<p>看上去好像有点重复性，但没找到具体的规律。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">000 001 010 011 100 101 110 111</span><br></pre></td></tr></table></figure>
+<p>那再从二进制的角度看看。后 4 个数字除了第 1 位不同，后两位数和前 4 个数字的规律是一样的。也就是说我们可以根据前面的数中 1 的个数加 1 推算出后面数字中 1 的个数。<br>从 2 推送到 4，4 推算到 8，8 推算到 16，依次进行。这样我们就可以用 $O(n)$ 的时间计算出结果。</p>
+<p>具体算法如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">countBits</span><span class="params">(self, num)</span>:</span></span><br><span class="line">        <span class="string">"""</span><br><span class="line">        :type num: int</span><br><span class="line">        :rtype: List[int]</span><br><span class="line">        """</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> [<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result = [<span class="number">0</span>]</span><br><span class="line">            initial = <span class="number">1</span></span><br><span class="line">            <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">                result = result + list(map(<span class="keyword">lambda</span> x: x + <span class="number">1</span>, result))</span><br><span class="line">                initial *= <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span> num &lt; initial:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">return</span> result[<span class="number">0</span>:num+<span class="number">1</span>]</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -91,7 +92,7 @@
         
   
   <div class="categories">
-    <a href="/categories/读书笔记/">读书笔记</a>
+    <a href="/categories/Algorithms/">Algorithms</a>
   </div>
 
         
@@ -107,7 +108,7 @@
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  	<div class="ds-thread" data-thread-key="2016/05/07/App-Development/" data-title="读《App 研发录》" data-url="http://kaywu.github.io/2016/05/07/App-Development/"></div>
+  	<div class="ds-thread" data-thread-key="2016/07/31/Counting-Bits/" data-title="Counting Bits" data-url="http://kaywu.github.io/2016/07/31/Counting-Bits/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">
@@ -135,7 +136,7 @@
   }(document, 'script', 'facebook-jssdk'));
 </script>
 
-<div class="fb-comments" data-href="http://kaywu.github.io/2016/05/07/App-Development/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/07/31/Counting-Bits/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
       
   
 </section>
