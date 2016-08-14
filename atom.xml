@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-07-31T09:59:08.000Z</updated>
+  <updated>2016-08-14T10:52:29.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Single Number</title>
+    <link href="http://kaywu.github.io/2016/08/14/Single-Number/"/>
+    <id>http://kaywu.github.io/2016/08/14/Single-Number/</id>
+    <published>2016-08-14T15:54:09.000Z</published>
+    <updated>2016-08-14T10:52:29.000Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;Single-Number&quot;&gt;&lt;a href=&quot;#Single-Number&quot; class=&quot;headerlink&quot; title=&quot;Single Number&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://leetcode.com/problems/single-number/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Single Number&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Given an array of integers, every element appears twice except for one. Find that single one.&lt;/p&gt;
+&lt;p&gt;Note:&lt;br&gt;Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?&lt;/p&gt;
+&lt;p&gt;题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。&lt;br&gt;这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。&lt;br&gt;按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(object)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;singleNumber&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(self, nums)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;string&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :type nums: List[int]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :rtype: int&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &quot;&quot;&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        result = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; i &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; nums:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            result ^= i&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; result&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;Single-Number-II&quot;&gt;&lt;a href=&quot;#Single-Number-II&quot; class=&quot;headerlink&quot; title=&quot;Single Number II&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://leetcode.com/problems/single-number-ii/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Single Number II&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;于是题目升级了。&lt;br&gt;Given an array of integers, every element appears three times except for one. Find that single one.&lt;/p&gt;
+&lt;p&gt;Note:&lt;br&gt;Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?&lt;/p&gt;
+&lt;p&gt;由于出现次数是 3 次，我们不能再方便地使用 xor 运算了。那有没有哪个现成的运算可以拿来用？显然没有。那我们只能直接做出类似 xor 的运算了。&lt;br&gt;具体公式的形成可以参考 &lt;a href=&quot;https://discuss.leetcode.com/topic/22821/an-general-way-to-handle-all-this-sort-of-questions&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;An General Way to Handle All this sort of questions.&lt;/a&gt; 以及 &lt;a href=&quot;https://discuss.leetcode.com/topic/11877/detailed-explanation-and-generalization-of-the-bitwise-operation-method-for-single-numbers&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Detailed explanation and generalization of the bitwise operation method for single numbers&lt;/a&gt;。&lt;br&gt;其中 b 存放的是只出现一次的值，a 存放的是出现两次的值。&lt;br&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(object)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;singleNumber&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(self, nums)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;string&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :type nums: List[int]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :rtype: int&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &quot;&quot;&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        a = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        b = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; c &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; nums:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            ta = (~a &amp;amp; b &amp;amp; c) | (a &amp;amp; ~b &amp;amp; ~c)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            b = (~a &amp;amp; ~b &amp;amp; c) | (~a &amp;amp; b &amp;amp; ~c)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            a = ta&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; a | b&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Single-Number-III&quot;&gt;&lt;a href=&quot;#Single-Number-III&quot; class=&quot;headerlink&quot; title=&quot;Single Number III&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://leetcode.com/problems/single-number-iii/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Single Number III&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;又是一个变形。&lt;br&gt;Given an array of numbers nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;p&gt;Given nums = [1, 2, 1, 3, 2, 5], return [3, 5].&lt;/p&gt;
+&lt;p&gt;Note:&lt;br&gt;The order of the result is not important. So in the above example, [5, 3] is also correct.&lt;br&gt;Your algorithm should run in linear runtime complexity. Could you implement it using only constant space complexity?&lt;/p&gt;
+&lt;p&gt;既然还是出现两次，那自然还是使用 xor 运算。但如果和 I 一样，直接对数组进行 xor 运算，会无法识别那两个数字。有什么办法能把那两个数字分开？&lt;br&gt;我们可以先对数组进行 xor 运算，对得到的结果进行分析。由于两个数肯定不相等，那得到的结果中必有一位为 1。我们再根据该位将数组分成两部分，然后分别进行 xor 运算，就可以得到剩下的两个数。&lt;br&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Solution&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(object)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;singleNumber&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(self, nums)&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;string&quot;&gt;&quot;&quot;&quot;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :type nums: List[int]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        :rtype: List[int]&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &quot;&quot;&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        xor = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        a = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        b = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; num &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; nums:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            xor ^= num&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mask = &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;while&lt;/span&gt; (xor &amp;amp; mask == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;):&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            mask = mask &amp;lt;&amp;lt; &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; num &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; nums:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; num &amp;amp; mask:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                a ^= num&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                b ^= num&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; [a, b]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://discuss.leetcode.com/topic/22821/an-general-way-to-handle-all-this-sort-of-questions&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;An General Way to Handle All this sort of questions.&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://discuss.leetcode.com/topic/11877/detailed-explanation-and-generalization-of-the-bitwise-operation-method-for-single-numbers&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Detailed explanation and generalization of the bitwise operation method for single numbers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://discuss.leetcode.com/topic/21605/accepted-c-java-o-n-time-o-1-space-easy-solution-with-detail-explanations&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Accepted C++/Java O(n)-time O(1)-space Easy Solution with Detail Explanations&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Single-Number&quot;&gt;&lt;a href=&quot;#Single-Number&quot; class=&quot;headerlink&quot; title=&quot;Single Number&quot;&gt;&lt;/a&gt;&lt;a href=&quot;https://leetcode.com/problems/single-number/&quot;&gt;Single Number&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Given an array of integers, every element appears twice except for one. Find that single one.&lt;/p&gt;
+&lt;p&gt;Note:&lt;br&gt;Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?&lt;/p&gt;
+&lt;p&gt;题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。&lt;br&gt;这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。&lt;br&gt;按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Algorithms" scheme="http://kaywu.github.io/categories/Algorithms/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Counting Bits</title>
@@ -671,100 +711,6 @@
     </summary>
     
       <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>代码之髓笔记</title>
-    <link href="http://kaywu.github.io/2015/12/12/Programmming-Language-Concepts/"/>
-    <id>http://kaywu.github.io/2015/12/12/Programmming-Language-Concepts/</id>
-    <published>2015-12-12T02:00:41.000Z</published>
-    <updated>2015-12-19T05:31:16.000Z</updated>
-    
-    <content type="html">&lt;p&gt;不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;那么不局限在一门具体的语言，站在一定的高度看其间的异同和发展，就是&lt;code&gt;《代码之髓：编程语言核心概念》&lt;/code&gt;要做的事。作者在前言中就指出，在学习中需要做到以下三点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;在比较中学习&lt;/li&gt;
-&lt;li&gt;在历史中学习&lt;/li&gt;
-&lt;li&gt;在实践中学习&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;具体到编程语言，第一条指通过比较多种语言，总结出某种语言的独有特点，以及多种语言的共有特点。&lt;br&gt;第二条是指通过追溯语言的发展历史，了解语言是如何产生、变化和消失的，探寻语言发展演变的轨迹。&lt;br&gt;第三条是亲自进行程序设计。边实践边思考如何编程，才能深入理解语言设计者的意图，同时也能发现自己原先理解不到位之处。&lt;/p&gt;
-&lt;p&gt;书第1、2章分别讲学习方法和语言的诞生历史，从第3章开始介绍编程语言的相关概念。下面摘录自己认为重要的内容以及相关笔记。&lt;/p&gt;
-&lt;h2 id=&quot;书摘&quot;&gt;&lt;a href=&quot;#书摘&quot; class=&quot;headerlink&quot; title=&quot;书摘&quot;&gt;&lt;/a&gt;书摘&lt;/h2&gt;&lt;h3 id=&quot;语法&quot;&gt;&lt;a href=&quot;#语法&quot; class=&quot;headerlink&quot; title=&quot;语法&quot;&gt;&lt;/a&gt;语法&lt;/h3&gt;&lt;p&gt;语法就是程序设计者规定的解释程序编写方式的一系列规则。&lt;br&gt;编程语言的描述一般可以分为语法及语义。语法是说明编程语言中，哪些符号或文字的组合方式是正确的，语义则是对于编程的解释。（来源：&lt;a href=&quot;https://zh.wikipedia.org/wiki/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;维基百科&lt;/a&gt;）&lt;/p&gt;
-&lt;p&gt;补充：&lt;a href=&quot;https://www.zhihu.com/question/19942085&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;如何自己创建一种编程语言&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;函数&quot;&gt;&lt;a href=&quot;#函数&quot; class=&quot;headerlink&quot; title=&quot;函数&quot;&gt;&lt;/a&gt;函数&lt;/h3&gt;&lt;p&gt;函数的调用是以栈的形式来实现的，具体的实现可见&lt;a href=&quot;http://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Mips/stack.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;UnderStanding the Stack&lt;/a&gt;和CSAPP的相关章节。&lt;/p&gt;
-&lt;h3 id=&quot;错误处理&quot;&gt;&lt;a href=&quot;#错误处理&quot; class=&quot;headerlink&quot; title=&quot;错误处理&quot;&gt;&lt;/a&gt;错误处理&lt;/h3&gt;&lt;p&gt;错误处理的方法大体可分为两种，使用返回值和异常处理。前者以C语言为代表，如今的大多数语言都支持后者。异常的传递使得其追踪变得困难，Java使用了检查型异常来避免漏查抛出异常的可能，但这种机制并没有得到普及。&lt;/p&gt;
-&lt;h3 id=&quot;名字和作用域&quot;&gt;&lt;a href=&quot;#名字和作用域&quot; class=&quot;headerlink&quot; title=&quot;名字和作用域&quot;&gt;&lt;/a&gt;名字和作用域&lt;/h3&gt;&lt;p&gt;早期的语言中，整个程序共用一个对照表，即变量名字的有效范围是整个程序。由于全局变量每次被改写都会波及整个程序，我们就得小心翼翼地避免变量名不小心被重复使用。但随着程序规模的扩大，防止名字冲突变得苦难，于是产生了使用作用域的概念。作用域又分动态作用域和静态作用域。动态作用域即把变量原来的值事先保存在函数入口处，在出口处写回变量中。但多个函数仍一张对照表。而静态作用域按函数区分对照表。&lt;/p&gt;
-&lt;h3 id=&quot;类型&quot;&gt;&lt;a href=&quot;#类型&quot; class=&quot;headerlink&quot; title=&quot;类型&quot;&gt;&lt;/a&gt;类型&lt;/h3&gt;&lt;p&gt;对于计算机来说，如果仅仅给定一串比特列，它是不知道这应该解释为整数还是浮点数。因此，需要有表示这个值为何种类型的额外的信息，这就是类型。&lt;/p&gt;
-&lt;p&gt;通过将不同类型进行组合得到复杂的类型后，使用中会出现想更改其中一部分却又不想全部重新定义的再利用需求。因此出现了构成要素部分可变的类型，即总称型。想要表现不同的情况时，出现了以类型为参数创建类型的函数。C++语言中的模板、Java语言中的泛型以及Haskell语言中的类型构造器可以说就是这种创建类型的机制。&lt;/p&gt;
-&lt;p&gt;把类型的信息和数值看做整体的方式叫动态类型，反之则为静态类型。&lt;/p&gt;
-&lt;p&gt;静态类型语言在编译时确定类型，同时编译时也检查了类型的一致性。这一点动态类型语言是无法做到的。&lt;br&gt;既不放弃编译时的类型检查，也想尽量减少麻烦的类型声明，要实现这一要求就要用到计算机自动推论确定类型的方法。&lt;/p&gt;
-&lt;h3 id=&quot;容器&quot;&gt;&lt;a href=&quot;#容器&quot; class=&quot;headerlink&quot; title=&quot;容器&quot;&gt;&lt;/a&gt;容器&lt;/h3&gt;&lt;p&gt;万能的容器是不存在的。根据容器的使用目的、使用方式和操作类型的不同，最适宜的容器类型也会相应地变化。&lt;/p&gt;
-&lt;p&gt;补充：&lt;a href=&quot;http://sharecore.net/2014/08/10/%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E5%B8%B8%E8%AF%86%E5%8F%8A%E9%97%AE%E9%A2%98%E8%A7%A3%E6%9E%90/index.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;字符编码常识及问题解析&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;并发&quot;&gt;&lt;a href=&quot;#并发&quot; class=&quot;headerlink&quot; title=&quot;并发&quot;&gt;&lt;/a&gt;并发&lt;/h3&gt;&lt;p&gt;交替的两种方式：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;协作式多任务模式——在合适的节点自发进行交替&lt;/li&gt;
-&lt;li&gt;抢占式多任务模式——一定时间后进行交替&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;并行执行的两个处理之间出现竞态条件必须同时满足以下三个条件：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;两个处理共享变量&lt;/li&gt;
-&lt;li&gt;至少一个处理会对变量进行修改&lt;/li&gt;
-&lt;li&gt;一个处理未完成之前另一个处理有可能介入进来&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;反之，只要三个条件中有一个不具备，就可以编写适合于并行处理的安全的程序。&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;没有共享：进程和actor模型（通过不共享内存而是传递消息的方式来在并行处理时进行信息交互）&lt;/li&gt;
-&lt;li&gt;不修改：const、val、Immutable&lt;/li&gt;
-&lt;li&gt;不介入：&lt;ul&gt;
-&lt;li&gt;线程的协调——fibre、coroutine、green thread&lt;br&gt;处理介入的原因是抢占式线程，那么使用协调模式的线程就可以解决了。&lt;/li&gt;
-&lt;li&gt;表示不便介入的标志——锁、mutex、semaphore&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;锁的问题：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;死锁——上锁的顺序&lt;/li&gt;
-&lt;li&gt;无法组合——借用事务内存来解决&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&quot;对象和类&quot;&gt;&lt;a href=&quot;#对象和类&quot; class=&quot;headerlink&quot; title=&quot;对象和类&quot;&gt;&lt;/a&gt;对象和类&lt;/h3&gt;&lt;p&gt;归集变量与函数建立模型的方法&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;模块&lt;/li&gt;
-&lt;li&gt;函数和变量放在&lt;/li&gt;
-&lt;li&gt;闭包&lt;/li&gt;
-&lt;li&gt;类&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;像这种不受限制，可以赋值给变量，也可以作为函数的参数传递，又可以作为函数的返回值返回的值被称为first class的值。&lt;/p&gt;
-&lt;p&gt;闭包：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。&lt;/p&gt;
-&lt;p&gt;类的三大作用：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;实例生成器&lt;/li&gt;
-&lt;li&gt;可行操作的功能说明&lt;/li&gt;
-&lt;li&gt;代码再利用的单元&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&quot;继承与代码再利用&quot;&gt;&lt;a href=&quot;#继承与代码再利用&quot; class=&quot;headerlink&quot; title=&quot;继承与代码再利用&quot;&gt;&lt;/a&gt;继承与代码再利用&lt;/h3&gt;&lt;p&gt;继承的实现策略大体可以分为三种&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;一般化和专门化&lt;/li&gt;
-&lt;li&gt;共享部分的提取&lt;/li&gt;
-&lt;li&gt;差异实现&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;使用多重继承时该如何解决名字解释的问题？&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;禁止多重继承 使用委托 接口&lt;/li&gt;
-&lt;li&gt;按顺序进行搜索 深度搜索-&amp;gt;c3线性化确定顺序 （父类不必子类先被检查 如果是从多个类中继承下来则优先检查先书写的类）&lt;/li&gt;
-&lt;li&gt;混入式处理 定义仅包含所需功能的类并把它与需要添加这些功能的更大的类糅合在一起&lt;/li&gt;
-&lt;li&gt;Trait 当类用于创建实例时，作为再利用单元来说就显得太大了。Trait即是把再利用单元的作用特别化，设定一些更小的结构（特性=方法的组合）。&lt;/li&gt;
-&lt;/ol&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="读书笔记" scheme="http://kaywu.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
   </entry>
