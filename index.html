@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape_Drawable/">2016-08-28</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/08/28/Shape_Drawable/">从代码创建 Shape Drawable</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>平时一直是用 xml 来写 ShapeDrawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
+<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">shape</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:shape</span>=<span class="value">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">corners</span> <span class="attribute">android:radius</span>=<span class="value">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">stroke</span> <span class="attribute">android:width</span>=<span class="value">"2px"</span> <span class="attribute">android:color</span>=<span class="value">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+<p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/08/28/Shape_Drawable/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-08-14T15:54:09.000Z"><a href="/2016/08/14/Single-Number/">2016-08-14</a></time>
       
       
@@ -404,43 +444,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-15T06:44:29.000Z"><a href="/2016/05/15/Closure/">2016-05-15</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/15/Closure/">闭包是什么</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。但在理解闭包之前，我们需要知道一些基础性的概念。让我们先从命名说起。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/05/15/Closure/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -464,7 +467,7 @@
   
     <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>11</small></li>
+    <li><a href="/categories/Android/">Android</a><small>12</small></li>
   
     <li><a href="/categories/Git/">Git</a><small>1</small></li>
   

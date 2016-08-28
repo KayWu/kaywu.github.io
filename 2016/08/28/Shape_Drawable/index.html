@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>从代码创建 Shape Drawable | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="平时一直是用 xml 来写 ShapeDrawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。
+相关 xml 代码如下：12345&amp;lt;shape xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;    android:shape=&quot;rectangle&quot;&amp;gt;    &amp;lt;corners android:radius=&quot;10dp&quot;/&amp;gt;    &amp;lt;stroke android:width=&quot;2px&quot; android:color=&quot;#ff000000&quot;/&amp;gt;&amp;lt;/shape&amp;gt;
+查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。12345678float radius = DensityUtil.dip2px(this, 10);float[] outerR = new float[]&amp;#123;radius, radius, radius, radius, radius, radius, radius, radius&amp;#125;;RoundRectShape rr = new RoundRectShape(outerR, null, null);ShapeDrawable drawable = new ShapeDrawable(rr);drawable.getPaint().setColor(0xff333333);drawable.getPaint().setStyle(Paint.Style.STROKE);drawable.getPaint().setStrokeWidth(2);code.setBackgroundDrawable(drawable);
+除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="从代码创建 Shape Drawable"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape_Drawable/">2016-08-28</a></time>
+      
+      
+  
+    <h1 class="title">从代码创建 Shape Drawable</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>平时一直是用 xml 来写 ShapeDrawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
+<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">shape</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:shape</span>=<span class="value">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">corners</span> <span class="attribute">android:radius</span>=<span class="value">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">stroke</span> <span class="attribute">android:width</span>=<span class="value">"2px"</span> <span class="attribute">android:color</span>=<span class="value">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+<p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br><a id="more"></a><br><img src="/img/shapedrawable.png" alt="对比"></p>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><p>我们来研究下源码，看下对 xml 的解析到底是个怎样的流程。<br>从 view.setBackgroundResource 开始，发现是通过 Resources.getDrawable 来获取到 Drawable。重点是其中的 loadDrawable 方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Nullable</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Drawable <span class="title">getDrawable</span><span class="params">(@DrawableRes <span class="keyword">int</span> id, @Nullable Theme theme)</span> <span class="keyword">throws</span> NotFoundException </span>&#123;</span><br><span class="line">    TypedValue value;</span><br><span class="line">    <span class="keyword">synchronized</span> (mAccessLock) &#123;</span><br><span class="line">        value = mTmpValue;</span><br><span class="line">        <span class="keyword">if</span> (value == <span class="keyword">null</span>) &#123;</span><br><span class="line">            value = <span class="keyword">new</span> TypedValue();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            mTmpValue = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        getValue(id, value, <span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> Drawable res = loadDrawable(value, id, theme);</span><br><span class="line">    <span class="keyword">synchronized</span> (mAccessLock) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mTmpValue == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mTmpValue = value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>loadDrawable 方法挺长的，抽取中间最重要的一部分进行说明。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Nullable</span></span><br><span class="line"><span class="function">Drawable <span class="title">loadDrawable</span><span class="params">(TypedValue value, <span class="keyword">int</span> id, Theme theme)</span> <span class="keyword">throws</span> NotFoundException </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="comment">// 上面都是对 Drawable 缓存的检查和处理</span></span><br><span class="line">    <span class="comment">// 下文的 cs 为缓存的 Drawable 具体属性</span></span><br><span class="line">    Drawable dr;</span><br><span class="line">    <span class="keyword">if</span> (cs != <span class="keyword">null</span>) &#123;</span><br><span class="line">        dr = cs.newDrawable(<span class="keyword">this</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isColorDrawable) &#123;</span><br><span class="line">        dr = <span class="keyword">new</span> ColorDrawable(value.data);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        dr = loadDrawableForCookie(value, id, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以分析出，当第一次加载 xml 时，最终会调用到 loadDrawableForCookie 来获取到 Drawable。<br>我们再来看下 loadDrawableForCookie 的代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line"> * Loads a drawable from XML or resources stream.</span><br><span class="line"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Drawable <span class="title">loadDrawableForCookie</span><span class="params">(TypedValue value, <span class="keyword">int</span> id, Theme theme)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> Drawable dr;</span><br><span class="line"></span><br><span class="line">    Trace.traceBegin(Trace.TRACE_TAG_RESOURCES, file);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (file.endsWith(<span class="string">".xml"</span>)) &#123;</span><br><span class="line">            <span class="keyword">final</span> XmlResourceParser rp = loadXmlResourceParser(</span><br><span class="line">                    file, id, value.assetCookie, <span class="string">"drawable"</span>);</span><br><span class="line">            dr = Drawable.createFromXml(<span class="keyword">this</span>, rp, theme);</span><br><span class="line">            rp.close();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> InputStream is = mAssets.openNonAsset(</span><br><span class="line">                    value.assetCookie, file, AssetManager.ACCESS_STREAMING);</span><br><span class="line">            dr = Drawable.createFromResourceStream(<span class="keyword">this</span>, value, is, file, <span class="keyword">null</span>);</span><br><span class="line">            is.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);</span><br><span class="line">        <span class="keyword">final</span> NotFoundException rnf = <span class="keyword">new</span> NotFoundException(</span><br><span class="line">                <span class="string">"File "</span> + file + <span class="string">" from drawable resource ID #0x"</span> + Integer.toHexString(id));</span><br><span class="line">        rnf.initCause(e);</span><br><span class="line">        <span class="keyword">throw</span> rnf;</span><br><span class="line">    &#125;</span><br><span class="line">    Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> dr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>若是 xml 文件，则会调用 Drawable.createFromXml，而 Drawable.createFromXml 会调用 Drawable.createFromInner 方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Drawable <span class="title">createFromXmlInner</span><span class="params">(Resources r, XmlPullParser parser, AttributeSet attrs,</span><br><span class="line">            Theme theme)</span> <span class="keyword">throws</span> XmlPullParserException, IOException </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Drawable drawable;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">final</span> String name = parser.getName();</span><br><span class="line">    <span class="keyword">switch</span> (name) &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="keyword">case</span> <span class="string">"shape"</span>:</span><br><span class="line">            drawable = <span class="keyword">new</span> GradientDrawable();</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> XmlPullParserException(parser.getPositionDescription() +</span><br><span class="line">                    <span class="string">": invalid drawable tag "</span> + name);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    drawable.inflate(r, parser, attrs, theme);</span><br><span class="line">    <span class="keyword">return</span> drawable;</span><br></pre></td></tr></table></figure></p>
+<p>原来，shape 时创建的是 GradientDrawable 而不是 ShapeDrawable，被名字无情地欺骗了，还是源码最靠谱。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>将 ShapeDrawable 替换为 GradientDrawable 就可以完美解决问题了，代码也简洁了许多。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line">GradientDrawable drawable = <span class="keyword">new</span> GradientDrawable();</span><br><span class="line">drawable.setCornerRadius(radius);</span><br><span class="line">drawable.setStroke(<span class="number">2</span>, <span class="number">0xff333333</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Android/">Android</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/08/28/Shape_Drawable/" data-title="从代码创建 Shape Drawable" data-url="http://kaywu.github.io/2016/08/28/Shape_Drawable/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://kaywu.github.io/2016/08/28/Shape_Drawable/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>12</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>
