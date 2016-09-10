@@ -84,7 +84,7 @@
 <h2 id="git-subtree"><a href="#git-subtree" class="headerlink" title="git subtree"></a>git subtree</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 添加 subtree</span><br><span class="line">// git subtree add --prefix=目录 项目地址 分支</span><br><span class="line">git subtree add --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure>
 <p>不同于 git submodule，此时的 child 仅仅是含有相关代码的普通目录，而不是一个独立的 Git 仓库。因此当在 child 进行修改时，上层项目会立刻记录其改动，而不是像之前那样先在子项目中提交才能进行记录。克隆上层仓库时 child 目录也不再为空。但同时，child 也不能再执行独立的 Git 命令，只有 git subtree 相关的操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 提交改动</span><br><span class="line">// git subtree push --prefix=目录 项目地址 分支</span><br><span class="line">git subtree push --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
 <p>提交改动时 Git 会遍历所有的 commit，从中找出 child 相关的修改然后提交到 child 的项目地址上。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 更新改动</span><br><span class="line">// git subtree pull --prefix=目录 项目地址 分支</span><br><span class="line">git subtree pull --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
-<p>更新 child 目录下的代码。<br>简便起见，可将项目地址添加为 remote 方便后续操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加 remote</span><br><span class="line">git add remote child https://github.com/KayWu/ExViewPager</span><br><span class="line">// 用 remote 替换项目地址</span><br><span class="line">git subtree push --prefix-child child master</span><br></pre></td></tr></table></figure></p>
+<p>更新 child 目录下的代码。<br>简便起见，可将项目地址添加为 remote 方便后续操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加 remote</span><br><span class="line">git add remote child https://github.com/KayWu/ExViewPager</span><br><span class="line">// 用 remote 替换项目地址</span><br><span class="line">git subtree push --prefix=child child master</span><br></pre></td></tr></table></figure></p>
 <p>简单来说，submodule 和 subtree 最大的区别是，submodule 保存的是子仓库的 link，而 subtree 保存的是子仓库的 copy。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://stackoverflow.com/questions/31769820/differences-between-git-submodule-and-subtree" target="_blank" rel="external">Differences between git submodule and subtree</a></li>
@@ -163,7 +163,7 @@
   
     <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>2</small></li>
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
   
     <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
   

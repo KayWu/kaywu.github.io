@@ -66,6 +66,45 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-09-06T14:36:27.000Z"><a href="/2016/09/06/blog-speed-up/">2016-09-06</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/09/06/blog-speed-up/">Hexo 博客加速实践</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。</p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</span><br><span class="line">@import url("//fonts.useso.com/css?family=Lato:400,400italic")</span><br></pre></td></tr></table></figure></p>
+<p>当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。<br>再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。<br>但是，这还不够。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/09/06/blog-speed-up/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape_Drawable/">2016-08-28</a></time>
       
       
@@ -406,44 +445,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-29T02:58:55.000Z"><a href="/2016/05/29/ThreadPoolExecutor/">2016-05-29</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/29/ThreadPoolExecutor/">Java 线程池笔记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure></p>
-<p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/05/29/ThreadPoolExecutor/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -479,7 +480,7 @@
   
     <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>2</small></li>
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
   
     <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
   

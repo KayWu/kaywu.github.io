@@ -2,6 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.github.io/2016/09/06/blog-speed-up/</loc>
+    
+    <lastmod>2016-09-10T16:51:26.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2015/04/05/LayoutInfalter/</loc>
+    
+    <lastmod>2016-09-10T16:44:29.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2015/04/04/GoogleMusicPlayer/</loc>
+    
+    <lastmod>2016-09-10T16:43:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2015/04/03/DoubanDemo/</loc>
+    
+    <lastmod>2016-09-10T16:42:53.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/07/17/Android-Storage-Note/</loc>
+    
+    <lastmod>2016-09-10T16:37:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/06/10/git-submodule-vs-git-subtree/</loc>
+    
+    <lastmod>2016-09-06T14:36:57.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.github.io/2016/08/28/Shape_Drawable/</loc>
     
     <lastmod>2016-08-28T05:27:53.000Z</lastmod>
@@ -30,13 +72,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2016/07/17/Android-Storage-Note/</loc>
-    
-    <lastmod>2016-07-17T12:19:33.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2016/06/26/Longest-Palindromic-Substring/</loc>
     
     <lastmod>2016-07-03T12:48:47.000Z</lastmod>
@@ -58,13 +93,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2016/06/10/git-submodule-vs-git-subtree/</loc>
-    
-    <lastmod>2016-06-10T06:15:41.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2016/05/29/ThreadPoolExecutor/</loc>
     
     <lastmod>2016-06-10T03:55:38.000Z</lastmod>
@@ -79,7 +107,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2015/11/30/The-Way-To-Program/</loc>
+    <loc>http://kaywu.github.io/2016/03/27/Android-Support-Annotation/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
     
@@ -93,13 +121,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2016/03/27/Android-Support-Annotation/</loc>
-    
-    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2016/03/13/Java-Exception/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
@@ -107,21 +128,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2015/04/03/DoubanDemo/</loc>
-    
-    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/2015/04/04/GoogleMusicPlayer/</loc>
-    
-    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2016/02/28/PacketCapture/</loc>
+    
+    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2015/11/30/The-Way-To-Program/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
     
@@ -194,13 +208,6 @@
     <loc>http://kaywu.github.io/about/index.html</loc>
     
     <lastmod>2015-12-09T15:57:09.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/2015/04/05/LayoutInfalter/</loc>
-    
-    <lastmod>2015-04-05T13:35:23.000Z</lastmod>
     
   </url>
   
