@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-09-10T16:51:26.000Z</updated>
+  <updated>2016-09-17T13:46:37.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>如何在非 UI 线程截图</title>
+    <link href="http://kaywu.github.io/2016/09/17/Screenshot-in-Non-UI-Thread/"/>
+    <id>http://kaywu.github.io/2016/09/17/Screenshot-in-Non-UI-Thread/</id>
+    <published>2016-09-17T10:50:48.000Z</published>
+    <updated>2016-09-17T13:46:37.000Z</updated>
+    
+    <content type="html">&lt;p&gt;截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。&lt;/p&gt;
+&lt;p&gt;我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。&lt;/p&gt;
+&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// 在后台线程调用该方法&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Bitmap &lt;span class=&quot;title&quot;&gt;getBitmapByView&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(LinearLayout linearLayout)&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; h = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        Bitmap bitmap = &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; (&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;; i &amp;lt; linearLayout.getChildCount(); i++) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                h += linearLayout.getChildAt(i).getHeight();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        bitmap = Bitmap.createBitmap(linearLayout.getWidth(), h,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                Config.ARGB_8888);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; Canvas canvas = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Canvas(bitmap);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        linearLayout.draw(canvas);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; bitmap;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (Exception e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        e.printStackTrace();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;null&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;但没想到之后有一个类似的方法，仅是将参数从 LinearLayout 改为 ScrollView，竟然会偶发性地报错。报错截图如下：&lt;br&gt;&lt;img src=&quot;/img/thread_exception.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;这样看来，draw 是只能在主线程调用了？那之前的方法为什么一直没事呢？&lt;/p&gt;
+&lt;h2 id=&quot;原因&quot;&gt;&lt;a href=&quot;#原因&quot; class=&quot;headerlink&quot; title=&quot;原因&quot;&gt;&lt;/a&gt;原因&lt;/h2&gt;&lt;p&gt;我们先来研究下这个 Exception 是怎么产生的。&lt;br&gt;从上面的堆栈看出，是由 ViewRootImpl 的 checkThread 引起的。该方法是为了防止我们在非 UI 线程更新 UI。当我们调用 requestLayout、invalidate 时最终都会调用到 checkThread 方法。&lt;/p&gt;
+&lt;p&gt;那又是如何调用到 checkThread 的呢？首先我们调用了 ScrollView.draw 方法，通过 super.draw 调用了 View.draw 方法。而 Draw 方法中又包含 onDrawScrollBars，它调用了 invalidate 而使得 checkThread 抛出异常。&lt;/p&gt;
+&lt;p&gt;我们大胆猜测 onDrawScrollBars 是 LinearLayout、ScrollView 调用相同方法却引发不同结果的关键。我们可以把 ScrollView 的 scrollbar 设为 none 来验证一下猜想。果不其然，之后就再不报这个错了。看代码的逻辑，LinearLayout、ScrollView 都会调用 onDrawScrollBars。但由于 LinearLayout 的 scrollbar 为 none 直接返回，而 ScrollView 走进了 onDrawScrollBars 的逻辑引发了 invalidate。&lt;/p&gt;
+&lt;h2 id=&quot;总结&quot;&gt;&lt;a href=&quot;#总结&quot; class=&quot;headerlink&quot; title=&quot;总结&quot;&gt;&lt;/a&gt;总结&lt;/h2&gt;&lt;p&gt;从上面的分析可得，使用 view.draw 后台截图时需要十分小心，不然容易出现类似 ScrollView 的情况而报错。&lt;br&gt;使用 view.draw 方法截的图和屏幕展示出来的效果是一样的。但某些软件的截图功能两者是不一致的。比如高德地图的路线截图保存功能，屏幕上显示的路线没有完全展开，而截图显示的是完全展开的路线。猜测可能在自定义 View 中写了类似 draw 的方法然后调用，原理应该还是通过 canvas 来实现的。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/zhaokaiqiang1992/article/details/43410351&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;讨论一下“只能在UI主线程更新View”这件小事&lt;/a&gt;&lt;br&gt;&lt;a href=&quot;http://blog.csdn.net/aigestudio/article/details/43449123&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;为什么我们可以在非UI线程中更新UI&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。&lt;/p&gt;
+&lt;p&gt;我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>Hexo 博客加速实践</title>
@@ -48,8 +80,8 @@
   
   <entry>
     <title>从代码创建 Shape Drawable</title>
-    <link href="http://kaywu.github.io/2016/08/28/Shape_Drawable/"/>
-    <id>http://kaywu.github.io/2016/08/28/Shape_Drawable/</id>
+    <link href="http://kaywu.github.io/2016/08/28/Shape-Drawable/"/>
+    <id>http://kaywu.github.io/2016/08/28/Shape-Drawable/</id>
     <published>2016-08-28T02:48:34.000Z</published>
     <updated>2016-08-28T05:27:53.000Z</updated>
     
@@ -669,37 +701,6 @@
     </summary>
     
       <category term="Python" scheme="http://kaywu.github.io/categories/Python/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>聊聊 Java Exception 机制</title>
-    <link href="http://kaywu.github.io/2016/03/13/Java-Exception/"/>
-    <id>http://kaywu.github.io/2016/03/13/Java-Exception/</id>
-    <published>2016-03-13T06:25:14.000Z</published>
-    <updated>2016-06-10T03:54:48.000Z</updated>
-    
-    <content type="html">&lt;p&gt;调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Thread() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            mRestAdapter.create(Api.class).sendRequst();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (Exception e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;// handle Exception&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;.start();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  BufferedReader reader = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; BufferedReader(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; FileReader(Path));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  String firstLine = reader.readLine();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (IOException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;Exception-机制&quot;&gt;&lt;a href=&quot;#Exception-机制&quot; class=&quot;headerlink&quot; title=&quot;Exception 机制&quot;&gt;&lt;/a&gt;Exception 机制&lt;/h2&gt;&lt;p&gt;这就得从 Java 的 Exception 机制开始说起了。&lt;br&gt;&lt;img src=&quot;/img/java_throwable.gif&quot; alt=&quot;&quot;&gt;&lt;br&gt;Throwable 表示任何可以作为异常被抛出的类。Throwable 对象分为两种类型，Error 表示系统级错误，如资源不足、约束失败，或者其他使程序无法继续执行的条件，一般无需我们关心。而 Exception 是所有异常的父类，可分为两大类型。一种是 RuntimeException 及其子类，表示运行时异常。另一种是除了 RuntimeException 及其子类之外的 Exception，称为受检异常。&lt;br&gt;那运行时异常和受检异常有什么区别呢？在使用上最大的区别就是，受检异常强迫调用者使用显式的 catch 语句处理或者将它传播出去。写代码时如果 IDE 提示你使用 catch 语句或者在方法中添加 throws 声明，这种异常都是受检异常，要扼杀在摇篮里，否则编译都无法通过。而运行时异常则不需要这样做。&lt;br&gt;除了使用上的差异，两者的使用场景也有区别。《Effective Java》是这样建议的：如果可恢复的情况使用受检异常，对编程错误使用运行时异常。&lt;/p&gt;
-&lt;p&gt;让我们回到问题，现在答案已经很明显了。Retrofit 抛出的是运行时异常，而 BufferedReader 抛出的是受检异常。&lt;/p&gt;
-&lt;p&gt;那 Retrofit 为什么不抛出受检异常呢？这种情况应该属于可恢复的，并且受检异常能提醒开发者进行处理。&lt;br&gt;不是不想，实是不能啊。Retrofit 是通过动态代理来实现声明的接口的功能。而由于父类方法没有抛出异常,子类方法也不能显式地抛出异常。所以 Retrofit 不能抛出各种异常（如 IO 异常），只能通过捕获异常并转换为 RuntimeException 再抛出。&lt;/p&gt;
-&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;Effective Java 第9章 异常&lt;/li&gt;
-&lt;/ul&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Thread() &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            mRestAdapter.create(Api.class).sendRequst();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (Exception e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;comment&quot;&gt;// handle Exception&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;.start();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;try&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  BufferedReader reader = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; BufferedReader(&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; FileReader(Path));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  String firstLine = reader.readLine();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; &lt;span class=&quot;keyword&quot;&gt;catch&lt;/span&gt; (IOException e) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Java" scheme="http://kaywu.github.io/categories/Java/"/>
     
     
   </entry>
