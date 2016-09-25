@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>探索 pointerIndex out of range | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="最近 App 里报了一个奇怪的 Exception。为什么说奇怪呢，因为它发生的概率不是很大，但每天总有那么几个。这种非必现的问题，解决起来最是麻烦。查了下代码，发现是 event.getY() 报错，我刚看到的反应是：纳尼，这里都能报错？网上查找了下解决方案，大致都是在  onTouchEvent 里面或外面包一层 try…catch。能解决问题，可惜不够优雅。 于是花了些时间研究下。
+1234567java.lang.IllegalArgumentException: pointerIndex out of range    at android.view.MotionEvent.nativeGetAxisValue(Native Method)    at android.view.MotionEvent.getY(MotionEvent.java:1994)    at com.kay.example.DemoView.onTouchEvent(HomeView.java:184)    at android.view.View.dispatchTouchEvent(View.java:7714)    at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:2210)    at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:1945)
+探索这种非必现的问题，第一步要找到能重现问题的场景。于是我就拼命地戳那个报错的 View，在不懈努力之下，还真重现了几次。异常的栈跟上面是一致的，看来 event.getY() 真能出错。如果 event.getY() 这种基础的方法都能出错，那么系统的控件是如何防止这个错误的呢。查看了 NestedScrollView 的源码，发现它的 onTouchEvent 的处理果然是有门道的。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="探索 pointerIndex out of range"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-09-25T03:50:53.000Z"><a href="/2016/09/25/pointer-index-out-of-range/">2016-09-25</a></time>
+      
+      
+  
+    <h1 class="title">探索 pointerIndex out of range</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近 App 里报了一个奇怪的 Exception。为什么说奇怪呢，因为它发生的概率不是很大，但每天总有那么几个。这种非必现的问题，解决起来最是麻烦。查了下代码，发现是 <code>event.getY()</code> 报错，我刚看到的反应是：纳尼，这里都能报错？网上查找了下解决方案，大致都是在  <code>onTouchEvent</code> 里面或外面包一层 try…catch。能解决问题，可惜不够优雅。 于是花了些时间研究下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalArgumentException: pointerIndex out of range</span><br><span class="line">    at android.view.MotionEvent.nativeGetAxisValue(Native Method)</span><br><span class="line">    at android.view.MotionEvent.getY(MotionEvent.java:<span class="number">1994</span>)</span><br><span class="line">    at com.kay.example.DemoView.onTouchEvent(HomeView.java:<span class="number">184</span>)</span><br><span class="line">    at android.view.View.dispatchTouchEvent(View.java:<span class="number">7714</span>)</span><br><span class="line">    at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:<span class="number">2210</span>)</span><br><span class="line">    at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:<span class="number">1945</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h2><p>这种非必现的问题，第一步要找到能重现问题的场景。于是我就拼命地戳那个报错的 View，在不懈努力之下，还真重现了几次。异常的栈跟上面是一致的，看来 <code>event.getY()</code> 真能出错。<br>如果 <code>event.getY()</code> 这种基础的方法都能出错，那么系统的控件是如何防止这个错误的呢。<br>查看了 <code>NestedScrollView</code> 的源码，发现它的 <code>onTouchEvent</code> 的处理果然是有门道的。<br><a id="more"></a><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NestedScrollView#onTouchEvent</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">switch</span> (actionMasked) &#123;</span><br><span class="line">    <span class="keyword">case</span> MotionEvent.ACTION_DOWN: &#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">        mActivePointerId = MotionEventCompat.getPointerId(ev, <span class="number">0</span>);</span><br><span class="line">        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> activePointerIndex = MotionEventCompat.findPointerIndex(ev,</span><br><span class="line">                mActivePointerId);</span><br><span class="line">        <span class="keyword">if</span> (activePointerIndex == -<span class="number">1</span>) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"Invalid pointerId="</span> + mActivePointerId + <span class="string">" in onTouchEvent"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">float</span> y = event.getY(activePointerIndex);</span><br><span class="line">        <span class="comment">// ...</span></span><br></pre></td></tr></table></figure></p>
+<p>在报错的 View 中，是直接通过 <code>event.getY()</code> 来获取到纵坐标的值。而 <code>NestedScrollView</code> 先保存了原先 MotionEvent 的 PointerId，再通过 PointerId 查找到 Index，并判断是否有效，最终通过 <code>event.getY(activePointerIndex)</code> 获取纵坐标的值。<br>查看源码发现，<code>event.getY()</code> 相当于 <code>event.getY(0)</code>，也就是说两者的差别在于对 Index 的获取。那么 Index 和 Id 两者有什么区别呢？</p>
+<h2 id="Index-vs-ID"><a href="#Index-vs-ID" class="headerlink" title="Index vs ID"></a>Index vs ID</h2><p>以下这段来自 <a href="http://android-developers.blogspot.ru/2010/06/making-sense-of-multitouch.html" target="_blank" rel="external">Making Sense of Multitouch</a>。</p>
+<p>At a higher level, touchscreen data from a snapshot in time may not be immediately useful since touch gestures involve motion over time spanning many motion events. A pointer index does not necessarily match up across complex events, it only indicates the data’s position within the MotionEvent. However this is not work that your app has to do itself. Each pointer also has an ID mapping that stays persistent across touch events. You can retrieve this ID for each pointer using MotionEvent.getPointerId(index) and find an index for a pointer ID using MotionEvent.findPointerIndex(id).</p>
+<p>简单的说，Index 只是表示存储在 MotionEvent 中数据的位置，在事件中不一定保持一致。而 ID 在 Touch 事件中是保持一致的。因此我们需要先保存 PointerId 然后再通过它来找到对应的 Index 来获取相应的坐标数据。</p>
+<p>看来得多看看系统源码，能少爬多少坑。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://android-developers.blogspot.ru/2010/06/making-sense-of-multitouch.html" target="_blank" rel="external">Making Sense of Multitouch</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Android/">Android</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  	<div class="ds-thread" data-thread-key="2016/09/25/pointer-index-out-of-range/" data-title="探索 pointerIndex out of range" data-url="http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:"kaywu"};
+  	(function() {
+  		var ds = document.createElement('script');
+  		ds.type = 'text/javascript';ds.async = true;
+  		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+  		ds.charset = 'UTF-8';
+  		(document.getElementsByTagName('head')[0] 
+  		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+  	})();
+  	</script>
+  <!-- 多说公共JS代码 end -->
+  
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

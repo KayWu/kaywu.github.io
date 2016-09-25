@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.github.io/"/>
-  <updated>2016-09-17T13:46:37.000Z</updated>
+  <updated>2016-09-25T05:28:17.000Z</updated>
   <id>http://kaywu.github.io/</id>
   
   <author>
@@ -14,6 +14,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>探索 pointerIndex out of range</title>
+    <link href="http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/"/>
+    <id>http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/</id>
+    <published>2016-09-25T03:50:53.000Z</published>
+    <updated>2016-09-25T05:28:17.000Z</updated>
+    
+    <content type="html">&lt;p&gt;最近 App 里报了一个奇怪的 Exception。为什么说奇怪呢，因为它发生的概率不是很大，但每天总有那么几个。这种非必现的问题，解决起来最是麻烦。查了下代码，发现是 &lt;code&gt;event.getY()&lt;/code&gt; 报错，我刚看到的反应是：纳尼，这里都能报错？网上查找了下解决方案，大致都是在  &lt;code&gt;onTouchEvent&lt;/code&gt; 里面或外面包一层 try…catch。能解决问题，可惜不够优雅。 于是花了些时间研究下。&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;java.lang.IllegalArgumentException: pointerIndex out of range&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.MotionEvent.nativeGetAxisValue(Native Method)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.MotionEvent.getY(MotionEvent.java:&lt;span class=&quot;number&quot;&gt;1994&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at com.kay.example.DemoView.onTouchEvent(HomeView.java:&lt;span class=&quot;number&quot;&gt;184&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.View.dispatchTouchEvent(View.java:&lt;span class=&quot;number&quot;&gt;7714&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:&lt;span class=&quot;number&quot;&gt;2210&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:&lt;span class=&quot;number&quot;&gt;1945&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;探索&quot;&gt;&lt;a href=&quot;#探索&quot; class=&quot;headerlink&quot; title=&quot;探索&quot;&gt;&lt;/a&gt;探索&lt;/h2&gt;&lt;p&gt;这种非必现的问题，第一步要找到能重现问题的场景。于是我就拼命地戳那个报错的 View，在不懈努力之下，还真重现了几次。异常的栈跟上面是一致的，看来 &lt;code&gt;event.getY()&lt;/code&gt; 真能出错。&lt;br&gt;如果 &lt;code&gt;event.getY()&lt;/code&gt; 这种基础的方法都能出错，那么系统的控件是如何防止这个错误的呢。&lt;br&gt;查看了 &lt;code&gt;NestedScrollView&lt;/code&gt; 的源码，发现它的 &lt;code&gt;onTouchEvent&lt;/code&gt; 的处理果然是有门道的。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// NestedScrollView#onTouchEvent&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;switch&lt;/span&gt; (actionMasked) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; MotionEvent.ACTION_DOWN: &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;// ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        mActivePointerId = MotionEventCompat.getPointerId(ev, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;case&lt;/span&gt; MotionEvent.ACTION_MOVE:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; activePointerIndex = MotionEventCompat.findPointerIndex(ev,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                mActivePointerId);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (activePointerIndex == -&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            Log.e(TAG, &lt;span class=&quot;string&quot;&gt;&quot;Invalid pointerId=&quot;&lt;/span&gt; + mActivePointerId + &lt;span class=&quot;string&quot;&gt;&quot; in onTouchEvent&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;break&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;float&lt;/span&gt; y = event.getY(activePointerIndex);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;comment&quot;&gt;// ...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;在报错的 View 中，是直接通过 &lt;code&gt;event.getY()&lt;/code&gt; 来获取到纵坐标的值。而 &lt;code&gt;NestedScrollView&lt;/code&gt; 先保存了原先 MotionEvent 的 PointerId，再通过 PointerId 查找到 Index，并判断是否有效，最终通过 &lt;code&gt;event.getY(activePointerIndex)&lt;/code&gt; 获取纵坐标的值。&lt;br&gt;查看源码发现，&lt;code&gt;event.getY()&lt;/code&gt; 相当于 &lt;code&gt;event.getY(0)&lt;/code&gt;，也就是说两者的差别在于对 Index 的获取。那么 Index 和 Id 两者有什么区别呢？&lt;/p&gt;
+&lt;h2 id=&quot;Index-vs-ID&quot;&gt;&lt;a href=&quot;#Index-vs-ID&quot; class=&quot;headerlink&quot; title=&quot;Index vs ID&quot;&gt;&lt;/a&gt;Index vs ID&lt;/h2&gt;&lt;p&gt;以下这段来自 &lt;a href=&quot;http://android-developers.blogspot.ru/2010/06/making-sense-of-multitouch.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Making Sense of Multitouch&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;At a higher level, touchscreen data from a snapshot in time may not be immediately useful since touch gestures involve motion over time spanning many motion events. A pointer index does not necessarily match up across complex events, it only indicates the data’s position within the MotionEvent. However this is not work that your app has to do itself. Each pointer also has an ID mapping that stays persistent across touch events. You can retrieve this ID for each pointer using MotionEvent.getPointerId(index) and find an index for a pointer ID using MotionEvent.findPointerIndex(id).&lt;/p&gt;
+&lt;p&gt;简单的说，Index 只是表示存储在 MotionEvent 中数据的位置，在事件中不一定保持一致。而 ID 在 Touch 事件中是保持一致的。因此我们需要先保存 PointerId 然后再通过它来找到对应的 Index 来获取相应的坐标数据。&lt;/p&gt;
+&lt;p&gt;看来得多看看系统源码，能少爬多少坑。&lt;/p&gt;
+&lt;h2 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://android-developers.blogspot.ru/2010/06/making-sense-of-multitouch.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Making Sense of Multitouch&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近 App 里报了一个奇怪的 Exception。为什么说奇怪呢，因为它发生的概率不是很大，但每天总有那么几个。这种非必现的问题，解决起来最是麻烦。查了下代码，发现是 &lt;code&gt;event.getY()&lt;/code&gt; 报错，我刚看到的反应是：纳尼，这里都能报错？网上查找了下解决方案，大致都是在  &lt;code&gt;onTouchEvent&lt;/code&gt; 里面或外面包一层 try…catch。能解决问题，可惜不够优雅。 于是花了些时间研究下。&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;java.lang.IllegalArgumentException: pointerIndex out of range&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.MotionEvent.nativeGetAxisValue(Native Method)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.MotionEvent.getY(MotionEvent.java:&lt;span class=&quot;number&quot;&gt;1994&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at com.kay.example.DemoView.onTouchEvent(HomeView.java:&lt;span class=&quot;number&quot;&gt;184&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.View.dispatchTouchEvent(View.java:&lt;span class=&quot;number&quot;&gt;7714&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.ViewGroup.dispatchTransformedTouchEvent(ViewGroup.java:&lt;span class=&quot;number&quot;&gt;2210&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    at android.view.ViewGroup.dispatchTouchEvent(ViewGroup.java:&lt;span class=&quot;number&quot;&gt;1945&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h2 id=&quot;探索&quot;&gt;&lt;a href=&quot;#探索&quot; class=&quot;headerlink&quot; title=&quot;探索&quot;&gt;&lt;/a&gt;探索&lt;/h2&gt;&lt;p&gt;这种非必现的问题，第一步要找到能重现问题的场景。于是我就拼命地戳那个报错的 View，在不懈努力之下，还真重现了几次。异常的栈跟上面是一致的，看来 &lt;code&gt;event.getY()&lt;/code&gt; 真能出错。&lt;br&gt;如果 &lt;code&gt;event.getY()&lt;/code&gt; 这种基础的方法都能出错，那么系统的控件是如何防止这个错误的呢。&lt;br&gt;查看了 &lt;code&gt;NestedScrollView&lt;/code&gt; 的源码，发现它的 &lt;code&gt;onTouchEvent&lt;/code&gt; 的处理果然是有门道的。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>如何在非 UI 线程截图</title>
@@ -677,30 +710,6 @@
     </summary>
     
       <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>初识 LiveReload</title>
-    <link href="http://kaywu.github.io/2016/03/20/Python-LiveReload/"/>
-    <id>http://kaywu.github.io/2016/03/20/Python-LiveReload/</id>
-    <published>2016-03-20T05:29:15.000Z</published>
-    <updated>2016-04-03T10:41:30.000Z</updated>
-    
-    <content type="html">&lt;p&gt;LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。&lt;br&gt;LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 &lt;a href=&quot;http://livereload.readthedocs.org/en/latest/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LiveReload&lt;/a&gt; 介绍其使用。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;安装&quot;&gt;&lt;a href=&quot;#安装&quot; class=&quot;headerlink&quot; title=&quot;安装&quot;&gt;&lt;/a&gt;安装&lt;/h2&gt;&lt;p&gt;首先为浏览器安装 &lt;a href=&quot;https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;LiveReload 插件&lt;/a&gt;。该插件可以和后台的相关服务器通信，当服务器通知该插件后，该插件会自动刷新页面。&lt;br&gt;接着通过&lt;code&gt;pip3 install livereload&lt;/code&gt;安装相关 python 包。That’s all~&lt;/p&gt;
-&lt;h2 id=&quot;使用&quot;&gt;&lt;a href=&quot;#使用&quot; class=&quot;headerlink&quot; title=&quot;使用&quot;&gt;&lt;/a&gt;使用&lt;/h2&gt;&lt;p&gt;在 html 所在的文件夹，使用&lt;code&gt;livereload&lt;/code&gt;命令即可。这时打开浏览器&lt;code&gt;http://127.0.0.1:35729&lt;/code&gt;，就会发现网页会实时刷新了。&lt;br&gt;但是，有时候你可能需要在刷新之前做一些操作。如使用 Hexo 写文章时，保存文章后你希望能自动地执行&lt;code&gt;hexo g&lt;/code&gt;的命令，然后刷新页面。那 LiveReload 能做到吗？当然可以，只需要一段简短的程序即可。&lt;br&gt;下面是我写的关于上面小需求的代码。&lt;br&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#!/usr/bin/env python3&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;# -*- coding: utf-8 -*-&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;from&lt;/span&gt; livereload &lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; Server, shell&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server = Server()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server.watch(&lt;span class=&quot;string&quot;&gt;&#39;source/_posts/*&#39;&lt;/span&gt;, shell(&lt;span class=&quot;string&quot;&gt;&#39;hexo g&#39;&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;server.serve(root=&lt;span class=&quot;string&quot;&gt;&#39;public&#39;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;p&gt;使用 LiveReload 之后，感觉写文章都轻松了很多。&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。&lt;br&gt;LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 &lt;a href=&quot;http://livereload.readthedocs.org/en/latest/&quot;&gt;LiveReload&lt;/a&gt; 介绍其使用。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="Python" scheme="http://kaywu.github.io/categories/Python/"/>
     
     
   </entry>
