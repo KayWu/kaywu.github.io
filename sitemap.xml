@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.github.io/about/index.html</loc>
+    
+    <lastmod>2017-07-18T14:40:47.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.github.io/2017/05/14/rails-js-compress/</loc>
     
     <lastmod>2017-07-18T14:36:36.000Z</lastmod>
@@ -131,13 +138,6 @@
     <loc>http://kaywu.github.io/2016/11/20/ruby-super/</loc>
     
     <lastmod>2017-07-18T09:14:27.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/about/index.html</loc>
-    
-    <lastmod>2017-07-18T09:04:13.000Z</lastmod>
     
   </url>
   
