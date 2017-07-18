@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Rails form_for 源码阅读 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="初学 Rails 时，觉得 form_for 很强大，这么简单就能完成一个表单。现在想来，它其实就是通过配置来输出 Html。但由于做法很巧妙，使用时颇为爽快。于是阅读下源码来研究下它的神奇之处。
+如何使用123456789&amp;lt;%= form_for @person do |f| %&amp;gt;  ">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Rails form_for 源码阅读"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-11-27T10:15:49.000Z"><a href="/2016/11/27/rails-form-for/">2016-11-27</a></time>
+      
+      
+  
+    <h1 class="title">Rails form_for 源码阅读</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>初学 Rails 时，觉得 form_for 很强大，这么简单就能完成一个表单。<br>现在想来，它其实就是通过配置来输出 Html。但由于做法很巧妙，使用时颇为爽快。<br>于是阅读下源码来研究下它的神奇之处。</p>
+<h4 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h4><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;%= form_for <span class="variable">@person</span> <span class="keyword">do</span> |f| %&gt;</span><br><span class="line">  &lt;%= f.label <span class="symbol">:first_name</span> %&gt;<span class="symbol">:</span></span><br><span class="line">  &lt;%= f.text_field <span class="symbol">:first_name</span> %&gt;&lt;br /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;%= f.label <span class="symbol">:last_name</span> %&gt;<span class="symbol">:</span></span><br><span class="line">  &lt;%= f.text_field <span class="symbol">:last_name</span> %&gt;&lt;br /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;%= f.submit %&gt;</span><br><span class="line">&lt;% <span class="keyword">end</span> %&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">form</span> <span class="attribute">action</span>=<span class="value">"/people"</span> <span class="attribute">class</span>=<span class="value">"new_person"</span> <span class="attribute">id</span>=<span class="value">"new_person"</span> <span class="attribute">method</span>=<span class="value">"post"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">name</span>=<span class="value">"authenticity_token"</span> <span class="attribute">type</span>=<span class="value">"hidden"</span> <span class="attribute">value</span>=<span class="value">"NrOp5bsjoLRuK8IW5+dQEYjKGUJDe7TQoZVvq95Wteg="</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">label</span> <span class="attribute">for</span>=<span class="value">"person_first_name"</span>&gt;</span>First name<span class="tag">&lt;/<span class="title">label</span>&gt;</span>:</span><br><span class="line">  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">id</span>=<span class="value">"person_first_name"</span> <span class="attribute">name</span>=<span class="value">"person[first_name]"</span> <span class="attribute">type</span>=<span class="value">"text"</span> /&gt;</span><span class="tag">&lt;<span class="title">br</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="title">label</span> <span class="attribute">for</span>=<span class="value">"person_last_name"</span>&gt;</span>Last name<span class="tag">&lt;/<span class="title">label</span>&gt;</span>:</span><br><span class="line">  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">id</span>=<span class="value">"person_last_name"</span> <span class="attribute">name</span>=<span class="value">"person[last_name]"</span> <span class="attribute">type</span>=<span class="value">"text"</span> /&gt;</span><span class="tag">&lt;<span class="title">br</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="title">input</span> <span class="attribute">name</span>=<span class="value">"commit"</span> <span class="attribute">type</span>=<span class="value">"submit"</span> <span class="attribute">value</span>=<span class="value">"Create Person"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># form_for 源码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">form_for</span><span class="params">(record, options = &#123;&#125;, &amp;block)</span></span></span><br><span class="line">    raise <span class="constant">ArgumentError</span>, <span class="string">"Missing block"</span> <span class="keyword">unless</span> block_given?</span><br><span class="line">    html_options = options[<span class="symbol">:html</span>] ||= &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> record</span><br><span class="line">    <span class="keyword">when</span> <span class="constant">String</span>, <span class="constant">Symbol</span></span><br><span class="line">      object_name = record</span><br><span class="line">      object      = <span class="keyword">nil</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      object      = record.is_a?(<span class="constant">Array</span>) ? record.last <span class="symbol">:</span> record</span><br><span class="line">      raise <span class="constant">ArgumentError</span>, <span class="string">"First argument in form cannot contain nil or be empty"</span> <span class="keyword">unless</span> object</span><br><span class="line">      object_name = options[<span class="symbol">:as</span>] || model_name_from_record_or_class(object).param_key</span><br><span class="line">      apply_form_for_options!(record, object, options)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    html_options[<span class="symbol">:data</span>]   = options.delete(<span class="symbol">:data</span>)   <span class="keyword">if</span> options.has_key?(<span class="symbol">:data</span>)</span><br><span class="line">    html_options[<span class="symbol">:remote</span>] = options.delete(<span class="symbol">:remote</span>) <span class="keyword">if</span> options.has_key?(<span class="symbol">:remote</span>)</span><br><span class="line">    html_options[<span class="symbol">:method</span>] = options.delete(<span class="symbol">:method</span>) <span class="keyword">if</span> options.has_key?(<span class="symbol">:method</span>)</span><br><span class="line">    html_options[<span class="symbol">:enforce_utf8</span>] = options.delete(<span class="symbol">:enforce_utf8</span>) <span class="keyword">if</span> options.has_key?(<span class="symbol">:enforce_utf8</span>)</span><br><span class="line">    html_options[<span class="symbol">:authenticity_token</span>] = options.delete(<span class="symbol">:authenticity_token</span>)</span><br><span class="line"></span><br><span class="line">    builder = instantiate_builder(object_name, object, options)</span><br><span class="line">    output  = capture(builder, &amp;block)</span><br><span class="line">    html_options[<span class="symbol">:multipart</span>] ||= builder.multipart?</span><br><span class="line"></span><br><span class="line">    html_options = html_options_for_form(options[<span class="symbol">:url</span>] || &#123;&#125;, html_options)</span><br><span class="line">    form_tag_with_body(html_options, output)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>form_for 如何获得 @person 的 model name？<br>通过 <code>model_name_from_record_or_class(object).param_key</code> 方法。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">ActionView</span></span></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">ModelNaming</span></span></span><br><span class="line">    <span class="comment"># Converts the given object to an ActiveModel compliant one.</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">convert_to_model</span><span class="params">(object)</span></span></span><br><span class="line">      object.respond_to?(<span class="symbol">:to_model</span>) ? object.to_model <span class="symbol">:</span> object</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">model_name_from_record_or_class</span><span class="params">(record_or_class)</span></span></span><br><span class="line">      convert_to_model(record_or_class).model_name</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如何判断 @person 是 create 还是 update?<br>通过 <code>persisted?</code> 来判断。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># apply_from_for_options 中的代码</span></span><br><span class="line">...</span><br><span class="line">action, method = object.respond_to?(<span class="symbol">:persisted?</span>) &amp;&amp; object.persisted? ? [<span class="symbol">:edit</span>, <span class="symbol">:patch</span>] <span class="symbol">:</span> [<span class="symbol">:new</span>, <span class="symbol">:post</span>]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>FormBuilder 的作用是？</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># FormBuilder</span></span><br><span class="line">(field_helpers - [<span class="symbol">:label</span>, <span class="symbol">:check_box</span>, <span class="symbol">:radio_button</span>, <span class="symbol">:fields_for</span>, <span class="symbol">:hidden_field</span>, <span class="symbol">:file_field</span>]).each <span class="keyword">do</span> |selector|</span><br><span class="line">    class_eval &lt;&lt;-<span class="constant">RUBY_EVAL</span>, __FILE_<span class="number">_</span>, __LINE_<span class="number">_</span> + <span class="number">1</span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="comment">#&#123;selector&#125;(method, options = &#123;&#125;)  # def text_field(method, options = &#123;&#125;)</span></span></span><br><span class="line">        <span class="variable">@template</span>.send(                      <span class="comment">#   <span class="doctag">@template</span>.send(</span></span><br><span class="line">          <span class="comment">#&#123;selector.inspect&#125;,               #     "text_field",</span></span><br><span class="line">          <span class="variable">@object_name</span>,                      <span class="comment">#     <span class="doctag">@object</span>_name,</span></span><br><span class="line">          method,                            <span class="comment">#     method,</span></span><br><span class="line">          objectify_options(options))        <span class="comment">#     objectify_options(options))</span></span><br><span class="line">      <span class="keyword">end</span>                                    <span class="comment"># end</span></span><br><span class="line">    <span class="constant">RUBY_EVAL</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>以上是 FormBuilder 中的一段代码，其中 @template 代表的是 FormHelper。可以看出，FormBuilder 其实是一个 FormHelper 方法的代理类。<br>那为什么不直接使用 FormHelper？我的理解是，通过加入一层抽象，增加了灵活性。比如可以通过扩展 FormBuilder 来实现自定义的表单功能。</p>
+<ul>
+<li>最终的 html 是怎么生成的？<br>在 <code>capture(builder, &amp;block)</code> 中通过 FormBuilder 的方法来生成第一步的html，再通过 <code>form_tag_with_body(html_options, output)</code> 替换掉生成 html 中的 form_tag，形成最终版。<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">capture</span><span class="params">(*args)</span></span></span><br><span class="line">    value = <span class="keyword">nil</span></span><br><span class="line">    buffer = with_output_buffer &#123; value = <span class="keyword">yield</span>(*args) &#125;</span><br><span class="line">    <span class="keyword">if</span> string = buffer.presence || value <span class="keyword">and</span> string.is_a?(<span class="constant">String</span>)</span><br><span class="line">      <span class="constant">ERB::Util</span>.html_escape string</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Rails/">Rails</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

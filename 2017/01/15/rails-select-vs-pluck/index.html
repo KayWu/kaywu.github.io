@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>ActiveRecord select vs pluck | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="select、pluck 都可以从数据库读取指定的字段，但两者存在不小的差别。
+1234567Product.select(:id).to_a# Product Load (0.5ms)  SELECT `products`.`id` FROM `products`# [#&amp;lt;Product i">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="ActiveRecord select vs pluck"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-01-15T10:09:31.000Z"><a href="/2017/01/15/rails-select-vs-pluck/">2017-01-15</a></time>
+      
+      
+  
+    <h1 class="title">ActiveRecord select vs pluck</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">Product</span>.select(<span class="symbol">:id</span>).to_a</span><br><span class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></span><br><span class="line"></span><br><span class="line"><span class="constant">Product</span>.pluck(<span class="symbol">:id</span>)</span><br><span class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [2, 1]</span></span><br></pre></td></tr></table></figure>
+<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts <span class="constant">Benchmark</span>.measure &#123;<span class="constant">Product</span>.select(<span class="symbol">:id</span>).to_a&#125;</span><br><span class="line">puts <span class="constant">Benchmark</span>.measure &#123;<span class="constant">Product</span>.pluck(<span class="symbol">:id</span>)&#125;</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>user CPU time</th>
+<th>system CPU time</th>
+<th>sum CPU time</th>
+<th>elapsed real time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>select</td>
+<td>0.050000</td>
+<td>0.020000</td>
+<td>0.070000</td>
+<td>0.095440</td>
+</tr>
+<tr>
+<td>pluck</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.001845</td>
+</tr>
+</tbody>
+</table>
+<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">ProductOrder</span>.where.<span class="keyword">not</span>(<span class="symbol">id:</span> <span class="constant">SubOrder</span>.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></span><br><span class="line"></span><br><span class="line"><span class="constant">ProductOrder</span>.where.<span class="keyword">not</span>(<span class="symbol">id:</span> <span class="constant">SubOrder</span>.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></span><br><span class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></span><br></pre></td></tr></table></figure></p>
+<p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
+<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="external">Select Vs Pluck in Rails</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Rails/">Rails</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

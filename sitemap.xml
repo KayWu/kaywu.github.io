@@ -2,16 +2,121 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://kaywu.github.io/2016/11/20/ruby-super/</loc>
+    <loc>http://kaywu.github.io/2016/11/27/rails-form-for/</loc>
     
-    <lastmod>2017-07-18T09:14:27.000Z</lastmod>
+    <lastmod>2017-07-18T10:17:09.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/01/08/rails-etag/</loc>
+    
+    <lastmod>2017-07-18T10:15:24.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/01/15/rails-select-vs-pluck/</loc>
+    
+    <lastmod>2017-07-18T10:12:26.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/03/19/rails-concern/</loc>
+    
+    <lastmod>2017-07-18T10:08:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/05/01/rails-dev-reload/</loc>
+    
+    <lastmod>2017-07-18T10:06:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/05/14/rails-js-compress/</loc>
+    
+    <lastmod>2017-07-18T10:04:04.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/03/26/mysql-explain/</loc>
+    
+    <lastmod>2017-07-18T10:03:17.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/01/21/mysql-system-error-32/</loc>
+    
+    <lastmod>2017-07-18T09:54:14.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/12/04/mysql-emoji/</loc>
+    
+    <lastmod>2017-07-18T09:51:48.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/07/13/core-tech/</loc>
+    
+    <lastmod>2017-07-18T09:50:07.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/12/16/js-equal/</loc>
+    
+    <lastmod>2017-07-18T09:49:33.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/12/25/dom/</loc>
+    
+    <lastmod>2017-07-18T09:47:37.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/05/30/regex/</loc>
+    
+    <lastmod>2017-07-18T09:44:08.000Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://kaywu.github.io/2016/10/16/meta-programming/</loc>
     
-    <lastmod>2017-07-18T09:14:14.000Z</lastmod>
+    <lastmod>2017-07-18T09:27:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/06/28/factory-girl-analysis/</loc>
+    
+    <lastmod>2017-07-18T09:24:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/12/18/factory-girl/</loc>
+    
+    <lastmod>2017-07-18T09:20:07.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/11/20/ruby-super/</loc>
+    
+    <lastmod>2017-07-18T09:14:27.000Z</lastmod>
     
   </url>
   
@@ -149,13 +254,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2016/02/28/PacketCapture/</loc>
-    
-    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2015/11/30/The-Way-To-Program/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
@@ -178,6 +276,13 @@
   
   <url>
     <loc>http://kaywu.github.io/2015/05/14/Experience/</loc>
+    
+    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/02/28/PacketCapture/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
     

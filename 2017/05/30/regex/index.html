@@ -1,0 +1,376 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>正则表达式必知必会 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="匹配单个字符匹配纯文本正则：Ben&amp;gt;Hello, my name is Ben. Please visit my website at http://www.forta.com/.
+匹配任意字符. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。正则：s">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="正则表达式必知必会"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-05-30T09:37:21.000Z"><a href="/2017/05/30/regex/">2017-05-30</a></time>
+      
+      
+  
+    <h1 class="title">正则表达式必知必会</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code><br>&gt;<br>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="external">http://www.forta.com/</a>.</p>
+<h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code><br>&gt;<br><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
+<h3 id="匹配特殊字符"><a href="#匹配特殊字符" class="headerlink" title="匹配特殊字符"></a>匹配特殊字符</h3><p>元字符是一些在正则表达式里有着特殊含义的字符。如英语句号（.）是一个元字符，它可以用来匹配任何一个单个字符。因为元字符在正则表达式里有着特殊的含义，所以这些字符就无法用来代表它们本身。比如你不能使用 . 类匹配 . 本身。<br>在元字符的前面加上一个反斜杠就可以对它进行转移，转义序列 . 将匹配 . 本身。<br>正则：<code>.a.\.xls</code></p>
+<p>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code></p>
+<h2 id="匹配一组字符"><a href="#匹配一组字符" class="headerlink" title="匹配一组字符"></a>匹配一组字符</h2><h3 id="匹配多个字符中的某一个"><a href="#匹配多个字符中的某一个" class="headerlink" title="匹配多个字符中的某一个"></a>匹配多个字符中的某一个</h3><p>可以使用元字符 [  和 ] 来定义一个字符集合，在使用 [ 和 ] 定义的字符集合里，这两个元字符之间的所有字符都是该集合的组成部分，字符集合的匹配结果是能够与该集合里的任意一个成员想匹配的文本。<br>正则：<code>[ns]a.\.xls</code><br>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code><br>ca1.xls</p>
+<h3 id="利用字符集合区间"><a href="#利用字符集合区间" class="headerlink" title="利用字符集合区间"></a>利用字符集合区间</h3><p>模式 [0-9] 的功能与 [0123456789] 完全等价。</p>
+<p>正则：<code>[ns]a[0-9]\.xls</code><br>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code><br>ca1.xls</p>
+<p>其他常用的字符区间：<br>A-Z：匹配从 A 到 Z 的所有大写字母。<br>a-z：匹配从 a 到 z 的所有小写字母。</p>
+<h3 id="取非匹配"><a href="#取非匹配" class="headerlink" title="取非匹配"></a>取非匹配</h3><p>用元字符 ^ 来表明你相对一个字符集合进行取非匹配，也就是除了那个字符集里的字符，其他字符都可以匹配。<br>正则：<code>[ns]a[^0-9]\.xls</code><br>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>sam.xls</code><br>na1.xls<br>na2.xls<br>sa1.xls<br>ca1.xls</p>
+<h3 id="匹配特定的字符类型"><a href="#匹配特定的字符类型" class="headerlink" title="匹配特定的字符类型"></a>匹配特定的字符类型</h3><table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>\d</td>
+<td>任何一个数字字符（等价于[0-9]）</td>
+</tr>
+<tr>
+<td>\D</td>
+<td>任何一个非数字字符（等价于[^0-9]）</td>
+</tr>
+<tr>
+<td>\w</td>
+<td>任何一个字母数字字符（大小写均可）或下划线字符（等价于[a-zA-Z0-9_]）</td>
+</tr>
+<tr>
+<td>\W</td>
+<td>任何一个非字母数字或非下划线字符（等价于[^a-zA-Z0-9_]）</td>
+</tr>
+</tbody>
+</table>
+<p>正则：<code>myArray\[\d\]</code><br>&gt;<br>var myArray = new Array();<br>…<br>if (<code>myArray[0]</code> == 0) {<br>…<br>}</p>
+<p>正则：<code>\w\d\w\d\w\d</code><br>&gt;<br>11213<br><code>A1C2E3</code><br>48075<br>48237<br><code>M1B4F2</code><br>90046<br><code>H1H2H2</code></p>
+<h3 id="匹配空白字符"><a href="#匹配空白字符" class="headerlink" title="匹配空白字符"></a>匹配空白字符</h3><table>
+<thead>
+<tr>
+<th>元字符</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[\b]</td>
+<td>回退（并删除）一个字符（Backspace键）</td>
+</tr>
+<tr>
+<td>\f</td>
+<td>换页符</td>
+</tr>
+<tr>
+<td>\n</td>
+<td>换行符</td>
+</tr>
+<tr>
+<td>\r</td>
+<td>回车符</td>
+</tr>
+<tr>
+<td>\t</td>
+<td>制表符</td>
+</tr>
+<tr>
+<td>\v</td>
+<td>垂直制表符</td>
+</tr>
+<tr>
+<td>\s</td>
+<td>任何一个空白字符（等价于[\f\n\r\t\v]）</td>
+</tr>
+<tr>
+<td>\S</td>
+<td>任何一个非空白字符（等价于[^\f\n\r\t\v]）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="重复匹配"><a href="#重复匹配" class="headerlink" title="重复匹配"></a>重复匹配</h2><h3 id="匹配一个或多个字符"><a href="#匹配一个或多个字符" class="headerlink" title="匹配一个或多个字符"></a>匹配一个或多个字符</h3><ul>
+<li>匹配一个或多个字符（至少一个；不匹配零个字符的情况）。<br>正则：<code>\w+@\w+\.\w+</code><br>&gt;<br>Send personal email to <code>ben@forta.com</code>. For questions about a book use <code>support@forta.com</code>. Feel free to send unsolicited email to <code>spam@forta.com</code> (wouldn’t it be nice if it were that simple, huh?).</li>
+</ul>
+<h3 id="匹配零个或多个字符"><a href="#匹配零个或多个字符" class="headerlink" title="匹配零个或多个字符"></a>匹配零个或多个字符</h3><ul>
+<li>元字符匹配零个或多个字符。<br>正则：<code>\w+[\w.]*@[\w.]+\.\w+</code><br>&gt;<br>Hello, <code>.ben@forta.com</code> is my email address.</li>
+</ul>
+<h3 id="匹配零个或一个字符"><a href="#匹配零个或一个字符" class="headerlink" title="匹配零个或一个字符"></a>匹配零个或一个字符</h3><p>? 只能匹配一个字符（或字符集合）的零次或一次出现，最多不超过一次。<br>正则：<code>https?://[\w./]+</code><br>&gt;<br>The URL is <code>http://www.forta.com/</code>, to connect securely use <code>https://www.forta.com/</code> instead.</p>
+<h3 id="匹配的重复次数"><a href="#匹配的重复次数" class="headerlink" title="匹配的重复次数"></a>匹配的重复次数</h3><p>{3}意味着模式里的前一个字符（或字符集合）必须在原始文本里连续重复出现 3 次才算是一个匹配。<br>{2, 4} 的含义是最少重复 2 次、最多重复 4 次。<br>{3，} 表示至少重复 3 次。</p>
+<h3 id="懒惰型元字符"><a href="#懒惰型元字符" class="headerlink" title="懒惰型元字符"></a>懒惰型元字符</h3><p>正则：<code>&lt;[Bb]&gt;.*&lt;/[Bb]&gt;</code><br>&gt;<br>This offer is not available to customers living in <code>&lt;B&gt;AK&lt;/B&gt; and &lt;B&gt;HI&lt;/B&gt;</code>.</p>
+<p>因为 * 和 + 都是所谓的“贪婪型”元字符，它们在进行匹配时的行为模式是多多益善而不是适可而止的，会尽可能地从一段文本的开头一直匹配到这段文本的末尾。<br>在不需要这种“贪婪行为”的时候该怎么办？答案是使用这些元字符的“懒惰型”版本。懒惰型元字符只要给贪婪性元字符加上一个 ? 后缀即可。</p>
+<table>
+<thead>
+<tr>
+<th>贪婪型元字符</th>
+<th>懒惰型元字符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>*</td>
+<td>*?</td>
+</tr>
+<tr>
+<td>+</td>
+<td>+?</td>
+</tr>
+<tr>
+<td>{n, }</td>
+<td>{n, }?</td>
+</tr>
+</tbody>
+</table>
+<p>正则：<code>&lt;[Bb]&gt;.*?&lt;/[Bb]&gt;</code><br>&gt;<br>This offer is not available to customers living in <code>&lt;B&gt;AK&lt;/B&gt;</code> and <code>&lt;B&gt;HI&lt;/B&gt;</code>.</p>
+<h2 id="位置匹配"><a href="#位置匹配" class="headerlink" title="位置匹配"></a>位置匹配</h2><h3 id="单词边界"><a href="#单词边界" class="headerlink" title="单词边界"></a>单词边界</h3><p>\b 用来匹配一个单词的开始或结尾。<br>简单地说，\b 匹配的是一个这样的位置，这个位置位于一个能够用户构成单词的字符（字母、数字和下划线，也就是与 \w 相匹配的字符）和一个不能用来构成单词的字符（也就是与 \W 相匹配的字符）之间。<br>正则：<code>\bcat\b</code><br>&gt;<br>The <code>cat</code> scattered his food all over the room.</p>
+<h3 id="字符串边界"><a href="#字符串边界" class="headerlink" title="字符串边界"></a>字符串边界</h3><p>^ 用来定义字符串开头，\$ 用来定义字符串结尾。<br>注意：不同语言对 ^ \$ 的处理有所不同。比如 Javascript 是按照以上定义实现的，而 Ruby 中 ^ 匹配一行的开始，\$ 匹配一行的结束。具体可参考 <a href="http://www.regular-expressions.info/anchors.html。" target="_blank" rel="external">http://www.regular-expressions.info/anchors.html。</a></p>
+<h2 id="使用子表达式"><a href="#使用子表达式" class="headerlink" title="使用子表达式"></a>使用子表达式</h2><p>子表达式是一个更大的表达式的一部分，把一个表达式划分为一系列子表达式的目的是为了把那些子表达式当做一个独立元素来使用。子表达式必须用 ( 和 ) 括起来。<br>正则：<code>(19|20)\d{2}</code><br>&gt;<br>ID: 042<br>SEX: M<br>DOB: <code>1967</code>-08-17<br>Status: Active</p>
+<p>| 字符表示或操作符，19|20 将匹配数字序列 19 或 20。</p>
+<h2 id="回溯引用：前后一致匹配"><a href="#回溯引用：前后一致匹配" class="headerlink" title="回溯引用：前后一致匹配"></a>回溯引用：前后一致匹配</h2><p>正则：<code>[ ]+(\w+)[ ]+\1</code><br>&gt;<br>This is a block <code>of of</code> text, several words here <code>are are</code> repeated, <code>and and</code> they should not be.</p>
+<p>\1 不是一个回溯引用，而它引用的正是前面划分出来的那个子表达式。当 (\w+) 匹配到单词 of 的时候，\1 也匹配单词 of；当 (\w+) 匹配到单词 and 的时候，\1 也匹配单词 and。<br>为了方便理解，可以把回溯引用想象成变量。</p>
+<h2 id="前后查找"><a href="#前后查找" class="headerlink" title="前后查找"></a>前后查找</h2><p>前后查找包含的匹配本身并不返回，而是用于确定正确的匹配位置，它并不是匹配结果的一部分。</p>
+<h3 id="向前查找"><a href="#向前查找" class="headerlink" title="向前查找"></a>向前查找</h3><p>从语法上看，一个向前查找模式其实就是一个以 ?= 开头的子表达式，需要匹配的文本跟在 = 后面。</p>
+<p>正则：<code>.+(?=:)</code><br>&gt;<br><code>http</code>://www.forta.com/<br><code>https</code>://mail.forta.com/<br><code>ftp</code>://ftp.forta.com/</p>
+<p>与子表达的对比。<br>正则：<code>.+(:)</code><br>&gt;<br><code>http:</code>//www.forta.com/<br><code>https:</code>//mail.forta.com/<br><code>ftp:</code>//ftp.forta.com/</p>
+<h3 id="向后查找"><a href="#向后查找" class="headerlink" title="向后查找"></a>向后查找</h3><p>向后查找，以 ?&lt;= 开头的子表达式。<br>正则： <code>(?=\$)[0-9.]+</code><br>&gt;<br>ABC01: $<code>23.45</code><br>Total items found: 4</p>
+<h3 id="对前后查找取非"><a href="#对前后查找取非" class="headerlink" title="对前后查找取非"></a>对前后查找取非</h3><p>负向前查找讲向前查找不与给定模式相匹配的文本，负向后查找将向后查找不与给定模式相匹配的文本。</p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>说明</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(?=)</td>
+<td>正向前查找</td>
+<td>\d+(?= dollars) matches 100 in “100 dollars”</td>
+</tr>
+<tr>
+<td>(?!)</td>
+<td>负向前查找</td>
+<td>d+(?! dollars) matches 100 if it is NOT followed by the word “dollars”</td>
+</tr>
+<tr>
+<td>(?&lt;=)</td>
+<td>正向后查找</td>
+<td>(?&lt;=lucky )\d matches 7 in “lucky 7”</td>
+</tr>
+<tr>
+<td>(?&lt;!)</td>
+<td>负向后查找</td>
+<td>(?&lt;!furious )\d matches 7 in “lucky 7”</td>
+</tr>
+</tbody>
+</table>
+<h2 id="嵌入条件"><a href="#嵌入条件" class="headerlink" title="嵌入条件"></a>嵌入条件</h2><p>(?(backreference)true-regex)：? 表示这是一个条件，括号里的 backreference 是一个回溯引用， backreference 存在时会执行true-regex。<br>(?(backreference)true-regex|false-regex)： backreference 不存在时会执行 false-regex。</p>
+<h3 id="回溯引用条件"><a href="#回溯引用条件" class="headerlink" title="回溯引用条件"></a>回溯引用条件</h3><p>正则：<code>(\()?\d{3}(?(1)\)|-)\d{3}-\d{4}</code><br>&gt;<br><code>123-456-7890</code><br><code>(123)456-7890</code><br>(123)-456-7890<br>(123-456-7890<br>1234567890<br>123 456 7890</p>
+<p>(()? 匹配一个可选的左括号,(?(1))|-) 将根据条件是否满足而去匹配 ) 或者 -。如果 (1) 存在，) 必须被匹配，否则 - 必须被匹配。</p>
+<h3 id="前后查找条件"><a href="#前后查找条件" class="headerlink" title="前后查找条件"></a>前后查找条件</h3><p>前后查找条件的语法与回溯引用条件的语法大同小异，只需把回溯引用替换为一个完整的前后查找表达式就行了。<br>正则：<code>\d{5}(?(?=-)-\d{4})</code><br>&gt;<br>11111<br>22222<br>33333-<br>44444-4444</p>
+<p>(?(?=-)-\d{4}) 使用了 ?=- 来匹配（但不消费）一个连字符，如果条件得到满足（那个连字符存在），-\d{4} 将匹配那个连字符和随后的 4 位数字。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/读书笔记/">读书笔记</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Rails ETag 应用 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="使用 ETag 验证缓存来源：Browser Cache: How ETags Works in Rails 3 and Rails 4可以把 ETag 看成是响应的 token，客户端在下一个同样的请求中将其发送给服务器。服务器通过 token 来判断资源是否进行修改。若未修改，则返回 304 N">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Rails ETag 应用"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-01-08T10:13:24.000Z"><a href="/2017/01/08/rails-etag/">2017-01-08</a></time>
+      
+      
+  
+    <h1 class="title">Rails ETag 应用</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="使用-ETag-验证缓存"><a href="#使用-ETag-验证缓存" class="headerlink" title="使用 ETag 验证缓存"></a>使用 ETag 验证缓存</h2><p><img src="/img/etag.png" alt="etag.png-27.9kB"><br>来源：<a href="http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/" target="_blank" rel="external">Browser Cache: How ETags Works in Rails 3 and Rails 4</a><br>可以把 ETag 看成是响应的 token，客户端在下一个同样的请求中将其发送给服务器。服务器通过 token 来判断资源是否进行修改。若未修改，则返回 <code>304 Not Modified</code>，使客户端不需再去下载与缓存中已有的完全相同的字节。</p>
+<h2 id="fresh-when"><a href="#fresh-when" class="headerlink" title="fresh_when"></a>fresh_when</h2><p>在 Rails 中，我们可以通过 <code>stale</code> 或 <code>fresh_when</code> 方法来显式地使用 ETag。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductsController</span> <span class="inheritance">&lt; <span class="parent">ApplicationController</span></span></span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># This will automatically send back a :not_modified if the request is fresh,</span></span><br><span class="line">  <span class="comment"># and will render the default template (product.*) if it's stale.</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span></span><br><span class="line">    <span class="variable">@product</span> = <span class="constant">Product</span>.find(params[<span class="symbol">:id</span>])</span><br><span class="line">    fresh_when <span class="symbol">last_modified:</span> <span class="variable">@product</span>.published_at.utc, <span class="symbol">etag:</span> <span class="variable">@product</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>上例中通过 <code>@product.published_at.utc</code> 来判断资源是否过期。</p>
+<h2 id="默认开启的-ETag"><a href="#默认开启的-ETag" class="headerlink" title="默认开启的 ETag"></a>默认开启的 ETag</h2><p>最近才发现不用 fresh_when 返回的请求也会自带 ETag，查了下原来 Rails 框架默认使用 Rack::ETag middleware，会自动给无 ETag 的 response 根据其 body 添加上 ETag。<br>相关代码如下：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># File 'lib/rack/etag.rb', line 24</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">call</span><span class="params">(env)</span></span></span><br><span class="line">  status, headers, body = <span class="variable">@app</span>.call(env)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> etag_status?(status) &amp;&amp; etag_body?(body) &amp;&amp; !skip_caching?(headers)</span><br><span class="line">    original_body = body</span><br><span class="line">    digest, new_body = digest_body(body)</span><br><span class="line">    body = <span class="constant">Rack::BodyProxy</span>.new(new_body) <span class="keyword">do</span></span><br><span class="line">      original_body.close <span class="keyword">if</span> original_body.respond_to?(<span class="symbol">:close</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    headers[<span class="constant">ETAG_STRING</span>] = <span class="string">%(W/"<span class="subst">#&#123;digest&#125;</span>")</span> <span class="keyword">if</span> digest</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">unless</span> headers[<span class="constant">CACHE_CONTROL</span>]</span><br><span class="line">    <span class="keyword">if</span> digest</span><br><span class="line">      headers[<span class="constant">CACHE_CONTROL</span>] = <span class="variable">@cache_control</span> <span class="keyword">if</span> <span class="variable">@cache_control</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      headers[<span class="constant">CACHE_CONTROL</span>] = <span class="variable">@no_cache_control</span> <span class="keyword">if</span> <span class="variable">@no_cache_control</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  [status, headers, body]</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>那这种默认的 ETag 和 fresh_when 有什么区别呢？<br>主要区别是判定缓存命中的时机。fresh_when 通过指定的 last_modified 来判定是否命中，若命中则不需要进行渲染。而 默认的 ETag 是根据 response body 生成的，必须先进行模板文件的渲染。也就是说，fresh_when 的效率更高。但同样的，使用 fresh_when 必须准确地指定 last_modified 来判定缓存是否失效。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/" target="_blank" rel="external">Browser Cache: How ETags Works in Rails 3 and Rails 4</a></li>
+<li><a href="http://guides.rubyonrails.org/caching_with_rails.html" target="_blank" rel="external">Caching with Rails: An Overview</a></li>
+<li><a href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching" target="_blank" rel="external">HTTP Caching</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Rails/">Rails</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

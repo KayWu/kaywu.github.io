@@ -66,24 +66,25 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-04-05T10:00:02.000Z"><a href="/2015/04/05/LayoutInfalter/">2015-04-05</a></time>
+        <time datetime="2016-05-29T02:58:55.000Z"><a href="/2016/05/29/ThreadPoolExecutor/">2016-05-29</a></time>
       
       
   
-    <h1 class="title"><a href="/2015/04/05/LayoutInfalter/">从 LayoutInflater 谈起</a></h1>
+    <h1 class="title"><a href="/2016/05/29/ThreadPoolExecutor/">Java 线程池笔记</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>LayoutInflater 是我们用来加载布局的类，经常用于 Adapter 的 getView，Fragment 的 onCreateView 方法中。但我在使用时，经常有些疑惑，比如 inflater 方法参数的数目有时候为 2 个，有时候 3 个。第 2 个参数经常为 null，而第 3 个参数在第 2 个参数不为 null 的情况下常为 false。这些到底有什么区别？通过一段时间的实践，稍微有了些体会，写文章来总结下。<br>
+        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure></p>
+<p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2015/04/05/LayoutInfalter/#more" class="more-link">Read More</a>
+            <a href="/2016/05/29/ThreadPoolExecutor/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -103,24 +104,24 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-04-04T10:47:05.000Z"><a href="/2015/04/04/GoogleMusicPlayer/">2015-04-04</a></time>
+        <time datetime="2016-05-15T06:44:29.000Z"><a href="/2016/05/15/Closure/">2016-05-15</a></time>
       
       
   
-    <h1 class="title"><a href="/2015/04/04/GoogleMusicPlayer/">简单分析下 Google 最近的开源播放器</a></h1>
+    <h1 class="title"><a href="/2016/05/15/Closure/">闭包是什么</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
+        <p>闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。但在理解闭包之前，我们需要知道一些基础性的概念。让我们先从命名说起。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2015/04/04/GoogleMusicPlayer/#more" class="more-link">Read More</a>
+            <a href="/2016/05/15/Closure/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -140,24 +141,286 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-04-03T11:23:22.000Z"><a href="/2015/04/03/DoubanDemo/">2015-04-03</a></time>
+        <time datetime="2016-05-07T00:45:29.000Z"><a href="/2016/05/07/App-Development/">2016-05-07</a></time>
       
       
   
-    <h1 class="title"><a href="/2015/04/03/DoubanDemo/">打造豆瓣App</a></h1>
+    <h1 class="title"><a href="/2016/05/07/App-Development/">读《App 研发录》</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。<br><img src="/img/20150221173403265.gif" alt="最终效果"><br>
+        <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2015/04/03/DoubanDemo/#more" class="more-link">Read More</a>
+            <a href="/2016/05/07/App-Development/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-01T11:43:01.000Z"><a href="/2016/05/01/Maven-aar-source/">2016-05-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/01/Maven-aar-source/">为 aar 关联源代码</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>不知大家是否注意过，在使用 aar 时，若是本地的 aar 包，打开相关源码是反编译后的文件。而如果是引用的如 jcenter 的库，就能阅读详尽的源代码。两者的区别是什么呢？<br>如果大家有尝试过上传 library 到 jcenter 或 maven 就会知道，除了 aar 文件之外，还要上传相应的 sources、javadoc 以及 pom 文件，就像 <a href="https://bintray.com/bintray/jcenter/com.yalantis%3Aucrop/1.5.0/view#files/com/yalantis/ucrop/1.5.0">ucrop</a> 所显示的那样。gradle 在下载依赖时，也会包括 sources、javadoc 等文件，而 sources 文件正是使我们能够阅读源代码的真正原因。<br>那么，如何为 aar 文件添加 sources 支持呢？一种方法是添加 aar 的同时手工导入相应的 sources 文件，另一种则是将 aar、sources 上传到仓库然后通过 gradle 导入。这里说明第二种方法的使用。<br>由于上传到 maven、jcenter 都需要额外的步骤，为方便起见，我们搭建一个本地 Maven 仓库来讲解。如何搭建仓库可以参考 <a href="http://jeroenmols.com/blog/2015/08/06/artifactory/">A PRIVATE MAVEN REPOSITORY FOR ANDROID IN 30 MIN</a>，有<a href="http://www.devtf.cn/?p=1079">中文翻译</a>。后续对 build.gradle 的说明会建立在该文章的基础上。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/05/01/Maven-aar-source/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-24T06:52:03.000Z"><a href="/2016/04/24/Gradle/">2016-04-24</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/24/Gradle/">从编程的角度理解 Gradle</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>刚开始接触 Gradle 时，一头雾水。碰到不会的地方，搜索相关解决方案然后依样画葫芦。至于为什么这么做，这么做的原理是什么，完全不清楚。后来看了 <a href="http://blog.csdn.net/innost/article/details/48228651">Gradle 详解</a>，觉得作者说的十分有道理，得从编程的角度而不是脚本的角度来看 Gradle。下面小结下我在这个过程中的一些收获。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/24/Gradle/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/17/Android-Screen-On/">Android 保持屏幕常亮方法小结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/17/Android-Screen-On/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-03T10:38:09.000Z"><a href="/2016/04/03/Python-OpenPyXL/">2016-04-03</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/04/03/Python-OpenPyXL/">使用 Python 处理 Excel 文件</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近在学着使用 Python 解决些重复枯燥的工作，也给自己省些时间。比如每天从网站上摘抄几个数据然后制成 Excel。偶尔倒还好，要是每天都要这样，岂不是很浪费时间？像这种重复性的操作就可以交给不辞辛劳的计算机。<br>解决上面的需求主要分两步，一是从网上摘抄数据，根据不同的情况，摘抄数据的手段也各异。简单的直接<code>curl</code>一下然后正则，复杂点的可能需要抓包，或者爬虫，这里就不做展开（自己还在学……）。二是处理 Excel，今天就着重讲讲怎么处理 Excel。</p>
+<p>Python 关于 Excel 的库主要有两个：Python-Excel（xlrd, xlwt, xlutils）和 OpenPyXL。前者主要用于 xls，后者用于 xlsx。现在多数文件都是 xlsx，且后者维护得很勤快，再加上 <a href="https://automatetheboringstuff.com/">Automate the Boring Stuff with Python</a> 也是用的 OpenPyXL，就愉快地决定用它了。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/04/03/Python-OpenPyXL/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-27T11:28:08.000Z"><a href="/2016/03/27/Android-Support-Annotation/">2016-03-27</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/27/Android-Support-Annotation/">Support Annotation 小结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Support Annotation 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过<code>compile &#39;com.android.support:support-annotations:22.2.0&#39;</code>就能引入。它可以检验代码潜在的问题并提醒你去修正它。<br>下面简单介绍下我常用的几个注解，更加全面的介绍可以看<a href="http://tools.android.com/tech-docs/support-annotations">官方文档</a>。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/27/Android-Support-Annotation/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-20T05:29:15.000Z"><a href="/2016/03/20/Python-LiveReload/">2016-03-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/20/Python-LiveReload/">初识 LiveReload</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。<br>LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 <a href="http://livereload.readthedocs.org/en/latest/">LiveReload</a> 介绍其使用。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/20/Python-LiveReload/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/13/Java-Exception/">聊聊 Java Exception 机制</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mRestAdapter.create(Api.class).sendRequst();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// handle Exception</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;.start();</span><br></pre></td></tr></table></figure></p>
+<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</span><br><span class="line">  String firstLine = reader.readLine();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/13/Java-Exception/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -176,6 +439,8 @@
   
     <a href="/page/3/" class="alignleft prev">上一页</a>
   
+  
+    <a href="/page/5/" class="alignright next">下一页</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -196,23 +461,27 @@
   
     <li><a href="/categories/Android/">Android</a><small>14</small></li>
   
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
     <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   
     <li><a href="/categories/Java/">Java</a><small>3</small></li>
   
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
     <li><a href="/categories/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>3</small></li>
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
   
     <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
   
     <li><a href="/categories/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/categories/Ruby/读书笔记/">读书笔记</a><small>1</small></li>
-  
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
@@ -236,6 +505,18 @@
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
 
 
 

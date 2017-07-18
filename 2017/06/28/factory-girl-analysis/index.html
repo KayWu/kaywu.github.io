@@ -1,0 +1,233 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>FactoryGirl 源码浅析 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 FactoryGirl 技巧。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。这里我会对它最基础的方法进">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="FactoryGirl 源码浅析"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-06-28T09:21:20.000Z"><a href="/2017/06/28/factory-girl-analysis/">2017-06-28</a></time>
+      
+      
+  
+    <h1 class="title">FactoryGirl 源码浅析</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 <a href="http://www.jianshu.com/p/cca80f341d77" target="_blank" rel="external">FactoryGirl 技巧</a>。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。<br>这里我会对它最基础的方法进行分析，版本为 4.8.0。</p>
+<h3 id="FactoryGirl-define"><a href="#FactoryGirl-define" class="headerlink" title="FactoryGirl.define"></a>FactoryGirl.define</h3><p>先从定义 Factory 开始。下面的代码定义了名为 user 的 Factory，它有一个名为 name 的属性，值为 Kay。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">FactoryGirl</span>.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:user</span> <span class="keyword">do</span></span><br><span class="line">    name <span class="string">'Kay'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>我们先找到 FactoryGirl.define 的入口，在 syntax/default.rb 里。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># syntax/default.rb</span></span><br><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">FactoryGirl</span></span></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Syntax</span></span></span><br><span class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Default</span></span></span><br><span class="line">      <span class="keyword">include</span> <span class="constant">Methods</span></span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">define</span><span class="params">(&amp;block)</span></span></span><br><span class="line">        <span class="constant">DSL</span>.run(block)</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">      <span class="class"><span class="keyword">class</span> <span class="title">DSL</span></span></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">factory</span><span class="params">(name, options = &#123;&#125;, &amp;block)</span></span></span><br><span class="line">          factory = <span class="constant">Factory</span>.new(name, options)</span><br><span class="line">          proxy = <span class="constant">FactoryGirl::DefinitionProxy</span>.new(factory.definition)</span><br><span class="line">          proxy.instance_eval(&amp;block) <span class="keyword">if</span> block_given?</span><br><span class="line"></span><br><span class="line">          <span class="constant">FactoryGirl</span>.register_factory(factory)</span><br><span class="line"></span><br><span class="line">          proxy.child_factories.each <span class="keyword">do</span> |(child_name, child_options, child_block)|</span><br><span class="line">            parent_factory = child_options.delete(<span class="symbol">:parent</span>) || name</span><br><span class="line">            factory(child_name, child_options.merge(<span class="symbol">parent:</span> parent_factory), &amp;child_block)</span><br><span class="line">          <span class="keyword">end</span></span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">run</span><span class="params">(block)</span></span></span><br><span class="line">          new.instance_eval(&amp;block)</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  extend <span class="constant">Syntax::Default</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>从上面的代码分析可得，define 会调用 DSL.run，之后调用了 DSL#factory 方法，传入的参数 name 为 <code>:user</code>，block 为 <code>{ name &#39;Kay&#39; }</code>。我们重点看 factory 方法其中 4 行：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># DSL#factory</span></span><br><span class="line">factory = <span class="constant">Factory</span>.new(name, options)</span><br><span class="line">proxy = <span class="constant">FactoryGirl::DefinitionProxy</span>.new(factory.definition)</span><br><span class="line">proxy.instance_eval(&amp;block) <span class="keyword">if</span> block_given?</span><br><span class="line"></span><br><span class="line"><span class="constant">FactoryGirl</span>.register_factory(factory)</span><br></pre></td></tr></table></figure></p>
+<p>首先，会创建一个新的 Factory 对象，然后通过代理类 FactoryGirl::DefinitionProxy 对其进行封装，并执行其中的 block，最后注册这个 factory。其中 <code>proxy.instance_eval(&amp;block) if block_given?</code> 是属性赋值的关键。</p>
+<p><code>{ name &#39;Kay&#39; }</code> 会调用 FactoryGirl::DefinitionProxy 的 name 方法，但由于代理类没有该方法，最终会执行 method_missing，而该方法实现了赋值的逻辑。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method_missing</span><span class="params">(name, *args, &amp;block)</span></span></span><br><span class="line">  <span class="keyword">if</span> args.empty? &amp;&amp; block.<span class="keyword">nil</span>?</span><br><span class="line">    <span class="variable">@definition</span>.declare_attribute(<span class="constant">Declaration::Implicit</span>.new(name, <span class="variable">@definition</span>, <span class="variable">@ignore</span>))</span><br><span class="line">  <span class="keyword">elsif</span> args.first.respond_to?(<span class="symbol">:has_key?</span>) &amp;&amp; args.first.has_key?(<span class="symbol">:factory</span>)</span><br><span class="line">    association(name, *args)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    add_attribute(name, *args, &amp;block)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>由于赋值除了固定值，还可能是 block 或者 association，这里对几种情况分别进行了处理。</p>
+<p>FactoryGirl.define 的分析差不多结束了，method_missing 这一元编程的魔法在这里又发挥了巨大的作用。</p>
+<h3 id="FactoryGirl-create"><a href="#FactoryGirl-create" class="headerlink" title="FactoryGirl.create"></a>FactoryGirl.create</h3><p>讲完了 Factory 是如何定义的，我们来研究下如何创建一个 Factory。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user = <span class="constant">FactoryGirl</span>.create(<span class="symbol">:user</span>, <span class="symbol">name:</span> <span class="string">'Link'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>我们首先得找到 create 的入口。当搜寻了一遍之后会发现，并没有显式定义 create 的地方。看来该方法是动态定义的了。从官方文档上来看，create 定义在 FactoryGirl::Syntax::Methods。搜索之后发现 StrategySyntaxMethodRegistrar 里出现了给它动态添加方法的代码。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># strategy_syntax_method_registrar.rb</span></span><br><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">FactoryGirl</span></span></span><br><span class="line">    private</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">define_singular_strategy_method</span></span></span><br><span class="line">      strategy_name = <span class="variable">@strategy_name</span></span><br><span class="line"></span><br><span class="line">      define_syntax_method(strategy_name) <span class="keyword">do</span> |name, *traits_and_overrides, &amp;block|</span><br><span class="line">        <span class="constant">FactoryRunner</span>.new(name, strategy_name, traits_and_overrides).run(&amp;block)</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">define_syntax_method</span><span class="params">(name, &amp;block)</span></span></span><br><span class="line">      <span class="constant">FactoryGirl::Syntax::Methods</span>.module_exec <span class="keyword">do</span></span><br><span class="line">        <span class="keyword">if</span> method_defined?(name) || private_method_defined?(name)</span><br><span class="line">          undef_method(name)</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">        define_method(name, &amp;block)</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>用 create 替换 strategy_name，FactoryGirl.create 实质调用了 <code>FactoryRunner.new(name, :create, : traits_and_overrides).run(&amp;block)</code>。而 FactoryRunner#run 在进行了一些准备后，最终调用了 <code>factory.run(runner_strategy, @overrides, &amp;block)</code> 来创建对象。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Factory#run</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(build_strategy, overrides, &amp;block)</span></span></span><br><span class="line">  block ||= -&gt;(result) &#123; result &#125;</span><br><span class="line">  compile</span><br><span class="line">  strategy = <span class="constant">StrategyCalculator</span>.new(build_strategy).strategy.new</span><br><span class="line">  evaluator = evaluator_class.new(strategy, overrides.symbolize_keys)</span><br><span class="line">  attribute_assigner = <span class="constant">AttributeAssigner</span>.new(evaluator, build_class, &amp;compiled_constructor)</span><br><span class="line">  evaluation = <span class="constant">Evaluation</span>.new(attribute_assigner, compiled_to_create)</span><br><span class="line">  evaluation.add_observer(<span class="constant">CallbacksObserver</span>.new(callbacks, evaluator))</span><br><span class="line">  strategy.result(evaluation).tap(&amp;block)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>最后一行 <code>strategy.result(evaluation).tap(&amp;block)</code> 最终返回的是 evaluation.object，而 evaluation 把 object 委托给 attribute_assigner。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># AttributeAssigner#object</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">object</span></span></span><br><span class="line">  <span class="variable">@evaluator</span>.instance = build_class_instance</span><br><span class="line">  build_class_instance.tap <span class="keyword">do</span> |instance|</span><br><span class="line">    attributes_to_set_on_instance.each <span class="keyword">do</span> |attribute|</span><br><span class="line">      instance.public_send(<span class="string">"<span class="subst">#&#123;attribute&#125;</span>="</span>, get(attribute))</span><br><span class="line">      <span class="variable">@attribute_names_assigned</span> &lt;&lt; attribute</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>build_class_instance 实质上调用了 User.new 方法，创建了 User 对象。<code>instance.public_send</code> 对该对象的属性进行赋值。</p>
+<p>至此最关键的创建步骤说完了，我们简单地说下其他几行的作用。<br><code>compile</code> 主要处理 Factory 之间的继承关系。<br><code>StrategyCalculator.new(build_strategy).strategy.new</code> 为简单工厂，可以根据 Strategy 的名字找到对应的类。<br>evaluator 保存了属性的赋值。为什么不直接进行赋值，而要使用一个中间类？我觉得原因是，FactoryGirl 创建 user 时不仅可以给 user 的属性赋值，还可以给 evaluator 赋值。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:user</span> <span class="keyword">do</span></span><br><span class="line">    name <span class="string">"John Doe"</span></span><br><span class="line">    factory <span class="symbol">:user_with_posts</span> <span class="keyword">do</span></span><br><span class="line">      transient <span class="keyword">do</span></span><br><span class="line">        posts_count <span class="number">5</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">      after(<span class="symbol">:create</span>) <span class="keyword">do</span> |user, evaluator|</span><br><span class="line">        create_list(<span class="symbol">:post</span>, evaluator.posts_count, <span class="symbol">user:</span> user)</span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用</span></span><br><span class="line">create(<span class="symbol">:user_with_posts</span>, <span class="symbol">posts_count:</span> <span class="number">15</span>)</span><br></pre></td></tr></table></figure></p>
+<p>这里的 posts_count 不是 user 本身的属性，而属于 evaluator。<br>AttributeAssigner 创建了 user 对象，并给它赋值。<br>Evaluation 是对 Strategy 回调方法的一个封装，比如 Strategy::Create，都是直接调用的 evaluation 的方法。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Strategy::Create#result</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">result</span><span class="params">(evaluation)</span></span></span><br><span class="line">  evaluation.object.tap <span class="keyword">do</span> |instance|</span><br><span class="line">    evaluation.notify(<span class="symbol">:after_build</span>, instance)</span><br><span class="line">    evaluation.notify(<span class="symbol">:before_create</span>, instance)</span><br><span class="line">    evaluation.create(instance)</span><br><span class="line">    evaluation.notify(<span class="symbol">:after_create</span>, instance)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>顺带说下，compiled_constructor、compiled_to_create 在经过千辛万苦的查找后，是两个非常简单的 block。compiled_constructor 为 <code>{ new }</code>，而 compiled_to_create 为 <code>{ |instance| instance.save! }</code>，来自 configuration.rb 19、20 行。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>由于水平精力有限，只简单地分析了最基础的 define 和 create 方法。<br>define 使用了 method_missing 来实现属性的赋值。由于 FactoryGirl create 对象时能通过很灵活的方式，比如 trait，使得其代码在创建对象时要考虑各方面的配置。这里只抽出了最主要的流程进行说明。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Ruby/">Ruby</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

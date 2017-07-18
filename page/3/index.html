@@ -66,24 +66,26 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-04-17T01:37:41.000Z"><a href="/2016/04/17/Android-Screen-On/">2016-04-17</a></time>
+        <time datetime="2016-09-06T14:36:27.000Z"><a href="/2016/09/06/blog-speed-up/">2016-09-06</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/04/17/Android-Screen-On/">Android 保持屏幕常亮方法小结</a></h1>
+    <h1 class="title"><a href="/2016/09/06/blog-speed-up/">Hexo 博客加速实践</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br>
+        <p>最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。</p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</span><br><span class="line">@import url("//fonts.useso.com/css?family=Lato:400,400italic")</span><br></pre></td></tr></table></figure></p>
+<p>当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。<br>再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。<br>但是，这还不够。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/04/17/Android-Screen-On/#more" class="more-link">Read More</a>
+            <a href="/2016/09/06/blog-speed-up/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -103,25 +105,27 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-04-03T10:38:09.000Z"><a href="/2016/04/03/Python-OpenPyXL/">2016-04-03</a></time>
+        <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape-Drawable/">2016-08-28</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/04/03/Python-OpenPyXL/">使用 Python 处理 Excel 文件</a></h1>
+    <h1 class="title"><a href="/2016/08/28/Shape-Drawable/">从代码创建 Shape Drawable</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>最近在学着使用 Python 解决些重复枯燥的工作，也给自己省些时间。比如每天从网站上摘抄几个数据然后制成 Excel。偶尔倒还好，要是每天都要这样，岂不是很浪费时间？像这种重复性的操作就可以交给不辞辛劳的计算机。<br>解决上面的需求主要分两步，一是从网上摘抄数据，根据不同的情况，摘抄数据的手段也各异。简单的直接<code>curl</code>一下然后正则，复杂点的可能需要抓包，或者爬虫，这里就不做展开（自己还在学……）。二是处理 Excel，今天就着重讲讲怎么处理 Excel。</p>
-<p>Python 关于 Excel 的库主要有两个：Python-Excel（xlrd, xlwt, xlutils）和 OpenPyXL。前者主要用于 xls，后者用于 xlsx。现在多数文件都是 xlsx，且后者维护得很勤快，再加上 <a href="https://automatetheboringstuff.com/">Automate the Boring Stuff with Python</a> 也是用的 OpenPyXL，就愉快地决定用它了。<br>
+        <p>平时一直是用 xml 来写 Shape Drawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
+<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">shape</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:shape</span>=<span class="value">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">corners</span> <span class="attribute">android:radius</span>=<span class="value">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">stroke</span> <span class="attribute">android:width</span>=<span class="value">"2px"</span> <span class="attribute">android:color</span>=<span class="value">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+<p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/04/03/Python-OpenPyXL/#more" class="more-link">Read More</a>
+            <a href="/2016/08/28/Shape-Drawable/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -141,24 +145,26 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-27T11:28:08.000Z"><a href="/2016/03/27/Android-Support-Annotation/">2016-03-27</a></time>
+        <time datetime="2016-08-14T15:54:09.000Z"><a href="/2016/08/14/Single-Number/">2016-08-14</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/03/27/Android-Support-Annotation/">Support Annotation 小结</a></h1>
+    <h1 class="title"><a href="/2016/08/14/Single-Number/">Single Number</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>Support Annotation 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过<code>compile &#39;com.android.support:support-annotations:22.2.0&#39;</code>就能引入。它可以检验代码潜在的问题并提醒你去修正它。<br>下面简单介绍下我常用的几个注解，更加全面的介绍可以看<a href="http://tools.android.com/tech-docs/support-annotations">官方文档</a>。<br>
+        <h2 id="Single-Number"><a href="#Single-Number" class="headerlink" title="Single Number"></a><a href="https://leetcode.com/problems/single-number/">Single Number</a></h2><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
+<p>Note:<br>Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?</p>
+<p>题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。<br>这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。<br>按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。</p>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/03/27/Android-Support-Annotation/#more" class="more-link">Read More</a>
+            <a href="/2016/08/14/Single-Number/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -178,24 +184,24 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-20T05:29:15.000Z"><a href="/2016/03/20/Python-LiveReload/">2016-03-20</a></time>
+        <time datetime="2016-07-31T08:48:06.000Z"><a href="/2016/07/31/Counting-Bits/">2016-07-31</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/03/20/Python-LiveReload/">初识 LiveReload</a></h1>
+    <h1 class="title"><a href="/2016/07/31/Counting-Bits/">Counting Bits</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。<br>LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 <a href="http://livereload.readthedocs.org/en/latest/">LiveReload</a> 介绍其使用。<br>
+        <p><a href="https://leetcode.com/problems/counting-bits/">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/03/20/Python-LiveReload/#more" class="more-link">Read More</a>
+            <a href="/2016/07/31/Counting-Bits/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -215,26 +221,26 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
+        <time datetime="2016-07-24T07:34:37.000Z"><a href="/2016/07/24/Performance-Improvement/">2016-07-24</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/03/13/Java-Exception/">聊聊 Java Exception 机制</a></h1>
+    <h1 class="title"><a href="/2016/07/24/Performance-Improvement/">Android 性能优化实践小记</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mRestAdapter.create(Api.class).sendRequst();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// handle Exception</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;.start();</span><br></pre></td></tr></table></figure></p>
-<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</span><br><span class="line">  String firstLine = reader.readLine();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br>
+        <p>说来惭愧，看过那么多 Android 性能优化的文章，但这块实战经验微乎其微。抱着已经看过猪跑了，怎么着也得吃上猪肉的心态，尝试去解决某页面的卡顿。实践下来觉得是一次不错的经验，写文章记录下。</p>
+<h2 id="发现卡顿"><a href="#发现卡顿" class="headerlink" title="发现卡顿"></a>发现卡顿</h2><p>在解决卡顿之前，你得发现哪里卡顿。这里多亏了 <a href="https://github.com/markzhai/AndroidPerformanceMonitor">BlockCanary</a>，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。<br>下面是 BlockCanary 显示卡顿信息的截图。<br><img src="/img/performance_improve_0.png" alt=""><br>可以看出，卡顿是由于 DateHelper.parseString 而引起的。<br>那接下来让我们看看 parseString 的具体代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parseString</span><span class="params">(String dateString)</span> </span>&#123;</span><br><span class="line">    SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>, Locale.getDefault());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> dateFormat.parse(dateString);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>很简单的一段代码，将规定格式的 String 转换为 Date 对象，简单到貌似没有可以出错及优化的空间。<br>至此我们陷入了一个死胡同。我们查找到了疑似卡顿的原因，但是无法确认也不知如何优化。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/03/13/Java-Exception/#more" class="more-link">Read More</a>
+            <a href="/2016/07/24/Performance-Improvement/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -254,26 +260,26 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-06T04:53:55.000Z"><a href="/2016/03/06/Java-Generic/">2016-03-06</a></time>
+        <time datetime="2016-07-17T11:52:03.000Z"><a href="/2016/07/17/Android-Storage-Note/">2016-07-17</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/03/06/Java-Generic/">对Java泛型的理解</a></h1>
+    <h1 class="title"><a href="/2016/07/17/Android-Storage-Note/">Android 存储笔记</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>泛型是JDK 5中引入的一个新特性，允许在定义类和接口的时候使用类型参数，声明的类型参数在使用时用具体的类型来替换。在没有泛型之前，从集合中读取到的每一个对象都必须进行转化。如果不小心插入了类型错误的对象，则运行时的转换就会出错。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ArrayList apples = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">    &#125;</span><br><span class="line">    apples.add(<span class="keyword">new</span> Orange());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</span><br><span class="line">        <span class="comment">// java.lang.ClassCastException: Orange cannot be cast to Apple</span></span><br><span class="line">        <span class="comment">// ((Apple)apples.get(i)).id();</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>而使用了泛型之后，就可以在编译期防止将错误类型的对象放置到容器中。而且从List中取出时，也无需做强制的类型转换了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Compile-time error</span></span><br><span class="line">    <span class="comment">// apples.add(new Orange());</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</span><br><span class="line">        apples.get(i).id();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>虽然泛型有着种种的好处，但使用泛型常常会碰到一些反直觉的地方。</p>
+        <p>一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。<br>以包名为 com.kay.example 为例。</p>
+<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context.getCacheDir /data/data/com.kay.example/cache</span><br><span class="line">context.getFileDir /data/data/com.kay.example/files</span><br><span class="line">context.getDir /data/data/com.kay.example</span><br></pre></td></tr></table></figure>
+<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</span><br><span class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</span><br><span class="line">Environment.getExternalStorageDirectory /sdcard/</span><br><span class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/03/06/Java-Generic/#more" class="more-link">Read More</a>
+            <a href="/2016/07/17/Android-Storage-Note/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -293,24 +299,64 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-02-28T01:58:31.000Z"><a href="/2016/02/28/PacketCapture/">2016-02-28</a></time>
+        <time datetime="2016-07-03T07:30:27.000Z"><a href="/2016/07/03/fragment/">2016-07-03</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/02/28/PacketCapture/">Android最简单的抓包工具Packet Capture</a></h1>
+    <h1 class="title"><a href="/2016/07/03/fragment/">Fragment 源码笔记</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>抓包是每个App开发人员都必备的技能之一。常见的可使用WireShark，Fiddler(Windows)，Charles(Mac)等软件。这些工具都很强大，可以满足复杂的需求。但是有时候你可能仅仅想查看一两个请求，这时候开机-查看IP-设置代理这些步骤就略显繁琐。这时候你最需要的就是那种一键抓包的工具，而Packet Capture正好能满足需求。<br>
+        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
+<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</span><br></pre></td></tr></table></figure>
+<p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
+<h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-06-26T06:12:18.000Z"><a href="/2016/06/26/Longest-Palindromic-Substring/">2016-06-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/06/26/Longest-Palindromic-Substring/">Longest Palindromic Substring</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a href="https://leetcode.com/problems/longest-palindromic-substring/">LeetCode 5. Longest Palindromic Substring</a><br>Given a string S, find the longest palindromic substring in S.<br>给定一个字符串 S，找到其中最长的连续回文串。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2016/02/28/PacketCapture/#more" class="more-link">Read More</a>
+            <a href="/2016/06/26/Longest-Palindromic-Substring/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -330,24 +376,25 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-12-12T02:00:41.000Z"><a href="/2015/12/12/Programmming-Language-Concepts/">2015-12-12</a></time>
+        <time datetime="2016-06-19T01:55:12.000Z"><a href="/2016/06/19/Shadowsocks-HAProxy/">2016-06-19</a></time>
       
       
   
-    <h1 class="title"><a href="/2015/12/12/Programmming-Language-Concepts/">代码之髓笔记</a></h1>
+    <h1 class="title"><a href="/2016/06/19/Shadowsocks-HAProxy/">使用 HAProxy 加速  Shadowsocks</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>不同的编程语言之间相差很大，在熟悉了一门之后再去学另一门时总会感到别扭、生涩。C里面的指针，在Java里面就被隐藏了起来。在C、Java中必须显式声明类型的变量，在Python中却能进行动态地变化，更不要说Python中map等的函数，直接打开了函数式编程的大门。但不同的语言之间，都有类似的部分，如变量、函数的声明，if、for、while语句等等。<br>
+        <p>最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。<br>后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#23458;&#25143;&#31471; &#60; - &#62; &#20013;&#32487;&#26381;&#21153;&#22120; &#60; - &#62; Shadowsocks &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure></p>
+<p>在自己电脑上 ping 中继服务器，中继服务器 ping ss 服务器，延迟分别为 10+ ms、60+ ms。阿里云的出口带宽果然不一样。加速条件满足，开始进入安装配置。</p>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2015/12/12/Programmming-Language-Concepts/#more" class="more-link">Read More</a>
+            <a href="/2016/06/19/Shadowsocks-HAProxy/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -367,65 +414,24 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-11-30T12:54:10.000Z"><a href="/2015/11/30/The-Way-To-Program/">2015-11-30</a></time>
+        <time datetime="2016-06-10T05:47:34.000Z"><a href="/2016/06/10/git-submodule-vs-git-subtree/">2016-06-10</a></time>
       
       
   
-    <h1 class="title"><a href="/2015/11/30/The-Way-To-Program/">编程之路</a></h1>
+    <h1 class="title"><a href="/2016/06/10/git-submodule-vs-git-subtree/">git submodule vs git subtree</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>转行当程序员也快一年了，这篇给自己的交代硬生生拖了半年，趁着没忘，赶紧写写。</p>
-<p>大三前对编程的印象停留在初中用VB编猜数字游戏，但一直对编程抱有一定的好奇。<br>有数学和逻辑的魅力，又不会过于抽象，可以充分验证自己的想法，所需却不多，仅仅是一台电脑。<br>好奇心加上时间，我开始去学习编程相关的知识。</p>
-<p>那，如何去学呢？可能是因为一直都是按部就班地学习，对基础这块就特别重视，<br>再加上搜索如何学习编程时，经常看到“程序=算法+数据结构”这话，就决定先从算法开始。想来真是初生牛犊不怕虎。<br>幸运的是，那段时间MOOC正好兴起，尤其以计算机相关的课程最多。<br>
+        <p>Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code> 的信息（git diff 显示的结果）。<br>而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。<br>针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。<br>
       
     </div>
     <footer>
       
         
           <div class="alignleft">
-            <a href="/2015/11/30/The-Way-To-Program/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-05-14T02:01:00.000Z"><a href="/2015/05/14/Experience/">2015-05-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/05/14/Experience/">Android的自学之路</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>简单介绍下，非计算机专业，14年开始接触编程，陆续学习了些Android知识。然后年底的时候辞职开始专心学习Android开发。那时候其实差不多把《第一行代码》看完了，对Android基础的知识有了一定的了解。</p>
-<h2 id="自学过程"><a href="#自学过程" class="headerlink" title="自学过程"></a>自学过程</h2><p>由于自己习惯把做过的一些demo放到github上，正好可以借此回顾下自学的过程。</p>
-<p>其实android入门的教程是很多的，比如我看的《第一行代码》（强推），官方教程（强推），极客学院的视频课程等资料。<br>但是，我在学完了之后其实很困惑，四大组件学完了然后呢？我只能根据书上的例子敲demo，做不出什么实际的东西来。<br>然后想到要自己做出个App来，现在想来这虽然有用，但不是一个高效的方法。<br>因为做一个App不是一件容易的事，除了代码方面的工作，设计和功能都是要进行构思的，而这两项工作都很费功夫。<br>所以，我决定从模仿一个App的UI开始。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2015/05/14/Experience/#more" class="more-link">Read More</a>
+            <a href="/2016/06/10/git-submodule-vs-git-subtree/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -466,23 +472,27 @@
   
     <li><a href="/categories/Android/">Android</a><small>14</small></li>
   
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
     <li><a href="/categories/Git/">Git</a><small>1</small></li>
   
     <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
   
     <li><a href="/categories/Java/">Java</a><small>3</small></li>
   
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
     <li><a href="/categories/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>3</small></li>
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
   
     <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
   
     <li><a href="/categories/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/categories/Ruby/读书笔记/">读书笔记</a><small>1</small></li>
-  
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>2</small></li>
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
@@ -506,6 +516,18 @@
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
 
 
 

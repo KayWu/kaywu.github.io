@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>FactoryGirl 技巧 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="简洁地设置 Association123factory :post do    association :author, factory: :authorend
+我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="FactoryGirl 技巧"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-12-18T09:18:19.000Z"><a href="/2016/12/18/factory-girl/">2016-12-18</a></time>
+      
+      
+  
+    <h1 class="title">FactoryGirl 技巧</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="简洁地设置-Association"><a href="#简洁地设置-Association" class="headerlink" title="简洁地设置 Association"></a>简洁地设置 Association</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    association <span class="symbol">:author</span>, <span class="symbol">factory:</span> <span class="symbol">:author</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可以省略其 factory 的设置。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    auther</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:approved_post</span> <span class="keyword">do</span></span><br><span class="line">    approved <span class="keyword">true</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">approved_post = create(<span class="symbol">:approved_post</span>)</span><br><span class="line">approved_post.title    <span class="comment"># =&gt; "A title"</span></span><br><span class="line">approved_post.approved <span class="comment"># =&gt; true</span></span><br></pre></td></tr></table></figure>
+<p>也能明确指定 parent。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">factory <span class="symbol">:approved_post</span>, <span class="symbol">parent:</span> <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  approved <span class="keyword">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="使用-Trait"><a href="#使用-Trait" class="headerlink" title="使用 Trait"></a>使用 Trait</h3><p>以 Order 为例，它有多个状态。为了设置不同状态的 Order，我们可以通过写多个 Order 的 factory 来完成。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:order_paid</span> <span class="keyword">do</span></span><br><span class="line">    customer</span><br><span class="line">    state <span class="symbol">:paid</span></span><br><span class="line">    note <span class="string">'This is a paid order'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">factory <span class="symbol">:order_unpaid</span> <span class="keyword">do</span></span><br><span class="line">    customer</span><br><span class="line">    state <span class="symbol">:unpaid</span></span><br><span class="line">    note <span class="string">'This is an unpaid order'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>但如果 Order 的属性很多，这两个 factory 大部分都是重复的。可以使用 trait 来简化类似的 factory。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:order</span> od</span><br><span class="line">    customer</span><br><span class="line">    note <span class="string">'This is a order'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">trait <span class="symbol">:paid</span> <span class="keyword">do</span></span><br><span class="line">    state <span class="symbol">:paid</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">trait <span class="symbol">:unpaid</span> <span class="keyword">do</span></span><br><span class="line">    state <span class="symbol">:unpaid</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>要创建不同状态的 Order 时，使用 <code>create :order, :paid</code> 和 <code>create :order, :unpaid</code>。</p>
+<h3 id="使用-Callback"><a href="#使用-Callback" class="headerlink" title="使用 Callback"></a>使用 Callback</h3><p>当 Model 有多个 association 时，而且多个 association 还存在一定的关系时，我们就不能简单地设置 association，这会使 association 的关系遭到破坏。<br>例如一个订单有多个子订单，而每个子订单都有一个物流信息。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Order</span></span></span><br><span class="line">    has_many <span class="symbol">:shipments</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubOrder</span></span></span><br><span class="line">    has_one <span class="symbol">:shipment</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Shipment</span></span></span><br><span class="line">    belongs_to <span class="symbol">:order</span></span><br><span class="line">    belongs_to <span class="symbol">:sub_order</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>若要创建 Shipment 的 factory，需注意到 order、sub_order 是有一定的关系的。<br>可以通过 FactoryGirl 的 before(:create) 回调来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:shipment</span> <span class="keyword">do</span></span><br><span class="line">    ...</span><br><span class="line">    before <span class="symbol">:create</span> <span class="keyword">do</span> |shipment|</span><br><span class="line">        order = create <span class="symbol">:order</span></span><br><span class="line">        sub_order = create <span class="symbol">:sub_order</span>, <span class="symbol">order:</span> order</span><br><span class="line">        shipment.order = order</span><br><span class="line">        shipment.sub_order = sub_order</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>除 before(:create) 外，还有 after(:build)、after(:create)、after(:stub)。</p>
+<h3 id="设置-Transient-Attributes"><a href="#设置-Transient-Attributes" class="headerlink" title="设置 Transient Attributes"></a>设置 Transient Attributes</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">FactoryGirl</span>.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:comment</span> <span class="keyword">do</span></span><br><span class="line">    author</span><br><span class="line">    body <span class="string">'Post body'</span></span><br><span class="line">    approved_at <span class="constant">Date</span>.new(<span class="number">2016</span>, <span class="number">12</span>, <span class="number">18</span>)</span><br><span class="line">    post</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    title <span class="string">'New post'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  trait <span class="symbol">:with_comments</span> <span class="keyword">do</span></span><br><span class="line">    after <span class="symbol">:create</span> <span class="keyword">do</span> |post|</span><br><span class="line">      create_list <span class="symbol">:comment</span>, <span class="number">3</span>, <span class="symbol">:post</span> =&gt; post</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><code>create :post, :with_comments</code> 会创建带有 3 条 comment 的 post。但若我们只想要有 2 条 comment 呢？通过 transient attributes 可以在 create 时动态地更改 comment 的数量。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">FactoryGirl</span>.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:comment</span> <span class="keyword">do</span></span><br><span class="line">    author</span><br><span class="line">    body <span class="string">'Post body'</span></span><br><span class="line">    approved_at <span class="constant">Date</span>.new(<span class="number">2016</span>, <span class="number">12</span>, <span class="number">18</span>)</span><br><span class="line">    post</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    title <span class="string">'New post'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  trait <span class="symbol">:with_comments</span> <span class="keyword">do</span></span><br><span class="line">    transient <span class="keyword">do</span></span><br><span class="line">        comments_count <span class="number">3</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    after <span class="symbol">:create</span> <span class="keyword">do</span> |post, evaluator|</span><br><span class="line">      create_list <span class="symbol">:comment</span>, evaluator.comments_count, <span class="symbol">:post</span> =&gt; post</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>调用 <code>create :post, :with_comments, comments_count: 2</code> 即可。</p>
+<h3 id="Lazy-Attributes"><a href="#Lazy-Attributes" class="headerlink" title="Lazy Attributes"></a>Lazy Attributes</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:product</span> <span class="keyword">do</span></span><br><span class="line">    ...</span><br><span class="line">    name <span class="constant">Faker::Name</span>.name</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>这里使用 Faker 来动态生成名字。但是调用 <code>create :product</code> 多次后你会发现它们的名字都是相同的。若想在每次创建实例时重新执行 <code>Faker::Name.name</code>，<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:product</span> <span class="keyword">do</span></span><br><span class="line">    ...</span><br><span class="line">    name &#123; <span class="constant">Faker::Name</span>.name &#125;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>这样生成实例时都会调用 <code>Faker::Name.name</code>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://arjanvandergaag.nl/blog/factory_girl_tips.html" target="_blank" rel="external">FactoryGirl Tips and Tricks</a></li>
+<li><a href="https://github.com/thoughtbot/factory_girl/blob/master/GETTING_STARTED.md" target="_blank" rel="external">FactoryGirl - Getting Started</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/Ruby/">Ruby</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>

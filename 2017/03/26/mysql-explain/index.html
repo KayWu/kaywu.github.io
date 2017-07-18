@@ -1,0 +1,266 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>MySQL EXPLAIN 解读 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 EXPLAIN 关键字就可以。下面是一个简单的例子，测试数据在文章末尾。1# &amp;#20363; 1&amp;#10;mysql&amp;#62; EXPLAIN SELECT name FROM users W">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MySQL EXPLAIN 解读"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+
+</head>
+
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-03-26T09:55:35.000Z"><a href="/2017/03/26/mysql-explain/">2017-03-26</a></time>
+      
+      
+  
+    <h1 class="title">MySQL EXPLAIN 解读</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 <code>EXPLAIN</code> 关键字就可以。<br>下面是一个简单的例子，测试数据在文章末尾。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># &#20363; 1&#10;mysql&#62; EXPLAIN SELECT name FROM users WHERE id = 1\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: const&#10;possible_keys: PRIMARY&#10;          key: PRIMARY&#10;      key_len: 4&#10;          ref: const&#10;         rows: 1&#10;        Extra: NULL&#10;1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>EXPLAIN 列的解释：</p>
+<ul>
+<li>id：SELECT 标识符，下面具体分析</li>
+<li>select_type: SELECT 类型，下面会具体分析</li>
+<li>table: 查询所使用的表</li>
+<li>type: JOIN 的类型，下面会具体分析</li>
+<li>possible_keys: 可能使用的索引，但不一定会真正使用</li>
+<li>key: 真正使用的索引</li>
+<li>key_len: 所使用的索引长度</li>
+<li>ref: 与索引比较的列</li>
+<li>rows: 预估需要扫描的行数</li>
+<li>Extra: 额外信息</li>
+</ul>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><p>个人理解表示了 SELECT 的执行顺序。id 大的优先执行，id 相同的从上往下执行。</p>
+<h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h3><p>select_type 表示查询的类型，具体种类见官方图表。<br><img src="/img/select_type.png" alt="select_type.png-来自官方文档"><br>SIMPLE 是最常见的种类，表示它未使用 UNION 及子查询。例 1 的查询就属于 SIMPLE。</p>
+<p>当使用了关键字 UNION，查询的类型就会发生变化。<br><img src="/img/select_union.png" alt="select_union.png-41.3kB"></p>
+<p>在这个查询中，我们可以看到 3 种类型的查询。 PRIMARY 表示最外层的查询，也就是 UNION 之前的 <code>SELECT name FROM users WHERE id = 1</code>。UNION 之后的 <code>SELECT name FROM users WHERE id = 2</code> 归为 UNION 类型。最后 UNION RESULT 将两次查询的结果归总。</p>
+<p>下面是其他查询类型的例子。</p>
+<h4 id="PRIMARY-amp-SUBQUERY"><a href="#PRIMARY-amp-SUBQUERY" class="headerlink" title="PRIMARY &amp; SUBQUERY"></a>PRIMARY &amp; SUBQUERY</h4><p>PRIMARY 为最外层的查询，而 SUBQUERY 则指子查询。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM users WHERE id = (SELECT user_id FROM orders WHERE id = 3);</span><br></pre></td></tr></table></figure></p>
+<h4 id="PRIMARY-amp-DEPENDENT-SUBQUERY"><a href="#PRIMARY-amp-DEPENDENT-SUBQUERY" class="headerlink" title="PRIMARY &amp; DEPENDENT SUBQUERY"></a>PRIMARY &amp; DEPENDENT SUBQUERY</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM users WHERE EXISTS (SELECT user_id FROM orders WHERE orders.id = 3 and orders.user_id = users.id);</span><br></pre></td></tr></table></figure>
+<h4 id="MATERIALIZED"><a href="#MATERIALIZED" class="headerlink" title="MATERIALIZED"></a>MATERIALIZED</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT DISTINCT user_id FROM orders WHERE id IN (SELECT DISTINCT order_id FROM order_items WHERE product_name = &#39;p1&#39;);</span><br></pre></td></tr></table></figure>
+<h4 id="DERIVED"><a href="#DERIVED" class="headerlink" title="DERIVED"></a>DERIVED</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EXPLAIN SELECT * FROM (SELECT * FROM orders WHERE id = 3) o;</span><br></pre></td></tr></table></figure>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>type 表示 JOIN 的类型，是查询是否高效的重要依据。<br>效率从高到低排列为 system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; all。</p>
+<ul>
+<li>system: 表中只有一条数据，const 连接的特殊类型。</li>
+<li><p>const: 主键或唯一索引的等值比较，由于表中至多有一条符合的数据，所以速度很快。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; EXPLAIN SELECT * FROM users WHERE id = 2\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: const&#10;possible_keys: PRIMARY&#10;          key: PRIMARY&#10;      key_len: 4&#10;          ref: const&#10;         rows: 1&#10;        Extra: NULL&#10;1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>eq_ref: 上表的每一个行至多会匹配到该表的一行，是除 system 和 const 之外最高效的 join type。当索引为 PRIMARY KEY 或 UNIQUE NOT NULL 且被全部使用时会用到。常见于索引列的等值比较。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; EXPLAIN SELECT * FROM users, orders WHERE orders.user_id = users.id\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: orders&#10;         type: index&#10;possible_keys: index_orders_on_user_id_and_price&#10;          key: index_orders_on_user_id_and_price&#10;      key_len: 8&#10;          ref: NULL&#10;         rows: 4&#10;        Extra: Using index&#10;*************************** 2. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: eq_ref&#10;possible_keys: PRIMARY&#10;          key: PRIMARY&#10;      key_len: 4&#10;          ref: explain_test.orders.user_id&#10;         rows: 1&#10;        Extra: NULL&#10;2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ref: 如果 join 不能根据键值只匹配一行时则会使用该 join type。常见于不是 UNIQUE 或 PRIMARY KEY的索引等值比较，或者是最左前缀规则的索引查询。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; EXPLAIN SELECT orders.id FROM orders JOIN users ON orders.user_id = users.id WHERE users.name = &#39;Amy&#39;\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: ref&#10;possible_keys: PRIMARY,index_users_on_names&#10;          key: index_users_on_names&#10;      key_len: 152&#10;          ref: const&#10;         rows: 1&#10;        Extra: Using where; Using index&#10;*************************** 2. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: orders&#10;         type: ref&#10;possible_keys: index_orders_on_user_id_and_price&#10;          key: index_orders_on_user_id_and_price&#10;      key_len: 4&#10;          ref: explain_test.users.id&#10;         rows: 1&#10;        Extra: Using index&#10;2 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>range: 使用索引进行范围查询，输出的 key 字段表示使用哪个索引，key_len 表示所使用索引中最长的索引长度。注意此类型下 ref 字段为 NULL。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; EXPLAIN SELECT * FROM users WHERE users.id IN (2, 3)\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: range&#10;possible_keys: PRIMARY&#10;          key: PRIMARY&#10;      key_len: 4&#10;          ref: NULL&#10;         rows: 2&#10;        Extra: Using where&#10;1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>index: 全索引扫描, index 类型仅仅扫描所有的索引, 而不扫描数据。一般两种情况会出现。<br>一种是出现在所要查询的数据直接在索引树中就可以获取, 此时 Extra 字段会显示 Using index。另一种是全表扫描时按索引的顺序查找数据，此时 Extra 字段不会显示 Using index。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&#62; EXPLAIN SELECT users.name FROM users\G&#10;*************************** 1. row ***************************&#10;           id: 1&#10;  select_type: SIMPLE&#10;        table: users&#10;         type: index&#10;possible_keys: NULL&#10;          key: index_users_on_names&#10;      key_len: 152&#10;          ref: NULL&#10;         rows: 10&#10;        Extra: Using index&#10;1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ALL: 全表扫描。</p>
+</li>
+</ul>
+<h3 id="Extra"><a href="#Extra" class="headerlink" title="Extra"></a>Extra</h3><p>Extra 字段提供了关于查询的额外信息，种类很多，具体可以看<a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html#explain-extra-information" target="_blank" rel="external">官方文档</a>。<br>除了上文提到的 Using index，这里再额外说两种。<br>Using filesort 表示 MySQL 需要遍历所有符合条件的行然后按照排序的 key 来使得最终的查询结果是有序的。<br>Using temporary 表示 MySQL 需要创建一个临时表来存储结果，通常发生在查询包含不同列的 GROUP BY 和 ORDER BY 子句。<br>看到这两者时，可以考虑对查询进行优化。</p>
+<h3 id="使用的测试数据"><a href="#使用的测试数据" class="headerlink" title="使用的测试数据"></a>使用的测试数据</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `users` (&#10;  `id` int(11) NOT NULL AUTO_INCREMENT,&#10;  `name` varchar(50) NOT NULL,&#10;  PRIMARY KEY (`id`),&#10;  KEY `index_users_on_names` (`name`)&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;&#10;&#10;INSERT INTO users(name) VALUES (&#39;Amy&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Bob&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Cindy&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Duke&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Kay&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Lucy&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Mike&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Nancy&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Ted&#39;);&#10;INSERT INTO users(name) VALUES (&#39;Van&#39;);&#10;&#10;&#10;CREATE TABLE `orders` (&#10;  `id` int(11) NOT NULL AUTO_INCREMENT,&#10;  `user_id` int(11) NOT NULL,&#10;  `price` decimal(8,2) NOT NULL,&#10;  PRIMARY KEY (`id`),&#10;  KEY `index_orders_on_user_id_and_price` (`user_id`,`price`)&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;&#10;INSERT INTO orders(user_id, price) VALUES (1, 80);&#10;INSERT INTO orders(user_id, price) VALUES (1, 100);&#10;INSERT INTO orders(user_id, price) VALUES (2, 90);&#10;INSERT INTO orders(user_id, price) VALUES (2, 120);&#10;&#10;&#10;CREATE TABLE `order_items` (&#10;  `id` int(11) NOT NULL AUTO_INCREMENT,&#10;  `order_id` int(11) NOT NULL,&#10;  `product_name` varchar(50) NOT NULL,&#10;  `quantity` int(11) NOT NULL,&#10;  PRIMARY KEY (`id`),&#10;  KEY `index_order_items_on_order_id` (`order_id`),&#10;  KEY `index_order_items_on_product_name` (`product_name`)&#10;) ENGINE=InnoDB DEFAULT CHARSET=utf8;&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (1, &#39;p1&#39;, 1);&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (1, &#39;p2&#39;, 2);&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (2, &#39;p3&#39;, 1);&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (2, &#39;p4&#39;, 1);&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (3, &#39;p5&#39;, 3);&#10;INSERT INTO order_items(order_id, product_name, quantity) VALUES (4, &#39;p6&#39;, 2);</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://dev.mysql.com/doc/refman/5.7/en/explain-output.html" target="_blank" rel="external">EXPLAIN Output Format</a></li>
+<li><a href="https://segmentfault.com/a/1190000008131735" target="_blank" rel="external">MySQL 性能优化神器 Explain 使用分析</a></li>
+<li><a href="http://www.cnitblog.com/aliyiyi08/archive/2008/09/09/48878.html" target="_blank" rel="external">Mysql Explain 详解</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+  
+  <div class="categories">
+    <a href="/categories/MySQL/">MySQL</a>
+  </div>
+
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.github.io">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">分类</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+  
+    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+  
+    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+</body>
+</html>
