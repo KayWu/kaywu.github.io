@@ -7,7 +7,9 @@
   <title>Rails 多台服务器上 js 不一致的问题 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="发现问题周二发布正式的时候，发生了匪夷所思的事情。打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicat">
+  <meta name="description" content="发现问题周二发布正式的时候，发生了匪夷所思的事情。打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicaton-745 时会报 404，使得操作没有反应。
+这里简单地说下发布的情况。该服务会发布到 A、B 两台服务器上，nginx 接收请求并转发到 A、B 上的实例。查看正式服务器上的文件发现，A 上存在 application-b1a 文件，B 上存在 application-745 文件。看来 nginx 会查找 服务器 A 上的文件，由于找不到 application-745 而返回 404。先把 B 上的 applicaiton-b1a 复制到 A，临时修复这个问题。
+排查原因为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 application-908e25f4bf641868d8683022a5b62f54.js 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。12345// 引用 js&amp;lt;%= javascript_include_tag &quot;application&quot; %&amp;gt;// 生成的 html&amp;lt;script src=&quot;/assets/application-908e25f4bf641868d8683022a5b62f54.js&quot;&amp;gt;&amp;lt;/script&amp;gt;">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -79,7 +81,8 @@
       
         <h3 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h3><p>周二发布正式的时候，发生了匪夷所思的事情。<br>打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicaton-745 时会报 404，使得操作没有反应。</p>
 <p>这里简单地说下发布的情况。该服务会发布到 A、B 两台服务器上，nginx 接收请求并转发到 A、B 上的实例。<br>查看正式服务器上的文件发现，A 上存在 application-b1a 文件，B 上存在 application-745 文件。看来 nginx 会查找 服务器 A 上的文件，由于找不到 application-745 而返回 404。先把 B 上的 applicaiton-b1a 复制到 A，临时修复这个问题。</p>
-<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 引用 js</span><br><span class="line">&lt;%= javascript_include_tag "application" %&gt;</span><br><span class="line"></span><br><span class="line">// 生成的 html</span><br><span class="line">&lt;script src="/assets/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script</span><br></pre></td></tr></table></figure></p>
+<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 引用 js</span><br><span class="line">&lt;%= javascript_include_tag "application" %&gt;</span><br><span class="line"></span><br><span class="line">// 生成的 html</span><br><span class="line">&lt;script src="/assets/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script&gt;</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <p>换句话说，若 js 内容一样，生成的摘要也应该是一样的。不应该啊！两个服务器部署的代码应该是一致的。为了保险起见，我还特定查看了相关文件的 MD5 值，完全相同。</p>
 <p>输入是相同的，而产生的结果却不一样，问题应该出在处理步骤上。于是我查看了正式环境的配置，发现了以下这条。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">config.assets.js_compressor = <span class="symbol">:uglifier</span></span><br></pre></td></tr></table></figure></p>
 <p>uglifier 是用 ruby 封装 UglifyJS 的 gem，而 UglifyJS 是依赖 node.js 对 js 进行压缩的。查看了下两台服务器的 node 版本，A 是 0.10，B 是 6.10。问题的原因终于找到了。node 的版本不一致，导致其压缩的结果不一样，使得生成的最终文件也不相同。</p>

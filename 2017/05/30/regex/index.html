@@ -8,7 +8,7 @@
   <meta name="author" content="Kay Wu">
   
   <meta name="description" content="匹配单个字符匹配纯文本正则：Ben&amp;gt;Hello, my name is Ben. Please visit my website at http://www.forta.com/.
-匹配任意字符. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。正则：s">
+匹配任意字符. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。正则：sales.&amp;gt;sales1.xlsorders3.xlssales2.xlssales3.xlsapac1.xlseurope2.xlsna1.xlsna2.xlssa1.xls">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -80,6 +80,7 @@
       
         <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code><br>&gt;<br>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="external">http://www.forta.com/</a>.</p>
 <h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code><br>&gt;<br><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
+<a id="more"></a>
 <h3 id="匹配特殊字符"><a href="#匹配特殊字符" class="headerlink" title="匹配特殊字符"></a>匹配特殊字符</h3><p>元字符是一些在正则表达式里有着特殊含义的字符。如英语句号（.）是一个元字符，它可以用来匹配任何一个单个字符。因为元字符在正则表达式里有着特殊的含义，所以这些字符就无法用来代表它们本身。比如你不能使用 . 类匹配 . 本身。<br>在元字符的前面加上一个反斜杠就可以对它进行转移，转义序列 . 将匹配 . 本身。<br>正则：<code>.a.\.xls</code></p>
 <p>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code></p>
 <h2 id="匹配一组字符"><a href="#匹配一组字符" class="headerlink" title="匹配一组字符"></a>匹配一组字符</h2><h3 id="匹配多个字符中的某一个"><a href="#匹配多个字符中的某一个" class="headerlink" title="匹配多个字符中的某一个"></a>匹配多个字符中的某一个</h3><p>可以使用元字符 [  和 ] 来定义一个字符集合，在使用 [ 和 ] 定义的字符集合里，这两个元字符之间的所有字符都是该集合的组成部分，字符集合的匹配结果是能够与该集合里的任意一个成员想匹配的文本。<br>正则：<code>[ns]a.\.xls</code><br>&gt;<br>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code><br>ca1.xls</p>

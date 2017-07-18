@@ -7,7 +7,19 @@
   <title>MySQL EXPLAIN 解读 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 EXPLAIN 关键字就可以。下面是一个简单的例子，测试数据在文章末尾。1# &amp;#20363; 1&amp;#10;mysql&amp;#62; EXPLAIN SELECT name FROM users W">
+  <meta name="description" content="EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 EXPLAIN 关键字就可以。下面是一个简单的例子，测试数据在文章末尾。1# &amp;#20363; 1&amp;#10;mysql&amp;#62; EXPLAIN SELECT name FROM users WHERE id = 1\G&amp;#10;*************************** 1. row ***************************&amp;#10;           id: 1&amp;#10;  select_type: SIMPLE&amp;#10;        table: users&amp;#10;         type: const&amp;#10;possible_keys: PRIMARY&amp;#10;          key: PRIMARY&amp;#10;      key_len: 4&amp;#10;          ref: const&amp;#10;         rows: 1&amp;#10;        Extra: NULL&amp;#10;1 row in set (0.00 sec)
+EXPLAIN 列的解释：
+
+id：SELECT 标识符，下面具体分析
+select_type: SELECT 类型，下面会具体分析
+table: 查询所使用的表
+type: JOIN 的类型，下面会具体分析
+possible_keys: 可能使用的索引，但不一定会真正使用
+key: 真正使用的索引
+key_len: 所使用的索引长度
+ref: 与索引比较的列
+rows: 预估需要扫描的行数
+Extra: 额外信息">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -91,6 +103,7 @@
 <li>rows: 预估需要扫描的行数</li>
 <li>Extra: 额外信息</li>
 </ul>
+<a id="more"></a>
 <h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><p>个人理解表示了 SELECT 的执行顺序。id 大的优先执行，id 相同的从上往下执行。</p>
 <h3 id="select-type"><a href="#select-type" class="headerlink" title="select_type"></a>select_type</h3><p>select_type 表示查询的类型，具体种类见官方图表。<br><img src="/img/select_type.png" alt="select_type.png-来自官方文档"><br>SIMPLE 是最常见的种类，表示它未使用 UNION 及子查询。例 1 的查询就属于 SIMPLE。</p>
 <p>当使用了关键字 UNION，查询的类型就会发生变化。<br><img src="/img/select_union.png" alt="select_union.png-41.3kB"></p>
