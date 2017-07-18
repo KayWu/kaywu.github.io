@@ -2,9 +2,58 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.github.io/2016/11/20/ruby-super/</loc>
+    
+    <lastmod>2017-07-18T09:14:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/10/16/meta-programming/</loc>
+    
+    <lastmod>2017-07-18T09:14:14.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2017/02/19/ruby-constant/</loc>
+    
+    <lastmod>2017-07-18T09:12:45.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/about/index.html</loc>
+    
+    <lastmod>2017-07-18T09:04:13.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/</loc>
     
-    <lastmod>2016-09-25T05:28:17.000Z</lastmod>
+    <lastmod>2017-06-25T04:13:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2015/04/05/LayoutInfalter/</loc>
+    
+    <lastmod>2017-06-25T03:27:11.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/03/27/Android-Support-Annotation/</loc>
+    
+    <lastmod>2017-06-24T05:56:27.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.github.io/2016/07/17/Android-Storage-Note/</loc>
+    
+    <lastmod>2017-06-24T05:56:10.000Z</lastmod>
     
   </url>
   
@@ -23,13 +72,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2015/04/05/LayoutInfalter/</loc>
-    
-    <lastmod>2016-09-10T16:44:29.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.github.io/2015/04/04/GoogleMusicPlayer/</loc>
     
     <lastmod>2016-09-10T16:43:37.000Z</lastmod>
@@ -40,13 +82,6 @@
     <loc>http://kaywu.github.io/2015/04/03/DoubanDemo/</loc>
     
     <lastmod>2016-09-10T16:42:53.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/2016/07/17/Android-Storage-Note/</loc>
-    
-    <lastmod>2016-09-10T16:37:43.000Z</lastmod>
     
   </url>
   
@@ -121,7 +156,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2015/05/14/Experience/</loc>
+    <loc>http://kaywu.github.io/2015/11/30/The-Way-To-Program/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
     
@@ -142,14 +177,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.github.io/2016/03/27/Android-Support-Annotation/</loc>
-    
-    <lastmod>2016-06-10T03:54:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/2015/11/30/The-Way-To-Program/</loc>
+    <loc>http://kaywu.github.io/2015/05/14/Experience/</loc>
     
     <lastmod>2016-06-10T03:54:48.000Z</lastmod>
     
@@ -215,13 +243,6 @@
     <loc>http://kaywu.github.io/2015/12/12/Programmming-Language-Concepts/</loc>
     
     <lastmod>2015-12-19T05:31:16.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.github.io/about/index.html</loc>
-    
-    <lastmod>2015-12-09T15:57:09.000Z</lastmod>
     
   </url>
   
