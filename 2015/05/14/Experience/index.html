@@ -83,7 +83,7 @@
 <h2 id="自学过程"><a href="#自学过程" class="headerlink" title="自学过程"></a>自学过程</h2><p>由于自己习惯把做过的一些demo放到github上，正好可以借此回顾下自学的过程。</p>
 <p>其实android入门的教程是很多的，比如我看的《第一行代码》（强推），官方教程（强推），极客学院的视频课程等资料。<br>但是，我在学完了之后其实很困惑，四大组件学完了然后呢？我只能根据书上的例子敲demo，做不出什么实际的东西来。<br>然后想到要自己做出个App来，现在想来这虽然有用，但不是一个高效的方法。<br>因为做一个App不是一件容易的事，除了代码方面的工作，设计和功能都是要进行构思的，而这两项工作都很费功夫。<br>所以，我决定从模仿一个App的UI开始。</p>
 <a id="more"></a>
-<h3 id="豆瓣Demo"><a href="#豆瓣Demo" class="headerlink" title="豆瓣Demo"></a>豆瓣Demo</h3><p>我首先做的是一个非常粗略地模仿豆瓣UI的demo。<br><img src="/img/20150221173403265.gif" alt="豆瓣demo"><br><a href="https://github.com/KayWu/Douban" target="_blank" rel="external">github地址</a><br><a href="http://kaywu.github.io/2015/04/03/DoubanDemo/">demo详细介绍</a><br>这个demo虽然简单，但是用到了几个非常常用的控件，如ViewPager(居家必备)， SwipeRefreshLayout(官方下拉刷新), PagerSlidingTabStrip(常用的ViewPager Indicator)。我也是在这个demo中第一次使用到了开源库，体会到了gradle导库的爽感。</p>
+<h3 id="豆瓣Demo"><a href="#豆瓣Demo" class="headerlink" title="豆瓣Demo"></a>豆瓣Demo</h3><p>我首先做的是一个非常粗略地模仿豆瓣UI的demo。<br><img src="/img/20150221173403265.gif" alt="豆瓣demo"><br><a href="https://github.com/KayWu/Douban" target="_blank" rel="external">github地址</a><br><a href="http://kaywu.github.io/2015/04/03/DoubanDemo/" target="_blank" rel="external">demo详细介绍</a><br>这个demo虽然简单，但是用到了几个非常常用的控件，如ViewPager(居家必备)， SwipeRefreshLayout(官方下拉刷新), PagerSlidingTabStrip(常用的ViewPager Indicator)。我也是在这个demo中第一次使用到了开源库，体会到了gradle导库的爽感。</p>
 <h3 id="简易知乎日报"><a href="#简易知乎日报" class="headerlink" title="简易知乎日报"></a>简易知乎日报</h3><p>第一个demo完成了之后，挺开心。但是想想，光滑来滑去也没太多意思。总得来些网络请求之类的吧，但是自己又没有api，正巧这时候发现了<a href="https://github.com/izzyleung/ZhihuDailyPurify" target="_blank" rel="external">纯净知乎日报</a>，既是个开源的App，wiki还有针对知乎Api的分析。于是就先拿来玩耍了下，然后学到了不少东西，如java文件的包设计，一些自定义的drawable的使用，如layer-list, shape等等。<br>学完了的东西就得用起来，于是我就做了自己的知乎日报。<br><img src="/img/zhihudaily.gif" alt="知乎日报"><br><a href="https://github.com/KayWu/Zhihu" target="_blank" rel="external">github地址</a></p>
 <p>这个App在很大程度上参考了纯净知乎日报，比如网络请求同样是用asynctask封装，gson解析，图片加载用的是universal-image-loader等等。<br>但是又加了自己的一些东西，比如webview+css样式的运用，以及收藏功能的实现。前者是通过google+stackoverflow，后者只是简单的数据库的应用。</p>
 <h3 id="仿堆糖UI"><a href="#仿堆糖UI" class="headerlink" title="仿堆糖UI"></a>仿堆糖UI</h3><p>现在终于可以做出一个比较简易的App了，虽然是在大量借鉴的情况下，但起码又是一个大的进步。<br>接下来我又做了一个高仿堆糖UI的App，纯UI，没有网络交互。<br><img src="/img/duitang_welcome.gif" alt="堆糖首页"><br><img src="/img/duitang_person.gif" alt="堆糖个人页"><br><a href="https://github.com/KayWu/Duitang" target="_blank" rel="external">github地址</a><br>这个阶段UI的仿照就比较细致了，而且随着UI复杂度的提升，可能会出现Touch事件冲突的现象。<br>比如热门页那里，ViewPager的左右滑动和下拉刷新是有冲突的，我采取的解决方法可以看github里面的介绍。<br>瀑布流、actionbar透明度的变化，都是通过google+stackoverflow一步步解决的。<br>这个App是手工通过玩正版App一步步拷下来的，基本是看图写代码。大量的看、写、比、改，布局写法的熟练度迅速上升。<br>做下来之后，不是太过复杂的界面基本可以Hold住了。</p>
@@ -139,7 +139,7 @@
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
     <input type="search" name="q" results="0" placeholder="搜索">
-    <input type="hidden" name="q" value="site:kaywu.github.io">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
   </form>
 </div>
 

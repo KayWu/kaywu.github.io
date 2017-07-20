@@ -4,9 +4,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://kaywu.github.io/"/>
+  <link href="http://kaywu.xyz/"/>
   <updated>2017-07-18T09:50:07.000Z</updated>
-  <id>http://kaywu.github.io/</id>
+  <id>http://kaywu.xyz/</id>
   
   <author>
     <name>Kay Wu</name>
@@ -17,8 +17,8 @@
   
   <entry>
     <title>互联网创业核心技术：构建可伸缩的 Web 应用</title>
-    <link href="http://kaywu.github.io/2017/07/13/core-tech/"/>
-    <id>http://kaywu.github.io/2017/07/13/core-tech/</id>
+    <link href="http://kaywu.xyz/2017/07/13/core-tech/"/>
+    <id>http://kaywu.xyz/2017/07/13/core-tech/</id>
     <published>2017-07-13T09:23:30.000Z</published>
     <updated>2017-07-18T09:50:07.000Z</updated>
     
@@ -35,15 +35,15 @@
     
     </summary>
     
-      <category term="读书笔记" scheme="http://kaywu.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://kaywu.xyz/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
   </entry>
   
   <entry>
     <title>FactoryGirl 源码浅析</title>
-    <link href="http://kaywu.github.io/2017/06/28/factory-girl-analysis/"/>
-    <id>http://kaywu.github.io/2017/06/28/factory-girl-analysis/</id>
+    <link href="http://kaywu.xyz/2017/06/28/factory-girl-analysis/"/>
+    <id>http://kaywu.xyz/2017/06/28/factory-girl-analysis/</id>
     <published>2017-06-28T09:21:20.000Z</published>
     <updated>2017-07-18T14:35:19.000Z</updated>
     
@@ -75,15 +75,15 @@
     
     </summary>
     
-      <category term="Ruby" scheme="http://kaywu.github.io/categories/Ruby/"/>
+      <category term="Ruby" scheme="http://kaywu.xyz/categories/Ruby/"/>
     
     
   </entry>
   
   <entry>
     <title>正则表达式必知必会</title>
-    <link href="http://kaywu.github.io/2017/05/30/regex/"/>
-    <id>http://kaywu.github.io/2017/05/30/regex/</id>
+    <link href="http://kaywu.xyz/2017/05/30/regex/"/>
+    <id>http://kaywu.xyz/2017/05/30/regex/</id>
     <published>2017-05-30T09:37:21.000Z</published>
     <updated>2017-07-18T14:36:04.000Z</updated>
     
@@ -257,15 +257,15 @@
     
     </summary>
     
-      <category term="读书笔记" scheme="http://kaywu.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://kaywu.xyz/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails 多台服务器上 js 不一致的问题</title>
-    <link href="http://kaywu.github.io/2017/05/14/rails-js-compress/"/>
-    <id>http://kaywu.github.io/2017/05/14/rails-js-compress/</id>
+    <link href="http://kaywu.xyz/2017/05/14/rails-js-compress/"/>
+    <id>http://kaywu.xyz/2017/05/14/rails-js-compress/</id>
     <published>2017-05-14T10:00:27.000Z</published>
     <updated>2017-07-18T14:36:36.000Z</updated>
     
@@ -291,15 +291,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails 如何在开发模式下重新加载源代码</title>
-    <link href="http://kaywu.github.io/2017/05/01/rails-dev-reload/"/>
-    <id>http://kaywu.github.io/2017/05/01/rails-dev-reload/</id>
+    <link href="http://kaywu.xyz/2017/05/01/rails-dev-reload/"/>
+    <id>http://kaywu.xyz/2017/05/01/rails-dev-reload/</id>
     <published>2017-05-01T10:04:50.000Z</published>
     <updated>2017-07-18T14:34:25.000Z</updated>
     
@@ -338,15 +338,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>MySQL EXPLAIN 解读</title>
-    <link href="http://kaywu.github.io/2017/03/26/mysql-explain/"/>
-    <id>http://kaywu.github.io/2017/03/26/mysql-explain/</id>
+    <link href="http://kaywu.xyz/2017/03/26/mysql-explain/"/>
+    <id>http://kaywu.xyz/2017/03/26/mysql-explain/</id>
     <published>2017-03-26T09:55:35.000Z</published>
     <updated>2017-07-18T14:31:55.000Z</updated>
     
@@ -423,15 +423,15 @@
     
     </summary>
     
-      <category term="MySQL" scheme="http://kaywu.github.io/categories/MySQL/"/>
+      <category term="MySQL" scheme="http://kaywu.xyz/categories/MySQL/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails Concern 源码研究</title>
-    <link href="http://kaywu.github.io/2017/03/19/rails-concern/"/>
-    <id>http://kaywu.github.io/2017/03/19/rails-concern/</id>
+    <link href="http://kaywu.xyz/2017/03/19/rails-concern/"/>
+    <id>http://kaywu.xyz/2017/03/19/rails-concern/</id>
     <published>2017-03-19T10:07:19.000Z</published>
     <updated>2017-07-18T14:34:46.000Z</updated>
     
@@ -465,15 +465,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>Ruby 常量查找</title>
-    <link href="http://kaywu.github.io/2017/02/19/ruby-constant/"/>
-    <id>http://kaywu.github.io/2017/02/19/ruby-constant/</id>
+    <link href="http://kaywu.xyz/2017/02/19/ruby-constant/"/>
+    <id>http://kaywu.xyz/2017/02/19/ruby-constant/</id>
     <published>2017-02-19T09:08:10.000Z</published>
     <updated>2017-07-18T14:33:35.000Z</updated>
     
@@ -503,15 +503,15 @@
     
     </summary>
     
-      <category term="Ruby" scheme="http://kaywu.github.io/categories/Ruby/"/>
+      <category term="Ruby" scheme="http://kaywu.xyz/categories/Ruby/"/>
     
     
   </entry>
   
   <entry>
     <title>mac 上 MySQL system error 32 解决方案</title>
-    <link href="http://kaywu.github.io/2017/01/21/mysql-system-error-32/"/>
-    <id>http://kaywu.github.io/2017/01/21/mysql-system-error-32/</id>
+    <link href="http://kaywu.xyz/2017/01/21/mysql-system-error-32/"/>
+    <id>http://kaywu.xyz/2017/01/21/mysql-system-error-32/</id>
     <published>2017-01-21T09:53:22.000Z</published>
     <updated>2017-07-18T09:54:14.000Z</updated>
     
@@ -531,15 +531,15 @@
     
     </summary>
     
-      <category term="MySQL" scheme="http://kaywu.github.io/categories/MySQL/"/>
+      <category term="MySQL" scheme="http://kaywu.xyz/categories/MySQL/"/>
     
     
   </entry>
   
   <entry>
     <title>ActiveRecord select vs pluck</title>
-    <link href="http://kaywu.github.io/2017/01/15/rails-select-vs-pluck/"/>
-    <id>http://kaywu.github.io/2017/01/15/rails-select-vs-pluck/</id>
+    <link href="http://kaywu.xyz/2017/01/15/rails-select-vs-pluck/"/>
+    <id>http://kaywu.xyz/2017/01/15/rails-select-vs-pluck/</id>
     <published>2017-01-15T10:09:31.000Z</published>
     <updated>2017-07-18T10:12:26.000Z</updated>
     
@@ -588,15 +588,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails ETag 应用</title>
-    <link href="http://kaywu.github.io/2017/01/08/rails-etag/"/>
-    <id>http://kaywu.github.io/2017/01/08/rails-etag/</id>
+    <link href="http://kaywu.xyz/2017/01/08/rails-etag/"/>
+    <id>http://kaywu.xyz/2017/01/08/rails-etag/</id>
     <published>2017-01-08T10:13:24.000Z</published>
     <updated>2017-07-18T14:34:12.000Z</updated>
     
@@ -623,15 +623,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>DOM 事件流</title>
-    <link href="http://kaywu.github.io/2016/12/25/dom/"/>
-    <id>http://kaywu.github.io/2016/12/25/dom/</id>
+    <link href="http://kaywu.xyz/2016/12/25/dom/"/>
+    <id>http://kaywu.xyz/2016/12/25/dom/</id>
     <published>2016-12-25T09:45:15.000Z</published>
     <updated>2017-07-18T09:47:37.000Z</updated>
     
@@ -660,15 +660,15 @@
     
     </summary>
     
-      <category term="Front-End" scheme="http://kaywu.github.io/categories/Front-End/"/>
+      <category term="Front-End" scheme="http://kaywu.xyz/categories/Front-End/"/>
     
     
   </entry>
   
   <entry>
     <title>FactoryGirl 技巧</title>
-    <link href="http://kaywu.github.io/2016/12/18/factory-girl/"/>
-    <id>http://kaywu.github.io/2016/12/18/factory-girl/</id>
+    <link href="http://kaywu.xyz/2016/12/18/factory-girl/"/>
+    <id>http://kaywu.xyz/2016/12/18/factory-girl/</id>
     <published>2016-12-18T09:18:19.000Z</published>
     <updated>2017-07-18T14:35:15.000Z</updated>
     
@@ -704,15 +704,15 @@
     
     </summary>
     
-      <category term="Ruby" scheme="http://kaywu.github.io/categories/Ruby/"/>
+      <category term="Ruby" scheme="http://kaywu.xyz/categories/Ruby/"/>
     
     
   </entry>
   
   <entry>
     <title>Javascript == 和 === 区别</title>
-    <link href="http://kaywu.github.io/2016/12/16/js-equal/"/>
-    <id>http://kaywu.github.io/2016/12/16/js-equal/</id>
+    <link href="http://kaywu.xyz/2016/12/16/js-equal/"/>
+    <id>http://kaywu.xyz/2016/12/16/js-equal/</id>
     <published>2016-12-16T09:48:31.000Z</published>
     <updated>2017-07-18T09:49:33.000Z</updated>
     
@@ -732,15 +732,15 @@
     
     </summary>
     
-      <category term="Front-End" scheme="http://kaywu.github.io/categories/Front-End/"/>
+      <category term="Front-End" scheme="http://kaywu.xyz/categories/Front-End/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails &amp; MySQL 使用 emoji 时 Incorrect string value 解决方法</title>
-    <link href="http://kaywu.github.io/2016/12/04/mysql-emoji/"/>
-    <id>http://kaywu.github.io/2016/12/04/mysql-emoji/</id>
+    <link href="http://kaywu.xyz/2016/12/04/mysql-emoji/"/>
+    <id>http://kaywu.xyz/2016/12/04/mysql-emoji/</id>
     <published>2016-12-04T09:50:50.000Z</published>
     <updated>2017-07-18T09:51:48.000Z</updated>
     
@@ -758,15 +758,15 @@
     
     </summary>
     
-      <category term="MySQL" scheme="http://kaywu.github.io/categories/MySQL/"/>
+      <category term="MySQL" scheme="http://kaywu.xyz/categories/MySQL/"/>
     
     
   </entry>
   
   <entry>
     <title>Rails form_for 源码阅读</title>
-    <link href="http://kaywu.github.io/2016/11/27/rails-form-for/"/>
-    <id>http://kaywu.github.io/2016/11/27/rails-form-for/</id>
+    <link href="http://kaywu.xyz/2016/11/27/rails-form-for/"/>
+    <id>http://kaywu.xyz/2016/11/27/rails-form-for/</id>
     <published>2016-11-27T10:15:49.000Z</published>
     <updated>2017-07-18T14:34:02.000Z</updated>
     
@@ -801,15 +801,15 @@
     
     </summary>
     
-      <category term="Rails" scheme="http://kaywu.github.io/categories/Rails/"/>
+      <category term="Rails" scheme="http://kaywu.xyz/categories/Rails/"/>
     
     
   </entry>
   
   <entry>
     <title>Ruby super 关键字</title>
-    <link href="http://kaywu.github.io/2016/11/20/ruby-super/"/>
-    <id>http://kaywu.github.io/2016/11/20/ruby-super/</id>
+    <link href="http://kaywu.xyz/2016/11/20/ruby-super/"/>
+    <id>http://kaywu.xyz/2016/11/20/ruby-super/</id>
     <published>2016-11-20T09:05:19.000Z</published>
     <updated>2017-07-18T09:14:27.000Z</updated>
     
@@ -831,15 +831,15 @@
     
     </summary>
     
-      <category term="Ruby" scheme="http://kaywu.github.io/categories/Ruby/"/>
+      <category term="Ruby" scheme="http://kaywu.xyz/categories/Ruby/"/>
     
     
   </entry>
   
   <entry>
     <title>Ruby 元编程</title>
-    <link href="http://kaywu.github.io/2016/10/16/meta-programming/"/>
-    <id>http://kaywu.github.io/2016/10/16/meta-programming/</id>
+    <link href="http://kaywu.xyz/2016/10/16/meta-programming/"/>
+    <id>http://kaywu.xyz/2016/10/16/meta-programming/</id>
     <published>2016-10-16T08:49:33.000Z</published>
     <updated>2017-07-18T14:31:40.000Z</updated>
     
@@ -927,15 +927,15 @@
     
     </summary>
     
-      <category term="读书笔记" scheme="http://kaywu.github.io/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://kaywu.xyz/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
     
   </entry>
   
   <entry>
     <title>探索 pointerIndex out of range</title>
-    <link href="http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/"/>
-    <id>http://kaywu.github.io/2016/09/25/pointer-index-out-of-range/</id>
+    <link href="http://kaywu.xyz/2016/09/25/pointer-index-out-of-range/"/>
+    <id>http://kaywu.xyz/2016/09/25/pointer-index-out-of-range/</id>
     <published>2016-09-25T03:50:53.000Z</published>
     <updated>2017-06-25T04:13:00.000Z</updated>
     
@@ -960,15 +960,15 @@
     
     </summary>
     
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+      <category term="Android" scheme="http://kaywu.xyz/categories/Android/"/>
     
     
   </entry>
   
   <entry>
     <title>如何在非 UI 线程截图</title>
-    <link href="http://kaywu.github.io/2016/09/17/Screenshot-in-Non-UI-Thread/"/>
-    <id>http://kaywu.github.io/2016/09/17/Screenshot-in-Non-UI-Thread/</id>
+    <link href="http://kaywu.xyz/2016/09/17/Screenshot-in-Non-UI-Thread/"/>
+    <id>http://kaywu.xyz/2016/09/17/Screenshot-in-Non-UI-Thread/</id>
     <published>2016-09-17T10:50:48.000Z</published>
     <updated>2016-09-17T13:46:37.000Z</updated>
     
@@ -992,7 +992,7 @@
     
     </summary>
     
-      <category term="Android" scheme="http://kaywu.github.io/categories/Android/"/>
+      <category term="Android" scheme="http://kaywu.xyz/categories/Android/"/>
     
     
   </entry>
