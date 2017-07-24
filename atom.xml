@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.xyz/"/>
-  <updated>2017-07-18T09:50:07.000Z</updated>
+  <updated>2017-07-24T12:11:55.000Z</updated>
   <id>http://kaywu.xyz/</id>
   
   <author>
@@ -20,18 +20,17 @@
     <link href="http://kaywu.xyz/2017/07/13/core-tech/"/>
     <id>http://kaywu.xyz/2017/07/13/core-tech/</id>
     <published>2017-07-13T09:23:30.000Z</published>
-    <updated>2017-07-18T09:50:07.000Z</updated>
+    <updated>2017-07-24T12:11:55.000Z</updated>
     
-    <content type="html">&lt;p&gt;最近在读这本书，发现此书很冷门但读完获益匪浅，强烈推荐，特别是初中级的后端。它通俗易懂地讲解了 Web 架构的套路。读完之后你会发现，高并发可伸缩系统听起来这么高的术语，拆解下来关键的点无非是那么几点。&lt;/p&gt;
-&lt;p&gt;我以前写 Android 应用的时候就对高并发之类的充满了敬佩之情，偶尔碰到的文章有着各种专业的术语，如负载均衡、反向代理、NoSQL 之类的，看得一头雾水。后来开发 Rails 后，对这些或多或少有了一些了解，但没有一个很清晰的整体认识。 读了这本书感觉零碎的知识有了一个完整的拼图。&lt;/p&gt;
-&lt;p&gt;《构建可伸缩的 Web 应用》写得非常接地气，读的时候我时常拿它和开发过的应用的架构做比较，发现真的是一模一样。DNS 轮询负载均衡器、Web 服务器无状态实现可伸缩、利用缓存提升性能等都是业界的最佳实践，都在书中做了易懂的说明。我觉得这本书对深度和广度的拿捏恰当好处，不会讲得很玄很方法论，让人摸不清头脑，也不会一股脑地钻进细节里，只见树木不见森林。&lt;/p&gt;
-&lt;p&gt;这本书是 16 年末出版的，里面介绍的技术都是业界常用的解决方案，翻译得也很流畅。但可惜知名度不高，我也是凑单才买的 :)。希望能有更多的人读到这本好书。&lt;/p&gt;
+    <content type="html">&lt;p&gt;《互联网创业核心技术：构建可伸缩的 Web 应用》整本书围绕“可伸缩”三个字，对 Web 应用的每一层展开了全面细致的解说。&lt;br&gt;如果你和我一样，对负载均衡、水平伸缩之类的概念不是很了解，或者不清楚它在整个架构中的使用，那么你应该来读下这本书。&lt;br&gt;读完之后你会发现架构这东西是有迹可循的，是围绕一系列基本的原则建立起来的。&lt;/p&gt;
+&lt;p&gt;一图胜千言，这本书不仅有着易懂的语言，而且有大量简洁的示意图。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;&lt;img src=&quot;/img/core_tech.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;上图大致说明了本书涉及的内容，从前后端设计、存储设计，再到消息队列和缓存等的使用场景。&lt;/p&gt;
+&lt;p&gt;我读到这本书时颇有意外之喜，毕竟这是凑单的书，可见这书挺冷门的。在这里推荐一下，希望能有更多的人读到。&lt;br&gt;可以搭配 &lt;a href=&quot;https://www.youtube.com/watch?v=-W9F__D3oY4&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Scalability Harvard Web Development (需翻墙)&lt;/a&gt; 一起使用。&lt;/p&gt;
 </content>
     
     <summary type="html">
     
-      &lt;p&gt;最近在读这本书，发现此书很冷门但读完获益匪浅，强烈推荐，特别是初中级的后端。它通俗易懂地讲解了 Web 架构的套路。读完之后你会发现，高并发可伸缩系统听起来这么高的术语，拆解下来关键的点无非是那么几点。&lt;/p&gt;
-&lt;p&gt;我以前写 Android 应用的时候就对高并发之类的充满
+      &lt;p&gt;《互联网创业核心技术：构建可伸缩的 Web 应用》整本书围绕“可伸缩”三个字，对 Web 应用的每一层展开了全面细致的解说。&lt;br&gt;如果你和我一样，对负载均衡、水平伸缩之类的概念不是很了解，或者不清楚它在整个架构中的使用，那么你应该来读下这本书。&lt;br&gt;读完之后你会发现架构这东西是有迹可循的，是围绕一系列基本的原则建立起来的。&lt;/p&gt;
+&lt;p&gt;一图胜千言，这本书不仅有着易懂的语言，而且有大量简洁的示意图。&lt;br&gt;
     
     </summary>
     

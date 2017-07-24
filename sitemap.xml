@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
+    
+    <lastmod>2017-07-24T12:11:55.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/about/index.html</loc>
     
     <lastmod>2017-07-18T14:40:47.000Z</lastmod>
@@ -110,13 +117,6 @@
     <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
     
     <lastmod>2017-07-18T09:51:48.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
-    
-    <lastmod>2017-07-18T09:50:07.000Z</lastmod>
     
   </url>
   
