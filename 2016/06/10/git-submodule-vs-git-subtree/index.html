@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>git submodule vs git subtree | Kay Wu&#39;s blog</title>
@@ -16,7 +16,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -33,14 +33,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -78,13 +78,13 @@
     <div class="entry">
       
         <p>Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code> 的信息（git diff 显示的结果）。<br>而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。<br>针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。<br><a id="more"></a></p>
-<h2 id="git-submodule"><a href="#git-submodule" class="headerlink" title="git submodule"></a>git submodule</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 新增 submodule</span><br><span class="line">git submodule add https://github.com/KayWu/ExViewPager child</span><br></pre></td></tr></table></figure>
-<p>会将 git 仓库中的代码拷贝到 child 目录中，同时添加 .gitmodules 配置文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// .gitmodules</span><br><span class="line">[submodule <span class="string">"child"</span>]</span><br><span class="line">    path = child</span><br><span class="line">    url = https://github.com/KayWu/ExViewPager</span><br></pre></td></tr></table></figure></p>
+<h2 id="git-submodule"><a href="#git-submodule" class="headerlink" title="git submodule"></a>git submodule</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// 新增 submodule</div><div class="line">git submodule add https://github.com/KayWu/ExViewPager child</div></pre></td></tr></table></figure>
+<p>会将 git 仓库中的代码拷贝到 child 目录中，同时添加 .gitmodules 配置文件。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// .gitmodules</div><div class="line">[submodule <span class="string">"child"</span>]</div><div class="line">    path = child</div><div class="line">    url = https://github.com/KayWu/ExViewPager</div></pre></td></tr></table></figure></p>
 <p>child 目录被当做一个独立的 Git 仓库，所有的 Git 命令都可以在 child 目录以及上层项目下独立工作。<br>尽管 child 是子目录，当你不在 child 目录时并不记录它的内容。取而代之的是，当你在那个子目录里修改并提交时，子项目会通知那里的 HEAD 已经发生变更并记录你当前正在工作的那个提交。而此时上层项目会显示 child 目录下的改动，将它记录成来自那个仓库的一个特殊的提交，如同上文举例的 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code>。<br>若他人要克隆该项目，会发现 child 目录为空。这时需要执行 <code>git submodule init</code> 来初始化你的本地配置文件，以及 <code>git submodule update</code> 拉取数据并切换到合适的提交。而后每次从主项目拉取子模块的变更时，由于主项目只更新了子模块提交的引用而没有更新子模块目录下的代码，必须执行 <code>git submodule update</code> 来更新子模块代码。</p>
-<h2 id="git-subtree"><a href="#git-subtree" class="headerlink" title="git subtree"></a>git subtree</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 添加 subtree</span><br><span class="line">// git subtree add --prefix=目录 项目地址 分支</span><br><span class="line">git subtree add --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure>
-<p>不同于 git submodule，此时的 child 仅仅是含有相关代码的普通目录，而不是一个独立的 Git 仓库。因此当在 child 进行修改时，上层项目会立刻记录其改动，而不是像之前那样先在子项目中提交才能进行记录。克隆上层仓库时 child 目录也不再为空。但同时，child 也不能再执行独立的 Git 命令，只有 git subtree 相关的操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 提交改动</span><br><span class="line">// git subtree push --prefix=目录 项目地址 分支</span><br><span class="line">git subtree push --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
-<p>提交改动时 Git 会遍历所有的 commit，从中找出 child 相关的修改然后提交到 child 的项目地址上。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 更新改动</span><br><span class="line">// git subtree pull --prefix=目录 项目地址 分支</span><br><span class="line">git subtree pull --prefix=child https://github.com/KayWu/ExViewPager master</span><br></pre></td></tr></table></figure></p>
-<p>更新 child 目录下的代码。<br>简便起见，可将项目地址添加为 remote 方便后续操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 添加 remote</span><br><span class="line">git add remote child https://github.com/KayWu/ExViewPager</span><br><span class="line">// 用 remote 替换项目地址</span><br><span class="line">git subtree push --prefix=child child master</span><br></pre></td></tr></table></figure></p>
+<h2 id="git-subtree"><a href="#git-subtree" class="headerlink" title="git subtree"></a>git subtree</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 添加 subtree</div><div class="line">// git subtree add --prefix=目录 项目地址 分支</div><div class="line">git subtree add --prefix=child https://github.com/KayWu/ExViewPager master</div></pre></td></tr></table></figure>
+<p>不同于 git submodule，此时的 child 仅仅是含有相关代码的普通目录，而不是一个独立的 Git 仓库。因此当在 child 进行修改时，上层项目会立刻记录其改动，而不是像之前那样先在子项目中提交才能进行记录。克隆上层仓库时 child 目录也不再为空。但同时，child 也不能再执行独立的 Git 命令，只有 git subtree 相关的操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 提交改动</div><div class="line">// git subtree push --prefix=目录 项目地址 分支</div><div class="line">git subtree push --prefix=child https://github.com/KayWu/ExViewPager master</div></pre></td></tr></table></figure></p>
+<p>提交改动时 Git 会遍历所有的 commit，从中找出 child 相关的修改然后提交到 child 的项目地址上。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 更新改动</div><div class="line">// git subtree pull --prefix=目录 项目地址 分支</div><div class="line">git subtree pull --prefix=child https://github.com/KayWu/ExViewPager master</div></pre></td></tr></table></figure></p>
+<p>更新 child 目录下的代码。<br>简便起见，可将项目地址添加为 remote 方便后续操作。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">// 添加 remote</div><div class="line">git add remote child https://github.com/KayWu/ExViewPager</div><div class="line">// 用 remote 替换项目地址</div><div class="line">git subtree push --prefix=child child master</div></pre></td></tr></table></figure></p>
 <p>简单来说，submodule 和 subtree 最大的区别是，submodule 保存的是子仓库的 link，而 subtree 保存的是子仓库的 copy。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://stackoverflow.com/questions/31769820/differences-between-git-submodule-and-subtree" target="_blank" rel="external">Differences between git submodule and subtree</a></li>
@@ -205,24 +205,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

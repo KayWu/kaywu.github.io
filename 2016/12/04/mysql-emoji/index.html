@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Rails &amp; MySQL 使用 emoji 时 Incorrect string value 解决方法 | Kay Wu&#39;s blog</title>
@@ -16,7 +16,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -33,14 +33,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -78,7 +78,7 @@
     <div class="entry">
       
         <p>当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 <code>Incorrect string value</code>。<br>仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQL 表来说报错实在是太不应该了。<br>查了之后，才发现原来 MySQL 的 utf-8 是不完全的，只支持 1-3 个字节，而 emoji 的 utf-8 编码大多为 4 个字节。为了支持更多的字符集，MySQL 5.5 推出了编码 utf8mb4，使其可以兼容 4 字节的 emoji。<br>因此，若要让数据库支持 emoji，可以将编码从 utf-8 改为 utf8mb4。</p>
-<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> <span class="inheritance">&lt; <span class="parent">ActiveRecord::Base</span></span></span></span><br><span class="line">    serialize <span class="symbol">:content</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></div><div class="line">    serialize <span class="symbol">:content</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
 <p>这时存储 emoji 时，就会先进行 serialize 再存入数据库。由于不是直接以 emoji 的 utf-8 编码存储，MySQL 也就不会报错了。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="external">Quick, no-hack emoji support with MySQL &amp; Rails</a></li>
@@ -197,24 +197,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

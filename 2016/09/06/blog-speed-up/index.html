@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Hexo 博客加速实践 | Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
   <meta name="description" content="最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。
-排查由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。然后在 Hexo 相应的 Theme 文件下使用grep -rI fonts.useso.com . 搜索相关字符串，发现了相关的 css 文件。12font-title = &quot;Lato&quot;, Helvetica Neue, Helvetica, Arial, sans-serif@import url(&quot;//fonts.useso.com/css?family=Lato:400,400italic&quot;)
+排查由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。然后在 Hexo 相应的 Theme 文件下使用grep -rI fonts.useso.com . 搜索相关字符串，发现了相关的 css 文件。12font-title = &#34;Lato&#34;, Helvetica Neue, Helvetica, Arial, sans-serif@import url(&#34;//fonts.useso.com/css?family=Lato:400,400italic&#34;)
 当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。但是，这还不够。">
   
   
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -35,14 +35,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -80,9 +80,9 @@
     <div class="entry">
       
         <p>最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。</p>
-<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</span><br><span class="line">@import url("//fonts.useso.com/css?family=Lato:400,400italic")</span><br></pre></td></tr></table></figure></p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</div><div class="line">@<span class="keyword">import</span> url(<span class="string">"//fonts.useso.com/css?family=Lato:400,400italic"</span>)</div></pre></td></tr></table></figure></p>
 <p>当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。<br>再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。<br>但是，这还不够。<br><a id="more"></a></p>
-<h2 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h2><p>由于众所周知的原因，Github 连接速度一直很不稳定，时好时坏。要想更快地提升速度，得将博客迁移到国内才行。国内 coding 也提供 Pages 的服务。通过配置 _config.yml，使得 <code>hexo deploy</code> 时可以同时更新两边的内容。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">- type: git</span><br><span class="line">  repo: https://github.com/KayWu/kaywu.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line"></span><br><span class="line">- type: git</span><br><span class="line">  repo: https://git.coding.net/KayWu/KayWu.git</span><br><span class="line">  branch: coding-pages</span><br></pre></td></tr></table></figure></p>
+<h2 id="迁移"><a href="#迁移" class="headerlink" title="迁移"></a>迁移</h2><p>由于众所周知的原因，Github 连接速度一直很不稳定，时好时坏。要想更快地提升速度，得将博客迁移到国内才行。国内 coding 也提供 Pages 的服务。通过配置 _config.yml，使得 <code>hexo deploy</code> 时可以同时更新两边的内容。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">deploy:</div><div class="line">- type: git</div><div class="line">  repo: https://github.com/KayWu/kaywu.github.io.git</div><div class="line">  branch: master</div><div class="line"></div><div class="line">- type: git</div><div class="line">  repo: https://git.coding.net/KayWu/KayWu.git</div><div class="line">  branch: coding-pages</div></pre></td></tr></table></figure></p>
 <h2 id="域名绑定"><a href="#域名绑定" class="headerlink" title="域名绑定"></a>域名绑定</h2><p>有了国内国外两处博客，但同时也有了两个地址。最好能统一地址访问，根据不同的情况访问不同的博客。而这就需要我们购买域名并配置 DNS。<br>域名的话我是去 NameCheap 买的，<code>kaywu.xyz</code>。第一年才 8 块钱。续费的话一年 60 左右，算是比较公道的价格。DNS 使用的是 Dnspod 的免费服务。<br>在购买了域名后，先将域名与 Pages 绑定。Github 是在仓库的根目录下新建一个名为 CNAME 文件，里面写入要绑定域名。coding 是直接在代码-&gt; Pages 服务里配置。<br>接着去 NameCheap 将 Dns 设置为 Custom DNS，并添加 <code>f1g1ns1.dnspod.net</code>、<code>f1g1ns2.dnspod.net</code>。<br><img src="/img/namecheap.png" alt=""><br>最后去 Dnspod 配置 Dns 解析，根据线路不同解析到不同的博客地址。<br><img src="/img/dnspod.png" alt=""><br>配置完成后等几个小时使 Dns 解析结果更新，就能使用 <code>kaywu.xyz</code> 来访问博客，并且将根据国内国外分别访问 GitHub 或 coding。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://quantumman.me/blog/setting-up-a-domain-with-gitHub-pages.html" target="_blank" rel="external">GitHub Pages 绑定来自阿里云的域名</a></li>
@@ -202,24 +202,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

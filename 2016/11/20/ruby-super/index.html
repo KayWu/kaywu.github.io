@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Ruby super 关键字 | Kay Wu&#39;s blog</title>
@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -34,14 +34,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -79,8 +79,8 @@
     <div class="entry">
       
         <p>由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        arg</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="inheritance">&lt; <span class="parent">A</span></span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        <span class="keyword">super</span>.a_method(arg)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="constant">B</span>.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></span><br></pre></td></tr></table></figure>
-<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="inheritance">&lt; <span class="parent">A</span></span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        <span class="keyword">super</span>(arg)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        arg</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>.a_method(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></div></pre></td></tr></table></figure>
+<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
 <p>那想调用父类的其他方法要如何？可以使用 <code>method(:foo).super_method.call</code> 来调用父类的 foo 方法。</p>
 <p>编程这事，果然不能想当然，不然坑得是自己。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
@@ -201,24 +201,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

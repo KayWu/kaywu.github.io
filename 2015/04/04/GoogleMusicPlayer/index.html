@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>简单分析下 Google 最近的开源播放器 | Kay Wu&#39;s blog</title>
@@ -16,7 +16,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -33,14 +33,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -80,12 +80,12 @@
         <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br><a id="more"></a></p>
 <h2 id="总体-UI-分析"><a href="#总体-UI-分析" class="headerlink" title="总体 UI 分析"></a>总体 UI 分析</h2><p><img src="/img/20150319113711041.jpg" alt="主页面"><br><img src="/img/20150319115256136.jpg" alt="播放页面"><br>UI 比较重要的类有 MusicPlayerActivity, PlaceholderActivity, MediaBrowserFragment, FullScreenPlayerActivity, PlaybackControlsFragment。<br>其中 MusicPlayerActivity, PlaceholderActivity 都是继承 BaseActivity, FullScreenPlayerActivity 是继承 ActionBarCastActivity，而 BaseActivity 是 ActionBarCastActivity 的子类。<br>ActionBarCastActivity 主要实现了 DrawLayout, Toolbar 之类的功能，而 BaseActivity 在此之上又添加了与 PlaybackControlsFragment 交互的功能。</p>
 <h3 id="DrawerLayout"><a href="#DrawerLayout" class="headerlink" title="DrawerLayout"></a>DrawerLayout</h3><p>值得注意的是，这里的 DrawerLayout 是在不同的 Activity 之中进行切换，而不是在 fragment 之间。主要实现的方法主要是通过继承一个含有 DrawLayout 的 Activity，在这里即是 ActionBarCastActivity。可以参考 <a href="http://stackoverflow.com/questions/19451715/same-navigation-drawer-in-different-activities" target="_blank" rel="external">该问题</a> 。<br>还有一个比较奇特的效果是，DrawerLayout 原本被 status bar 和 actionbar 挡住的部分可以显示出来了。<br><img src="/img/20150319122547034.jpg" alt="DrawLayout"><br>具体做法分析可以参考源码和文章 <a href="http://solo.farbox.com/blog/how-do-i-use-drawerlayout-to-display-over-the-actionbar-or-toolbar-and-under-the-status-bar" target="_blank" rel="external">如何将 DrawerLayout 显示在 ActionBar/Toolbar 和 status bar 之间</a> 。</p>
-<h2 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h2><h3 id="Drawble-Animation"><a href="#Drawble-Animation" class="headerlink" title="Drawble Animation"></a>Drawble Animation</h3><p><img src="/img/20150319122336166.gif" alt="Playing Animation"><br>在播放时 listview 图标会有变动的效果。这个主要是在 MediaItemViewHolder.java 通过 Drawble Animation 实现的。<br><a href="http://developer.android.com/guide/topics/graphics/drawable-animation.html" target="_blank" rel="external">官方文档</a><br>主要实现代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">AnimationDrawable animation = (AnimationDrawable)activity.getDrawable(R.drawable.ic_equalizer_white_36dp);</span><br><span class="line">holder.mImageView.setImageDrawable(animation);</span><br><span class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</span><br><span class="line">holder.mImageView.setVisibility(View.VISIBLE);</span><br><span class="line">animation.start();</span><br></pre></td></tr></table></figure></p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">animation-list</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span> <span class="attribute">android:oneshot</span>=<span class="value">"false"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:drawable</span>=<span class="value">"@drawable/ic_equalizer1_white_36dp"</span> <span class="attribute">android:duration</span>=<span class="value">"200"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:drawable</span>=<span class="value">"@drawable/ic_equalizer2_white_36dp"</span> <span class="attribute">android:duration</span>=<span class="value">"200"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">item</span> <span class="attribute">android:drawable</span>=<span class="value">"@drawable/ic_equalizer3_white_36dp"</span> <span class="attribute">android:duration</span>=<span class="value">"200"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">animation-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="切换-Drawer-Activity-Fragment-的动画效果"><a href="#切换-Drawer-Activity-Fragment-的动画效果" class="headerlink" title="切换 Drawer Activity Fragment 的动画效果"></a>切换 Drawer Activity Fragment 的动画效果</h3><p>ActionBarCastActivity.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Bundle extras = ActivityOptions.makeCustomAnimation(ActionBarCastActivity.<span class="keyword">this</span>, R.anim.fade_in, R.anim.fade_out).toBundle();</span><br><span class="line">Class activityClass = mDrawerMenuContents.getActivity(position);</span><br><span class="line">startActivity(<span class="keyword">new</span> Intent(ActionBarCastActivity.<span class="keyword">this</span>, activityClass), extras);</span><br></pre></td></tr></table></figure></p>
-<p>MusicPlayerActivity.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FragmentTransaction transaction = getFragmentManager().beginTransaction();</span><br><span class="line">transaction.setCustomAnimations(R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right);</span><br><span class="line">transaction.replace(R.id.container, fragment);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h2><h3 id="Drawble-Animation"><a href="#Drawble-Animation" class="headerlink" title="Drawble Animation"></a>Drawble Animation</h3><p><img src="/img/20150319122336166.gif" alt="Playing Animation"><br>在播放时 listview 图标会有变动的效果。这个主要是在 MediaItemViewHolder.java 通过 Drawble Animation 实现的。<br><a href="http://developer.android.com/guide/topics/graphics/drawable-animation.html" target="_blank" rel="external">官方文档</a><br>主要实现代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">AnimationDrawable animation = (AnimationDrawable)activity.getDrawable(R.drawable.ic_equalizer_white_36dp);</div><div class="line">holder.mImageView.setImageDrawable(animation);</div><div class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</div><div class="line">holder.mImageView.setVisibility(View.VISIBLE);</div><div class="line">animation.start();</div></pre></td></tr></table></figure></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">animation-list</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span> <span class="attr">android:oneshot</span>=<span class="string">"false"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@drawable/ic_equalizer1_white_36dp"</span> <span class="attr">android:duration</span>=<span class="string">"200"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@drawable/ic_equalizer2_white_36dp"</span> <span class="attr">android:duration</span>=<span class="string">"200"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:drawable</span>=<span class="string">"@drawable/ic_equalizer3_white_36dp"</span> <span class="attr">android:duration</span>=<span class="string">"200"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">animation-list</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="切换-Drawer-Activity-Fragment-的动画效果"><a href="#切换-Drawer-Activity-Fragment-的动画效果" class="headerlink" title="切换 Drawer Activity Fragment 的动画效果"></a>切换 Drawer Activity Fragment 的动画效果</h3><p>ActionBarCastActivity.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Bundle extras = ActivityOptions.makeCustomAnimation(ActionBarCastActivity.<span class="keyword">this</span>, R.anim.fade_in, R.anim.fade_out).toBundle();</div><div class="line">Class activityClass = mDrawerMenuContents.getActivity(position);</div><div class="line">startActivity(<span class="keyword">new</span> Intent(ActionBarCastActivity.<span class="keyword">this</span>, activityClass), extras);</div></pre></td></tr></table></figure></p>
+<p>MusicPlayerActivity.java<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">FragmentTransaction transaction = getFragmentManager().beginTransaction();</div><div class="line">transaction.setCustomAnimations(R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right);</div><div class="line">transaction.replace(R.id.container, fragment);</div></pre></td></tr></table></figure></p>
 <h2 id="小技巧"><a href="#小技巧" class="headerlink" title="小技巧"></a>小技巧</h2><h3 id="tools-xxx"><a href="#tools-xxx" class="headerlink" title="tools:xxx"></a>tools:xxx</h3><p>在显示布局时，TextView 可能需要文字填充来看看效果，但是又嫌调试后删去 android:text=”…”麻烦，就可以用 tools:text=”…”。<br>其中 tools:xxx 在用来预览界面方面还是很方便的。比如在看 activity_player.xml 预览时会提示 fragment 可能动态布局，请选择一个布局进行显示。进行选择后，就会在 fragment 里添加 tools:layout=”@layout/fragment_playback_controls”，这样在预览时就可以看到 PlaybackControlsFragment 的具体布局，但对运行时又没有影响。<br>关于 tools:xxx 的用法可参考 <a href="http://tools.android.com/tech-docs/tools-attributes。" target="_blank" rel="external">http://tools.android.com/tech-docs/tools-attributes。</a></p>
-<h3 id="android-tint"><a href="#android-tint" class="headerlink" title="android:tint"></a>android:tint</h3><p>在播放器里，像播放按钮一共有两种颜色，白色和蓝色。我们可以使用两个不同的图标来完成这种效果，也可以通过 android:tint 来使图标简单地变色，有点像 ps 里添加蒙版的感觉。<br>xml 里的用法是 android:tint，可参考 fragment_playback_controls.xml 里的 ImageButton。<br>Java 里的用法 setImageTintList()，可参考 MediaItemViewHolder.java 里相关代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(R.color.media_item_icon_not_playing));</span><br><span class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</span><br></pre></td></tr></table></figure></p>
+<h3 id="android-tint"><a href="#android-tint" class="headerlink" title="android:tint"></a>android:tint</h3><p>在播放器里，像播放按钮一共有两种颜色，白色和蓝色。我们可以使用两个不同的图标来完成这种效果，也可以通过 android:tint 来使图标简单地变色，有点像 ps 里添加蒙版的感觉。<br>xml 里的用法是 android:tint，可参考 fragment_playback_controls.xml 里的 ImageButton。<br>Java 里的用法 setImageTintList()，可参考 MediaItemViewHolder.java 里相关代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sColorStateNotPlaying = ColorStateList.valueOf(ctx.getResources().getColor(R.color.media_item_icon_not_playing));</div><div class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -200,24 +200,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

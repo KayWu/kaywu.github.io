@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>ActiveRecord select vs pluck | Kay Wu&#39;s blog</title>
@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -34,14 +34,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -79,8 +79,8 @@
     <div class="entry">
       
         <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">Product</span>.select(<span class="symbol">:id</span>).to_a</span><br><span class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></span><br><span class="line"></span><br><span class="line"><span class="constant">Product</span>.pluck(<span class="symbol">:id</span>)</span><br><span class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [2, 1]</span></span><br></pre></td></tr></table></figure>
-<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts <span class="constant">Benchmark</span>.measure &#123;<span class="constant">Product</span>.select(<span class="symbol">:id</span>).to_a&#125;</span><br><span class="line">puts <span class="constant">Benchmark</span>.measure &#123;<span class="constant">Product</span>.pluck(<span class="symbol">:id</span>)&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Product.select(<span class="symbol">:id</span>).to_a</div><div class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></div><div class="line"></div><div class="line">Product.pluck(<span class="symbol">:id</span>)</div><div class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [2, 1]</span></div></pre></td></tr></table></figure>
+<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</div><div class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</div></pre></td></tr></table></figure></p>
 <table>
 <thead>
 <tr>
@@ -108,7 +108,7 @@
 </tr>
 </tbody>
 </table>
-<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">ProductOrder</span>.where.<span class="keyword">not</span>(<span class="symbol">id:</span> <span class="constant">SubOrder</span>.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></span><br><span class="line"></span><br><span class="line"><span class="constant">ProductOrder</span>.where.<span class="keyword">not</span>(<span class="symbol">id:</span> <span class="constant">SubOrder</span>.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></span><br><span class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></span><br></pre></td></tr></table></figure></p>
+<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></div><div class="line"></div><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></div><div class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></div></pre></td></tr></table></figure></p>
 <p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
@@ -228,24 +228,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

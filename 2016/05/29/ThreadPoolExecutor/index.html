@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Java 线程池笔记 | Kay Wu&#39;s blog</title>
@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -34,14 +34,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -78,7 +78,7 @@
     </header>
     <div class="entry">
       
-        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure></p>
+        <p>下面是一种最为简单的线程创建和回收的方法。它创建了一个线程，并在 run() 方法结束后，自动回收该线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;).start();</div></pre></td></tr></table></figure></p>
 <p>这段代码在简单的应用系统中没有太大问题。但在真实环境下，这种为“为每一个任务分配一个线程”的方法存在较多的缺陷，它没有限制可创建线程的数量，并且会频繁地创建和销毁线程。我们可以通过合理地使用线程池来克服这些缺陷。<br><a id="more"></a></p>
 <h2 id="Executors"><a href="#Executors" class="headerlink" title="Executors"></a>Executors</h2><p>Executors 通过静态工厂方法提供了 4 种线程池。</p>
 <ul>
@@ -87,7 +87,7 @@
 <li>newSingleThreadExecutors()：只有一个线程的线程池，保证任务按照其提交的顺序执行。</li>
 <li>newScheduledThreadPool(int)：创建一个定时或周期性执行任务的线程池，该方法可指定线程池的核心线程个数。</li>
 </ul>
-<h2 id="ThreadPoolExucutor"><a href="#ThreadPoolExucutor" class="headerlink" title="ThreadPoolExucutor"></a>ThreadPoolExucutor</h2><p>上述的简单工厂方法最终都是调用 ThreadPoolExecutor 的构造函数来实现的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span><br><span class="line">                              <span class="keyword">int</span> maximumPoolSize,</span><br><span class="line">                              <span class="keyword">long</span> keepAliveTime,</span><br><span class="line">                              TimeUnit unit,</span><br><span class="line">                              BlockingQueue&lt;Runnable&gt; workQueue,</span><br><span class="line">                              ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">         threadFactory, defaultHandler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="ThreadPoolExucutor"><a href="#ThreadPoolExucutor" class="headerlink" title="ThreadPoolExucutor"></a>ThreadPoolExucutor</h2><p>上述的简单工厂方法最终都是调用 ThreadPoolExecutor 的构造函数来实现的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></div><div class="line"><span class="function"><span class="params">                              <span class="keyword">int</span> maximumPoolSize,</span></span></div><div class="line"><span class="function"><span class="params">                              <span class="keyword">long</span> keepAliveTime,</span></span></div><div class="line"><span class="function"><span class="params">                              TimeUnit unit,</span></span></div><div class="line"><span class="function"><span class="params">                              BlockingQueue&lt;Runnable&gt; workQueue,</span></span></div><div class="line"><span class="function"><span class="params">                              ThreadFactory threadFactory)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</div><div class="line">         threadFactory, defaultHandler);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>参数说明：</p>
 <ul>
 <li>corePoolSize（线程池基本大小）：当提交一个任务到线程池时，若线程池已创建的线程数小于 corePoolSize，即使存在空闲线程也会创建一个新线程来执行该任务。</li>
@@ -112,12 +112,12 @@
 <li>最后线程池判断整个线程池是否已满？没满，则创建一个新的工作线程来执行任务，满了，则交给饱和策略来处理这个任务。</li>
 </ol>
 <h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>我们分析下 newFixedThreadPool 和 newCachedThreadPool 的构造函数，来验证下整个流程。</p>
-<h4 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br></pre></td></tr></table></figure>
+<h4 id="newFixedThreadPool"><a href="#newFixedThreadPool" class="headerlink" title="newFixedThreadPool"></a>newFixedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</div><div class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</div><div class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</div></pre></td></tr></table></figure>
 <p>假设这是一个线程数量为 n 的 newFixedThreadPool，当我们提交 n 个任务到该线程池时，由于此时核心线程池未满，线程池会创建 n 个工作线程来执行任务。当我们再提交新的任务时，由于核心线程池已满且没有空闲线程，就会进入流程 3。由于 LinkedBlockingQueue 是个无界队列，因此之后不管再加多少个任务，都不会走到流程 4.<br>分析可得 newFixedThreadPool 确实是个固定长度的线程池。</p>
-<h4 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                              <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                              <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br></pre></td></tr></table></figure>
+<h4 id="newCachedThreadPool"><a href="#newCachedThreadPool" class="headerlink" title="newCachedThreadPool"></a>newCachedThreadPool</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</div><div class="line">                              <span class="number">60L</span>, TimeUnit.SECONDS,</div><div class="line">                              <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</div></pre></td></tr></table></figure>
 <p>当我们添加第一个任务到 newCachedThreadPool 时，线程池会创建一个线程去执行任务。之后，当我们添加任务时，由于核心线程池大小为 0，且此时线程池中没有空闲线程，再加上 SynchronousQueue 是一个不储存的阻塞队列，会直接进入流程 4 中，会创建一个新的线程来执行任务。由于 maximumPoolSize 为 Integer.MAX_VALUE，线程池无界而走不进饱和策略。之后当线程空闲时间超过 60s 时则自动回收。</p>
-<p>如果我希望 newCacedThreadPool 线程池有个上界，应该怎么做？直接把 maximumPoolSize 改为上界是否可以？<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, <span class="number">3</span>, <span class="number">60L</span>, TimeUnit.SECONDS, <span class="keyword">new</span> SynchronusQueue&lt;Runable&gt;());</span><br></pre></td></tr></table></figure></p>
-<p>这时当你提交 3 个任务时，一切正常。之后再提交任务，就会进入饱和策略。此时确实有了上界，但多余的任务会进入饱和策略，而不是储存到队列里。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue&#60;Runable&#62;());</span><br></pre></td></tr></table></figure></p>
+<p>如果我希望 newCacedThreadPool 线程池有个上界，应该怎么做？直接把 maximumPoolSize 改为上界是否可以？<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, <span class="number">3</span>, <span class="number">60L</span>, TimeUnit.SECONDS, <span class="keyword">new</span> SynchronusQueue&lt;Runable&gt;());</div></pre></td></tr></table></figure></p>
+<p>这时当你提交 3 个任务时，一切正常。之后再提交任务，就会进入饱和策略。此时确实有了上界，但多余的任务会进入饱和策略，而不是储存到队列里。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">new ThreadPoolExecutor(0, 3, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue&lt;Runable&gt;());</div></pre></td></tr></table></figure></p>
 <p>如果把工作队列改为无界的 LinkedBlockingQueue？情况更糟了，线程池中只有一个线程。因为 LinkedBlockingQueue 是个无界队列，所以会停留在流程 3，而不是去创建新的线程。<br>正确的做法其实是调用 newFixedThreadPool 的构造函数并设置 allowCoreThreadTimeOut(true)。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="http://gityuan.com/2016/01/16/thread-pool/" target="_blank" rel="external">Java线程池分析</a></li>
@@ -238,24 +238,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

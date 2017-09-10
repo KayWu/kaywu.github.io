@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Ruby 常量查找 | Kay Wu&#39;s blog</title>
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -35,14 +35,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -80,7 +80,7 @@
     <div class="entry">
       
         <p>对 Ruby 中常量查找只有基础的认识，使用上还是有不少疑问，比如 “::A” 的含义、为什么有时使用 “A::B” 而有时直接用 “B”。<br>花时间查了资料来加深对此的理解。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">    puts <span class="string">'outer'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></span><br><span class="line"></span><br><span class="line">    <span class="constant">Record</span>.method <span class="comment"># outer</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">        puts <span class="string">'inner'</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    <span class="constant">Record</span>.method <span class="comment"># inner</span></span><br><span class="line">    <span class="constant">::Record</span>.method <span class="comment"># outer</span></span><br><span class="line">    <span class="constant">Music::Record</span>.method <span class="comment"># inner</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">    puts <span class="string">'outer'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># outer</span></div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">        puts <span class="string">'inner'</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># inner</span></div><div class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></div><div class="line">    Music::Record.method <span class="comment"># inner</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
 <p>我们从简单的例子出发。在上文的代码中，共存在着两个名为 Record 的 module。一个是在最外层，一个是在 Music 内部。<br>当第 9 行调用 Record.method 时，由于 Music 内的 Record 还未被定义，因此调用的只能是最外层的 Record module。<br>而在第 17 行，当我们重新调用时，却发现调用的已经是内部的 Record 了。<br>可见常量的调用时是有一个先后顺序的，简单的说就是从近及远，先使用近的。虽然我们从直观上很容易理解近的含义，但严格上的顺序是通过 <code>Module.nesting</code> 得到的。在 Music 内部调用得到 [Record::Music, Record]，可见 Record::Music 确实比 Record 有更高的优先级。</p>
 <a id="more"></a>
 <p>我们再来看看 <code>::Record.method</code>，在使用 <code>::</code> 之后，调用的就变成了外层的 Record 。<code>::</code>的作用是从 top level 来查找相关常量，也就是调用最外层的 Record。</p>
@@ -209,24 +209,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

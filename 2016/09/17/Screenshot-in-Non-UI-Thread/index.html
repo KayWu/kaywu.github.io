@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>如何在非 UI 线程截图 | Kay Wu&#39;s blog</title>
@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -34,14 +34,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -81,7 +81,7 @@
         <p>截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。</p>
 <p>我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。</p>
 <a id="more"></a>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在后台线程调用该方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title">getBitmapByView</span><span class="params">(LinearLayout linearLayout)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">        Bitmap bitmap = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; linearLayout.getChildCount(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) &#123;</span><br><span class="line">                h += linearLayout.getChildAt(i).getHeight();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        bitmap = Bitmap.createBitmap(linearLayout.getWidth(), h,</span><br><span class="line">                Config.ARGB_8888);</span><br><span class="line">        <span class="keyword">final</span> Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);</span><br><span class="line">        linearLayout.draw(canvas);</span><br><span class="line">        <span class="keyword">return</span> bitmap;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 在后台线程调用该方法</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title">getBitmapByView</span><span class="params">(LinearLayout linearLayout)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> h = <span class="number">0</span>;</div><div class="line">        Bitmap bitmap = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; linearLayout.getChildCount(); i++) &#123;</div><div class="line">            <span class="keyword">if</span> (linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) &#123;</div><div class="line">                h += linearLayout.getChildAt(i).getHeight();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        bitmap = Bitmap.createBitmap(linearLayout.getWidth(), h,</div><div class="line">                Config.ARGB_8888);</div><div class="line">        <span class="keyword">final</span> Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);</div><div class="line">        linearLayout.draw(canvas);</div><div class="line">        <span class="keyword">return</span> bitmap;</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>但没想到之后有一个类似的方法，仅是将参数从 LinearLayout 改为 ScrollView，竟然会偶发性地报错。报错截图如下：<br><img src="/img/thread_exception.png" alt=""></p>
 <p>这样看来，draw 是只能在主线程调用了？那之前的方法为什么一直没事呢？</p>
 <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>我们先来研究下这个 Exception 是怎么产生的。<br>从上面的堆栈看出，是由 ViewRootImpl 的 checkThread 引起的。该方法是为了防止我们在非 UI 线程更新 UI。当我们调用 requestLayout、invalidate 时最终都会调用到 checkThread 方法。</p>
@@ -203,24 +203,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

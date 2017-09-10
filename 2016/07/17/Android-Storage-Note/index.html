@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>Android 存储笔记 | Kay Wu&#39;s blog</title>
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -35,14 +35,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -80,8 +80,8 @@
     <div class="entry">
       
         <p>一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。<br>以包名为 com.kay.example 为例。</p>
-<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context.getCacheDir /data/data/com.kay.example/cache</span><br><span class="line">context.getFileDir /data/data/com.kay.example/files</span><br><span class="line">context.getDir /data/data/com.kay.example</span><br></pre></td></tr></table></figure>
-<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</span><br><span class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</span><br><span class="line">Environment.getExternalStorageDirectory /sdcard/</span><br><span class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</span><br></pre></td></tr></table></figure>
+<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">context.getCacheDir /data/data/com.kay.example/cache</div><div class="line">context.getFileDir /data/data/com.kay.example/files</div><div class="line">context.getDir /data/data/com.kay.example</div></pre></td></tr></table></figure>
+<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</div><div class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</div><div class="line">Environment.getExternalStorageDirectory /sdcard/</div><div class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</div></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>外置存储这方面没太多接触，有兴趣的人可以看下 <a href="http://blog.desmondyao.com/2016/05/04/android-storage/" target="_blank" rel="external">Android 存储挖坑记</a>，这方面讲解得挺详细的。</p>
 <h3 id="缓存清理"><a href="#缓存清理" class="headerlink" title="缓存清理"></a>缓存清理</h3><p>做下载功能时，发现下载记录经常被清。研究了下，推测有两个原因。<br>一是把下载记录存到了 <code>/data/data/com.kay.example/cache</code> 下，而 Android 自带的清除缓存功能会把内部储存和外部储存的缓存文件夹同时清除，也就是 <code>/data/data/com.example.kay/cache</code> 以及 <code>/sdcard/Android/data/com.example/cache</code>。除此之外，像腾讯管家、百度管家等软件在空间清理时也会调动系统的清除缓存功能。<br>二是把下载的文件放到了 <code>/sdcard/Android/data/com.example.kay/files</code> 下。而 360 手机管家清理空间时会自动把该文件夹识别为日志文件然后清除。清理时该文件夹是默认勾选的，且隐藏得很深。当时发现这一点时我真是一脸懵逼，然后试了下某个大厂的 App，发现它家该文件夹倒是被视为重要文件，不默认勾选。竟然还区别待遇，只好乖乖地修改了下载的位置。</p>
@@ -204,24 +204,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

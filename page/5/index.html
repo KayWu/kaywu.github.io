@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>第 5 页 | Kay Wu&#39;s blog</title>
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -31,14 +31,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -76,8 +76,8 @@
     </header>
     <div class="entry">
       
-        <p>泛型是JDK 5中引入的一个新特性，允许在定义类和接口的时候使用类型参数，声明的类型参数在使用时用具体的类型来替换。在没有泛型之前，从集合中读取到的每一个对象都必须进行转化。如果不小心插入了类型错误的对象，则运行时的转换就会出错。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ArrayList apples = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">    &#125;</span><br><span class="line">    apples.add(<span class="keyword">new</span> Orange());</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</span><br><span class="line">        <span class="comment">// java.lang.ClassCastException: Orange cannot be cast to Apple</span></span><br><span class="line">        <span class="comment">// ((Apple)apples.get(i)).id();</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>而使用了泛型之后，就可以在编译期防止将错误类型的对象放置到容器中。而且从List中取出时，也无需做强制的类型转换了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ArrayList&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">        apples.add(<span class="keyword">new</span> Apple());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Compile-time error</span></span><br><span class="line">    <span class="comment">// apples.add(new Orange());</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</span><br><span class="line">        apples.get(i).id();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <p>泛型是JDK 5中引入的一个新特性，允许在定义类和接口的时候使用类型参数，声明的类型参数在使用时用具体的类型来替换。在没有泛型之前，从集合中读取到的每一个对象都必须进行转化。如果不小心插入了类型错误的对象，则运行时的转换就会出错。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    ArrayList apples = <span class="keyword">new</span> ArrayList();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</div><div class="line">        apples.add(<span class="keyword">new</span> Apple());</div><div class="line">    &#125;</div><div class="line">    apples.add(<span class="keyword">new</span> Orange());</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</div><div class="line">        <span class="comment">// java.lang.ClassCastException: Orange cannot be cast to Apple</span></div><div class="line">        <span class="comment">// ((Apple)apples.get(i)).id();</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>而使用了泛型之后，就可以在编译期防止将错误类型的对象放置到容器中。而且从List中取出时，也无需做强制的类型转换了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    ArrayList&lt;Apple&gt; apples = <span class="keyword">new</span> ArrayList();</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</div><div class="line">        apples.add(<span class="keyword">new</span> Apple());</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// Compile-time error</span></div><div class="line">    <span class="comment">// apples.add(new Orange());</span></div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; apples.size(); i++) &#123;</div><div class="line">        apples.get(i).id();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>虽然泛型有着种种的好处，但使用泛型常常会碰到一些反直觉的地方。</p>
       
     </div>
@@ -304,7 +304,7 @@
     </header>
     <div class="entry">
       
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
+        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
       
     </div>
     <footer>
@@ -452,24 +452,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>

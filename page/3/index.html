@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
   <title>第 3 页 | Kay Wu&#39;s blog</title>
@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content=""/>
   
 
   <link href="/favicon.png" rel="icon">
@@ -31,14 +31,14 @@
 	ga('create', 'UA-75043389-1', 'auto');
 	ga('send', 'pageview');
 
-</script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</script>
 
 
 </head>
 
 
 <body>
-  <!-- hexo-inject:begin --><!-- hexo-inject:end --><header id="header" class="inner"><div class="alignleft">
+  <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Kay Wu&#39;s blog</a></h1>
   <h2><a href="/"></a></h2>
 </div>
@@ -77,7 +77,7 @@
     <div class="entry">
       
         <p>最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。</p>
-<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</span><br><span class="line">@import url("//fonts.useso.com/css?family=Lato:400,400italic")</span><br></pre></td></tr></table></figure></p>
+<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</div><div class="line">@<span class="keyword">import</span> url(<span class="string">"//fonts.useso.com/css?family=Lato:400,400italic"</span>)</div></pre></td></tr></table></figure></p>
 <p>当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。<br>再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。<br>但是，这还不够。<br>
       
     </div>
@@ -116,8 +116,8 @@
     <div class="entry">
       
         <p>平时一直是用 xml 来写 Shape Drawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
-<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">shape</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">android:shape</span>=<span class="value">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">corners</span> <span class="attribute">android:radius</span>=<span class="value">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">stroke</span> <span class="attribute">android:width</span>=<span class="value">"2px"</span> <span class="attribute">android:color</span>=<span class="value">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">shape</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:shape</span>=<span class="string">"rectangle"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">corners</span> <span class="attr">android:radius</span>=<span class="string">"10dp"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">stroke</span> <span class="attr">android:width</span>=<span class="string">"2px"</span> <span class="attr">android:color</span>=<span class="string">"#ff000000"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">shape</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</div><div class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</div><div class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</div><div class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</div><div class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</div><div class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</div><div class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</div><div class="line">code.setBackgroundDrawable(drawable);</div></pre></td></tr></table></figure></p>
 <p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br>
       
     </div>
@@ -155,7 +155,7 @@
     </header>
     <div class="entry">
       
-        <h2 id="Single-Number"><a href="#Single-Number" class="headerlink" title="Single Number"></a><a href="https://leetcode.com/problems/single-number/">Single Number</a></h2><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
+        <h2 id="Single-Number"><a href="#Single-Number" class="headerlink" title="Single Number"></a><a href="https://leetcode.com/problems/single-number/" target="_blank" rel="external">Single Number</a></h2><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
 <p>Note:<br>Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?</p>
 <p>题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。<br>这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。<br>按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。</p>
       
@@ -194,7 +194,7 @@
     </header>
     <div class="entry">
       
-        <p><a href="https://leetcode.com/problems/counting-bits/">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br>
+        <p><a href="https://leetcode.com/problems/counting-bits/" target="_blank" rel="external">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br>
       
     </div>
     <footer>
@@ -232,7 +232,7 @@
     <div class="entry">
       
         <p>说来惭愧，看过那么多 Android 性能优化的文章，但这块实战经验微乎其微。抱着已经看过猪跑了，怎么着也得吃上猪肉的心态，尝试去解决某页面的卡顿。实践下来觉得是一次不错的经验，写文章记录下。</p>
-<h2 id="发现卡顿"><a href="#发现卡顿" class="headerlink" title="发现卡顿"></a>发现卡顿</h2><p>在解决卡顿之前，你得发现哪里卡顿。这里多亏了 <a href="https://github.com/markzhai/AndroidPerformanceMonitor">BlockCanary</a>，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。<br>下面是 BlockCanary 显示卡顿信息的截图。<br><img src="/img/performance_improve_0.png" alt=""><br>可以看出，卡顿是由于 DateHelper.parseString 而引起的。<br>那接下来让我们看看 parseString 的具体代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parseString</span><span class="params">(String dateString)</span> </span>&#123;</span><br><span class="line">    SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>, Locale.getDefault());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> dateFormat.parse(dateString);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="发现卡顿"><a href="#发现卡顿" class="headerlink" title="发现卡顿"></a>发现卡顿</h2><p>在解决卡顿之前，你得发现哪里卡顿。这里多亏了 <a href="https://github.com/markzhai/AndroidPerformanceMonitor" target="_blank" rel="external">BlockCanary</a>，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。<br>下面是 BlockCanary 显示卡顿信息的截图。<br><img src="/img/performance_improve_0.png" alt=""><br>可以看出，卡顿是由于 DateHelper.parseString 而引起的。<br>那接下来让我们看看 parseString 的具体代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parseString</span><span class="params">(String dateString)</span> </span>&#123;</div><div class="line">    SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>, Locale.getDefault());</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">return</span> dateFormat.parse(dateString);</div><div class="line">    &#125; <span class="keyword">catch</span> (ParseException e) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>很简单的一段代码，将规定格式的 String 转换为 Date 对象，简单到貌似没有可以出错及优化的空间。<br>至此我们陷入了一个死胡同。我们查找到了疑似卡顿的原因，但是无法确认也不知如何优化。<br>
       
     </div>
@@ -271,8 +271,8 @@
     <div class="entry">
       
         <p>一直搞不清 Android 常用文件夹的位置，做笔记整理下。顺便记录下自己在存储文件时踩的坑。<br>以包名为 com.kay.example 为例。</p>
-<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">context.getCacheDir /data/data/com.kay.example/cache</span><br><span class="line">context.getFileDir /data/data/com.kay.example/files</span><br><span class="line">context.getDir /data/data/com.kay.example</span><br></pre></td></tr></table></figure>
-<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</span><br><span class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</span><br><span class="line">Environment.getExternalStorageDirectory /sdcard/</span><br><span class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</span><br></pre></td></tr></table></figure>
+<h3 id="内部储存"><a href="#内部储存" class="headerlink" title="内部储存"></a>内部储存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">context.getCacheDir /data/data/com.kay.example/cache</div><div class="line">context.getFileDir /data/data/com.kay.example/files</div><div class="line">context.getDir /data/data/com.kay.example</div></pre></td></tr></table></figure>
+<h3 id="外部存储"><a href="#外部存储" class="headerlink" title="外部存储"></a>外部存储</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">context.getExternalCacheDir /sdcard/Android/data/com.example.kay/cache</div><div class="line">context.getExternalFilesDir /sdcard/Android/data/com.example.kay/files</div><div class="line">Environment.getExternalStorageDirectory /sdcard/</div><div class="line">Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) /sdcard/Movies</div></pre></td></tr></table></figure>
       
     </div>
     <footer>
@@ -310,7 +310,7 @@
     <div class="entry">
       
         <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
-<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</span><br></pre></td></tr></table></figure>
+<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</div></pre></td></tr></table></figure>
 <p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
 <h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
@@ -349,7 +349,7 @@
     </header>
     <div class="entry">
       
-        <p><a href="https://leetcode.com/problems/longest-palindromic-substring/">LeetCode 5. Longest Palindromic Substring</a><br>Given a string S, find the longest palindromic substring in S.<br>给定一个字符串 S，找到其中最长的连续回文串。<br>
+        <p><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="external">LeetCode 5. Longest Palindromic Substring</a><br>Given a string S, find the longest palindromic substring in S.<br>给定一个字符串 S，找到其中最长的连续回文串。<br>
       
     </div>
     <footer>
@@ -386,7 +386,7 @@
     </header>
     <div class="entry">
       
-        <p>最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。<br>后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#23458;&#25143;&#31471; &#60; - &#62; &#20013;&#32487;&#26381;&#21153;&#22120; &#60; - &#62; Shadowsocks &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure></p>
+        <p>最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。<br>后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">客户端 &lt; - &gt; 中继服务器 &lt; - &gt; Shadowsocks 服务器</div></pre></td></tr></table></figure></p>
 <p>在自己电脑上 ping 中继服务器，中继服务器 ping ss 服务器，延迟分别为 10+ ms、60+ ms。阿里云的出口带宽果然不一样。加速条件满足，开始进入安装配置。</p>
       
     </div>
@@ -537,24 +537,7 @@ var disqus_shortname = 'kay-wu';
 (function($){
   $('.fancybox').fancybox();
 })(jQuery);
-</script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
 </script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
-</script>
-
-<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-<!-- End: Injected MathJax -->
-<!-- hexo-inject:end -->
 
 
 </body>
