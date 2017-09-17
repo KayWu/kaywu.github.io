@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
   
-  <title>简单分析下 Google 最近的开源播放器 | Kay Wu&#39;s blog</title>
+  <title>Kay Wu&#39;s blog</title>
   <meta name="author" content="Kay Wu">
   
-  <meta name="description" content="项目地址Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。">
+  <meta name="description" content="title: “简单分析下 Google 最近的开源播放器”date: 2015-04-04 18:47:05categories: Androidtags: Android 项目地址Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="简单分析下 Google 最近的开源播放器"/>
+  
   <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
 
   
@@ -67,17 +67,17 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2015-04-04T10:47:05.000Z"><a href="/2015/04/04/GoogleMusicPlayer/">2015-04-04</a></time>
+        <time datetime="2016-06-10T03:54:48.000Z"><a href="/2016/06/10/GoogleMusicPlayer/">2016-06-10</a></time>
       
       
   
-    <h1 class="title">简单分析下 Google 最近的开源播放器</h1>
+    <h1 class="title"></h1>
   
 
     </header>
     <div class="entry">
       
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br><a id="more"></a></p>
+        <p>title: “简单分析下 Google 最近的开源播放器”<br>date: 2015-04-04 18:47:05<br>categories: Android<br>tags: Android<br> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br><a id="more"></a></p>
 <h2 id="总体-UI-分析"><a href="#总体-UI-分析" class="headerlink" title="总体 UI 分析"></a>总体 UI 分析</h2><p><img src="/img/20150319113711041.jpg" alt="主页面"><br><img src="/img/20150319115256136.jpg" alt="播放页面"><br>UI 比较重要的类有 MusicPlayerActivity, PlaceholderActivity, MediaBrowserFragment, FullScreenPlayerActivity, PlaybackControlsFragment。<br>其中 MusicPlayerActivity, PlaceholderActivity 都是继承 BaseActivity, FullScreenPlayerActivity 是继承 ActionBarCastActivity，而 BaseActivity 是 ActionBarCastActivity 的子类。<br>ActionBarCastActivity 主要实现了 DrawLayout, Toolbar 之类的功能，而 BaseActivity 在此之上又添加了与 PlaybackControlsFragment 交互的功能。</p>
 <h3 id="DrawerLayout"><a href="#DrawerLayout" class="headerlink" title="DrawerLayout"></a>DrawerLayout</h3><p>值得注意的是，这里的 DrawerLayout 是在不同的 Activity 之中进行切换，而不是在 fragment 之间。主要实现的方法主要是通过继承一个含有 DrawLayout 的 Activity，在这里即是 ActionBarCastActivity。可以参考 <a href="http://stackoverflow.com/questions/19451715/same-navigation-drawer-in-different-activities" target="_blank" rel="external">该问题</a> 。<br>还有一个比较奇特的效果是，DrawerLayout 原本被 status bar 和 actionbar 挡住的部分可以显示出来了。<br><img src="/img/20150319122547034.jpg" alt="DrawLayout"><br>具体做法分析可以参考源码和文章 <a href="http://solo.farbox.com/blog/how-do-i-use-drawerlayout-to-display-over-the-actionbar-or-toolbar-and-under-the-status-bar" target="_blank" rel="external">如何将 DrawerLayout 显示在 ActionBar/Toolbar 和 status bar 之间</a> 。</p>
 <h2 id="Animation"><a href="#Animation" class="headerlink" title="Animation"></a>Animation</h2><h3 id="Drawble-Animation"><a href="#Drawble-Animation" class="headerlink" title="Drawble Animation"></a>Drawble Animation</h3><p><img src="/img/20150319122336166.gif" alt="Playing Animation"><br>在播放时 listview 图标会有变动的效果。这个主要是在 MediaItemViewHolder.java 通过 Drawble Animation 实现的。<br><a href="http://developer.android.com/guide/topics/graphics/drawable-animation.html" target="_blank" rel="external">官方文档</a><br>主要实现代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">AnimationDrawable animation = (AnimationDrawable)activity.getDrawable(R.drawable.ic_equalizer_white_36dp);</div><div class="line">holder.mImageView.setImageDrawable(animation);</div><div class="line">holder.mImageView.setImageTintList(sColorStatePlaying);</div><div class="line">holder.mImageView.setVisibility(View.VISIBLE);</div><div class="line">animation.start();</div></pre></td></tr></table></figure></p>
@@ -92,11 +92,6 @@
     <footer>
       
         
-  
-  <div class="categories">
-    <a href="/categories/Android/">Android</a>
-  </div>
-
         
         
       
@@ -128,40 +123,40 @@
 
   
 <div class="widget tag">
-  <h3 class="title">分类</h3>
+  <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+    <li><a href="/tags/Android/">Android</a><small>12</small></li>
   
-    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
-    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
-    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
-    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+    <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
 
-
-  
 </aside>
     <div class="clearfix"></div>
   </div>

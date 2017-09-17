@@ -66,6 +66,75 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-01-15T10:09:31.000Z"><a href="/2017/01/15/rails-select-vs-pluck/">2017-01-15</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/01/15/rails-select-vs-pluck/">ActiveRecord select vs pluck</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Product.select(<span class="symbol">:id</span>).to_a</div><div class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></div><div class="line"></div><div class="line">Product.pluck(<span class="symbol">:id</span>)</div><div class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [2, 1]</span></div></pre></td></tr></table></figure>
+<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</div><div class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</div></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>user CPU time</th>
+<th>system CPU time</th>
+<th>sum CPU time</th>
+<th>elapsed real time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>select</td>
+<td>0.050000</td>
+<td>0.020000</td>
+<td>0.070000</td>
+<td>0.095440</td>
+</tr>
+<tr>
+<td>pluck</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.000000</td>
+<td>0.001845</td>
+</tr>
+</tbody>
+</table>
+<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></div><div class="line"></div><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></div><div class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></div></pre></td></tr></table></figure></p>
+<p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
+<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="external">Select Vs Pluck in Rails</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-01-08T10:13:24.000Z"><a href="/2017/01/08/rails-etag/">2017-01-08</a></time>
       
       
@@ -424,44 +493,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-09-17T10:50:48.000Z"><a href="/2016/09/17/Screenshot-in-Non-UI-Thread/">2016-09-17</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/09/17/Screenshot-in-Non-UI-Thread/">如何在非 UI 线程截图</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。</p>
-<p>我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/09/17/Screenshot-in-Non-UI-Thread/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -482,40 +513,40 @@
 
   
 <div class="widget tag">
-  <h3 class="title">分类</h3>
+  <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+    <li><a href="/tags/Android/">Android</a><small>12</small></li>
   
-    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
-    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
-    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
-    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+    <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
 
-
-  
 </aside>
     <div class="clearfix"></div>
   </div>

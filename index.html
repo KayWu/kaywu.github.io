@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-09-10T07:47:00.000Z"><a href="/2017/09/10/wechat-development/">2017-09-10</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/09/10/wechat-development/">微信开发总结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近开发了基于微信的相关项目，主要是微信的网页开发、微信支付以及发送消息这块的内容。项目本身没什么难度，但由于微信封闭的体系、混乱的配置以及分散的文档，爬了不少的坑，这里总结下经验。</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>先说说微信的文档。微信的文档不是统一的，比如公众平台技术文档在<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="external">一个网站</a>，而支付文档在<a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="external">另一个网站</a>，但支付文档所使用的 js 的相关文档又在前一个网站。除此之外，还有<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/index.html" target="_blank" rel="external">小程序文档</a>、<a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=open1419318292&amp;token=&amp;lang=zh_CN" target="_blank" rel="external">开放平台文档</a>。从这混乱的文档相信你也能或多或少体会到开发的难处。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>出于安全性（更多是封闭性）的考虑，微信的配置繁琐且复杂，这里我把整个流程都记录下来以供参考。<br>首先登录公众平台，在开发-基本配置里获得 <code>AppSecret</code> 并保存下来，之后网站就不会再显示开发者密码，只能重置。<br>同样在该页面，配置 IP 白名单。如果你需要接收用户公众号的消息以及事件推送，同一页面添加服务器配置。<br>然后，在设置-公众号设置-功能设置，按照说明对业务域名、JS 接口安全域名、网页授权域名进行设置。<br>如果有微信支付的需求，去<a href="https://pay.weixin.qq.com" target="_blank" rel="external">微信商户平台</a>，商户平台-产品中心-开发配置中设置公众号支付的授权目录。注意，授权目录必须是发起支付网址的上一级目录。举例来说，<br>发起支付的网址为 <code>www.xxx.com/orders/22/pay</code>，那么支付目录就必须为 <code>www.xxx.com/orders/22/</code>，填 <code>www.xxx.com/</code> 或者 <code>www.xxx.com/orders/</code> 都是不行的。再加上支付的授权目录只能填 5 个，发起支付的域名得注意设计。</p>
+<p>PS: 没有公众号的朋友可以通过微信的<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">测试号</a>来试验除微信支付以外大部分的功能。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/09/10/wechat-development/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-07-13T09:23:30.000Z"><a href="/2017/07/13/core-tech/">2017-07-13</a></time>
       
       
@@ -424,75 +464,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-01-15T10:09:31.000Z"><a href="/2017/01/15/rails-select-vs-pluck/">2017-01-15</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/01/15/rails-select-vs-pluck/">ActiveRecord select vs pluck</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Product.select(<span class="symbol">:id</span>).to_a</div><div class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></div><div class="line"></div><div class="line">Product.pluck(<span class="symbol">:id</span>)</div><div class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [2, 1]</span></div></pre></td></tr></table></figure>
-<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</div><div class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</div></pre></td></tr></table></figure></p>
-<table>
-<thead>
-<tr>
-<th>-</th>
-<th>user CPU time</th>
-<th>system CPU time</th>
-<th>sum CPU time</th>
-<th>elapsed real time</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>select</td>
-<td>0.050000</td>
-<td>0.020000</td>
-<td>0.070000</td>
-<td>0.095440</td>
-</tr>
-<tr>
-<td>pluck</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.000000</td>
-<td>0.001845</td>
-</tr>
-</tbody>
-</table>
-<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></div><div class="line"></div><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></div><div class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></div></pre></td></tr></table></figure></p>
-<p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
-<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="external">Select Vs Pluck in Rails</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -511,40 +482,40 @@
 
   
 <div class="widget tag">
-  <h3 class="title">分类</h3>
+  <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+    <li><a href="/tags/Android/">Android</a><small>12</small></li>
   
-    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
-    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
-    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
-    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+    <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
 
-
-  
 </aside>
     <div class="clearfix"></div>
   </div>

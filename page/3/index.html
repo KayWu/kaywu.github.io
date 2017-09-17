@@ -66,6 +66,44 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-09-17T10:50:48.000Z"><a href="/2016/09/17/Screenshot-in-Non-UI-Thread/">2016-09-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/09/17/Screenshot-in-Non-UI-Thread/">如何在非 UI 线程截图</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。</p>
+<p>我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/09/17/Screenshot-in-Non-UI-Thread/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-09-06T14:36:27.000Z"><a href="/2016/09/06/blog-speed-up/">2016-09-06</a></time>
       
       
@@ -408,43 +446,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-06-10T05:47:34.000Z"><a href="/2016/06/10/git-submodule-vs-git-subtree/">2016-06-10</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/06/10/git-submodule-vs-git-subtree/">git submodule vs git subtree</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Git 仓库 A 包含 Git 仓库 B，若在 B 中做改动，一些诡异的情况会发生。若 B 中的改动没有提交，A 看起来就像什么都没发生一样。而当改动提交之后，A 中就会显示类似 <code>Subproject commit 3fd38c0c070ed6b44c2e9b9551343bc75522ce25</code> 的信息（git diff 显示的结果）。<br>而提交 A 到远程仓库后再拉取下来，仓库 B 竟是一个空的目录。必须再拉取 B 的代码才能得到一个完整的仓库。<br>针对这些问题有两种解决方法，分别是 git submodule 和 git subtree。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/06/10/git-submodule-vs-git-subtree/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -465,40 +466,40 @@
 
   
 <div class="widget tag">
-  <h3 class="title">分类</h3>
+  <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+    <li><a href="/tags/Android/">Android</a><small>12</small></li>
   
-    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
-    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
-    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
-    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+    <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
 
-
-  
 </aside>
     <div class="clearfix"></div>
   </div>

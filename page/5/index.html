@@ -66,6 +66,119 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-03-27T11:28:08.000Z"><a href="/2016/03/27/Android-Support-Annotation/">2016-03-27</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/27/Android-Support-Annotation/">Support Annotation 小结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Support Annotation 是指 Andoid Support Library 从 19.1 开始引入的注解库，通过<code>compile &#39;com.android.support:support-annotations:22.2.0&#39;</code>就能引入。它可以检验代码潜在的问题并提醒你去修正它。<br>下面简单介绍下我常用的几个注解，更加全面的介绍可以看<a href="http://tools.android.com/tech-docs/support-annotations" target="_blank" rel="external">官方文档</a>。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/27/Android-Support-Annotation/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-20T05:29:15.000Z"><a href="/2016/03/20/Python-LiveReload/">2016-03-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/20/Python-LiveReload/">初识 LiveReload</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>LiveReload 是前端自动化的工具之一。在前端开发中，经常需要实时地看到页面编辑的效果。但每次都要从编辑器切换到浏览器，再刷新浏览器才能看到页面变化，这种频繁的操作严重影响了开发效率。LiveReload 就是用来解决这个问题的。<br>LiveReload 通过实时检测文件的变化，当文件变化时触发相关任务，并通知浏览器刷新页面。实现 LiveReload 有多种方式，如 Node.js 的 gulp、grunt，Ruby 的 Guard等。本文通过 python 的 <a href="http://livereload.readthedocs.org/en/latest/" target="_blank" rel="external">LiveReload</a> 介绍其使用。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/20/Python-LiveReload/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-13T06:25:14.000Z"><a href="/2016/03/13/Java-Exception/">2016-03-13</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/03/13/Java-Exception/">聊聊 Java Exception 机制</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread() &#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mRestAdapter.create(Api.class).sendRequst();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="comment">// handle Exception</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;.start();</div></pre></td></tr></table></figure></p>
+<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</div><div class="line">  String firstLine = reader.readLine();</div><div class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/03/13/Java-Exception/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-03-06T04:53:55.000Z"><a href="/2016/03/06/Java-Generic/">2016-03-06</a></time>
       
       
@@ -288,80 +401,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-04-04T10:47:05.000Z"><a href="/2015/04/04/GoogleMusicPlayer/">2015-04-04</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/04/04/GoogleMusicPlayer/">简单分析下 Google 最近的开源播放器</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2015/04/04/GoogleMusicPlayer/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-04-03T11:23:22.000Z"><a href="/2015/04/03/DoubanDemo/">2015-04-03</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/04/03/DoubanDemo/">打造豆瓣App</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>使用 ViewPager, PagerSlidingTabStrip, SwipeRefreshLayout打造豆瓣App的效果。<br><img src="/img/20150221173403265.gif" alt="最终效果"><br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2015/04/03/DoubanDemo/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -380,40 +419,40 @@
 
   
 <div class="widget tag">
-  <h3 class="title">分类</h3>
+  <h3 class="title">标签</h3>
   <ul class="entry">
   
-    <li><a href="/categories/Algorithms/">Algorithms</a><small>3</small></li>
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/categories/Android/">Android</a><small>14</small></li>
+    <li><a href="/tags/Android/">Android</a><small>12</small></li>
   
-    <li><a href="/categories/Front-End/">Front-End</a><small>2</small></li>
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
-    <li><a href="/categories/Git/">Git</a><small>1</small></li>
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/categories/Gradle/">Gradle</a><small>1</small></li>
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/categories/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
-    <li><a href="/categories/MySQL/">MySQL</a><small>3</small></li>
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
-    <li><a href="/categories/Python/">Python</a><small>2</small></li>
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/categories/Rails/">Rails</a><small>6</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
   
-    <li><a href="/categories/Ruby/">Ruby</a><small>4</small></li>
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/categories/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
   
-    <li><a href="/categories/编程/">编程</a><small>3</small></li>
+    <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/categories/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   
   </ul>
 </div>
 
-
-  
 </aside>
     <div class="clearfix"></div>
   </div>
