@@ -88,8 +88,7 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Module.nesting 只是查找常量的一部分，更完整的常量查找步骤如下：</p>
 <ol>
 <li>向外找，从 Module.nesting 依次查找</li>
-<li>向上找，从自身所在的 class 或 module 的 ancestors 依次查找</li>
-<li>如果 Module.nesting 为空，则从 Object.ancestors 找<br><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="external">Everything you ever wanted to know about constant lookup in Ruby</a> 讲得非常详情，就不多述了。</li>
+<li>向上找，从打开类 的 ancestors 依次查找（打开类：Module.nesting.first，若为空则为 Object）<br><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="external">Everything you ever wanted to know about constant lookup in Ruby</a> 讲得非常详情，就不多述了。</li>
 </ol>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="external">Everything you ever wanted to know about constant lookup in Ruby</a></li>
@@ -147,7 +146,7 @@
   
     <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
   
-    <li><a href="/tags/Android/">Android</a><small>12</small></li>
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
@@ -169,7 +168,7 @@
   
     <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
-    <li><a href="/tags/编程/">编程</a><small>2</small></li>
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
     <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
   

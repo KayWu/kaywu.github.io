@@ -2,6 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2015/04/03/DoubanDemo/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2015/04/04/GoogleMusicPlayer/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2015/12/12/Programmming-Language-Concepts/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2015/11/30/The-Way-To-Program/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2017/02/19/ruby-constant/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2017/09/10/wechat-development/</loc>
     
     <lastmod>2017-09-17T15:40:42.000Z</lastmod>
@@ -16,49 +58,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/07/31/Counting-Bits/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/06/10/DoubanDemo/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2015/05/14/Experience/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/06/10/GoogleMusicPlayer/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -107,6 +107,13 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2016/02/28/PacketCapture/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -115,13 +122,6 @@
   
   <url>
     <loc>http://kaywu.xyz/2016/07/24/Performance-Improvement/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2015/12/12/Programmming-Language-Concepts/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -156,6 +156,13 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2016/08/28/Shape-Drawable/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -164,13 +171,6 @@
   
   <url>
     <loc>http://kaywu.xyz/2016/08/14/Single-Number/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2015/11/30/The-Way-To-Program/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -240,14 +240,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/10/16/meta-programming/</loc>
+    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
+    <loc>http://kaywu.xyz/2016/10/16/meta-programming/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -317,7 +317,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2017/02/19/ruby-constant/</loc>
+    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -338,7 +338,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
+    <loc>http://kaywu.xyz/2016/07/31/Counting-Bits/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
