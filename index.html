@@ -66,6 +66,88 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-10-19T06:21:21.000Z"><a href="/2017/10/19/reveal-md/">2017-10-19</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/10/19/reveal-md/">如何用 Markdown 写 PPT</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js</a> 是通过网页来制作 PPT 的 JavaScript 框架，通过它可以轻松制作精致的网页 PPT。它自身也支持 Markdown。<br>但使用过几次之后，感觉对于日常使用还是稍重了些。每次新建 PPT 都需要复制粘贴 boilerplate code。</p>
+<p><a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md</a> 让你从这些繁琐的步骤中解放出来。它使用 reveal-js 自带的 Markdown 功能，让你只需写 Markdown，其他的事它帮你搞定。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单地说下如何使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir slides &amp;&amp; cd slides</div><div class="line">yarn init -y</div><div class="line">yarn add reveal-md</div><div class="line">yarn exec reveal-md demo</div></pre></td></tr></table></figure></p>
+<p>此时炫酷的 PPT 网页就在你眼前呈现了。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>标准的 Markdown 语法，默认 <code>---</code> 作为 PPT 页面的分割线。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># Title</div><div class="line"></div><div class="line">* Point 1</div><div class="line">* Point 2</div><div class="line"></div><div class="line">---</div><div class="line"></div><div class="line">## Second slide</div><div class="line"></div><div class="line">&gt; Best quote ever.</div><div class="line"></div><div class="line">Note: speaker notes FTW!</div></pre></td></tr></table></figure></p>
+<h3 id="演示命令"><a href="#演示命令" class="headerlink" title="演示命令"></a>演示命令</h3><p>演示命令 <code>reveal-md</code>，启动本地 server 并使用 reveal.js 渲染 Markdown 文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yarn exec reveal-md demo.md</div></pre></td></tr></table></figure></p>
+<p>更详细的配置请查看 <a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md 文档</a> 和 <a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js 文档</a>。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-10-17T14:18:46.000Z"><a href="/2017/10/17/default_url_options/">2017-10-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/10/17/default_url_options/">Rails 通过 path 实现 subdomain —— default_url_options 的妙用</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近在开发微信开放平台，需要通过 url 来区别不同的第三方。最简单直接的方法，就是通过 subdomain 来实现。<br>比如有两个第三方 A、B，那么 A 的域名为 A.example.com，B 的域名为 B.example.com。但这次由于 https 证书的问题只能通过 path 来实现，也就是 A 的域名为 www.example.com/A，B 的域名为 www.example.com/B。</p>
+<p>但通过 path 实现会有一个严重的问题，就是如何保证生成的 url 带有第三方的信息。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span> <span class="keyword">do</span></div><div class="line">  resources <span class="symbol">:orders</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<p>上面的配置使用 orders_path 时会报错 <code>missing required keys: [:third_path]</code>。<br>最笨的办法莫过于给所有的 url 手动加上，但这方法随着项目增大会变得不可行。</p>
+<p>我们希望 url 的生成可以更加智能，当访问 url 为 www.example.com/A 时，使用 orders_path 可以自动生成 /A/orders。从逻辑上，这是行得通的。</p>
+<p>首先想到 route 可以添加 default 配置，于是做了以下尝试，可惜报错了。在 route 时只能配置静态的默认值。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># undefined local variable or method `params'</span></div><div class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span>, <span class="symbol">default:</span> &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125; <span class="keyword">do</span></div><div class="line">  resources <span class="symbol">:orders</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>那么，有没有类似的方法，提供 url default 配置的功能呢？这时就轮到 default_url_options 出场了。<br>default_url_options 的用处不仅仅是在 config 时设置默认的 host，每个 Controller 都有该方法，调用 url_helper 时会结合该方法生成最终的 url。</p>
+<p>在对应的 Controller 里添加以下代码，这时调用 orders_path 就会根据域名中的 third_parth 生成对应的域名了。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">default_url_options</span></span></div><div class="line">  &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>解决了生成 url 的问题，我们还需要解决测试时 url 的问题。这里我对 ActionController::TestCase 进行了 monkey patch，供大家参考。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ActionController::TestCase</span></span></div><div class="line"></div><div class="line">  alias_method <span class="symbol">:orig_process</span>, <span class="symbol">:process</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(action, <span class="symbol">method:</span> <span class="string">"GET"</span>, <span class="symbol">params:</span> &#123;&#125;, <span class="symbol">session:</span> <span class="literal">nil</span>, <span class="symbol">body:</span> <span class="literal">nil</span>, <span class="symbol">flash:</span> &#123;&#125;, <span class="symbol">format:</span> <span class="literal">nil</span>, <span class="symbol">xhr:</span> <span class="literal">false</span>, <span class="symbol">as:</span> <span class="literal">nil</span>)</span></span></div><div class="line">    <span class="keyword">if</span> @controller.is_a? WechatBaseController</div><div class="line">      params.merge!(&#123;<span class="symbol">app_alias:</span> <span class="string">'test'</span>&#125;)</div><div class="line">    <span class="keyword">end</span></div><div class="line">    orig_process(action, <span class="symbol">method:</span> method, <span class="symbol">params:</span> params, <span class="symbol">session:</span> session, <span class="symbol">body:</span> body, <span class="symbol">flash:</span> flash, <span class="symbol">format:</span> format, <span class="symbol">xhr:</span> xhr, <span class="symbol">as:</span> as)</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-09-10T07:47:00.000Z"><a href="/2017/09/10/wechat-development/">2017-09-10</a></time>
       
       
@@ -384,86 +466,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-02-19T09:08:10.000Z"><a href="/2017/02/19/ruby-constant/">2017-02-19</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/02/19/ruby-constant/">Ruby 常量查找</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>对 Ruby 中常量查找只有基础的认识，使用上还是有不少疑问，比如 “::A” 的含义、为什么有时使用 “A::B” 而有时直接用 “B”。<br>花时间查了资料来加深对此的理解。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">    puts <span class="string">'outer'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># outer</span></div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">        puts <span class="string">'inner'</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># inner</span></div><div class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></div><div class="line">    Music::Record.method <span class="comment"># inner</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
-<p>我们从简单的例子出发。在上文的代码中，共存在着两个名为 Record 的 module。一个是在最外层，一个是在 Music 内部。<br>当第 9 行调用 Record.method 时，由于 Music 内的 Record 还未被定义，因此调用的只能是最外层的 Record module。<br>而在第 17 行，当我们重新调用时，却发现调用的已经是内部的 Record 了。<br>可见常量的调用时是有一个先后顺序的，简单的说就是从近及远，先使用近的。虽然我们从直观上很容易理解近的含义，但严格上的顺序是通过 <code>Module.nesting</code> 得到的。在 Music 内部调用得到 [Record::Music, Record]，可见 Record::Music 确实比 Record 有更高的优先级。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/02/19/ruby-constant/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-01-21T09:53:22.000Z"><a href="/2017/01/21/mysql-system-error-32/">2017-01-21</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/01/21/mysql-system-error-32/">mac 上 MySQL system error 32 解决方案</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>不知为何，在升级了 macOS 系统之后，Rails 连接 MySQL 经常性会报 <code>Mysql2::Error: Lost connection to MySQL server at &#39;sending authentication information&#39;, system error: 32</code> 的错误。重启 MySQL 就好了，过段时间又会报错，烦不胜烦。下定决心解决下。</p>
-<p>参考了<a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">这个帖子</a>后，大致看到有两种解决方法。一种是调大系统 <code>ulimit -n</code> 的值，另一种是调小 <code>table_open_cache</code> 的值。<br>从帖子的回复以及 <code>ulimit -n</code> 表示系统的文件句柄限制来看，个人认为调节 <code>ulimit -n</code> 的值是一个治标不治本的方法。本机的值已经 4k+，应该足够了。</p>
-<p>正巧有次出现问题时，MySQL 还连接着。查了下当时的 status，发现 <code>open_tables</code> 不过几十，而 <code>open_files</code> 却几千。<br>执行 <code>flush tables</code> 清除缓存后就可以重新连接了。确实和 <code>table_open_cache</code> 有一定的关系。</p>
-<p>查看了下 <code>table_open_cache</code> 的值，默认值是 2000。通过在 <code>my.cnf</code> 中添加 <code>table_open_cache = 500</code>，MySQL 这几天就没有闹别扭，希望能一直安稳下去。</p>
-<h4 id="MySQL-相关命令"><a href="#MySQL-相关命令" class="headerlink" title="MySQL 相关命令"></a>MySQL 相关命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">show status like &apos;%open_files%&apos;; # 查看 open_files 的值，open_tables 同理</div><div class="line">show variables like &apos;%table_open_cache%&apos;; # 查看 table_open_cache 的值</div></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">http://bugs.mysql.com/bug.php?id=71960</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -501,11 +503,11 @@
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
-    <li><a href="/tags/Rails/">Rails</a><small>7</small></li>
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
-    <li><a href="/tags/Tools/">Tools</a><small>1</small></li>
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>1</small></li>
   
@@ -521,7 +523,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2017 Kay Wu
+  &copy; 2018 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
@@ -529,7 +531,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 

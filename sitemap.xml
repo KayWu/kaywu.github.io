@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.xyz/2017/10/17/default_url_options/</loc>
+    
+    <lastmod>2018-03-12T15:38:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2017/10/19/reveal-md/</loc>
+    
+    <lastmod>2018-03-12T15:38:10.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
@@ -51,21 +65,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/29/ThreadPoolExecutor/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2015/05/14/Experience/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/04/24/Gradle/</loc>
+    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -107,13 +107,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2016/02/28/PacketCapture/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -122,6 +115,13 @@
   
   <url>
     <loc>http://kaywu.xyz/2016/07/24/Performance-Improvement/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -156,13 +156,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2016/08/28/Shape-Drawable/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -177,6 +170,20 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2016/07/31/Counting-Bits/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/05/29/ThreadPoolExecutor/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2016/07/17/Android-Storage-Note/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -184,14 +191,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
+    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
+    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -317,13 +324,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2017/05/30/regex/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -338,7 +338,21 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/07/31/Counting-Bits/</loc>
+    <loc>http://kaywu.xyz/2015/05/14/Experience/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/04/24/Gradle/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
