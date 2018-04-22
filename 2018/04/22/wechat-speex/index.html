@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>转码微信 speex | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过获取微信录音的接口下载录音。录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。下文介绍如何使用 docker 编译可转码微信 speex 的程序。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="转码微信 speex"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2018-04-22T06:29:35.000Z"><a href="/2018/04/22/wechat-speex/">2018-04-22</a></time>
+      
+      
+  
+    <h1 class="title">转码微信 speex</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
+<a id="more"></a>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先 <code>git clone https://github.com/ppninja/wechat-speex-declib</code>。该仓库在<a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a> 的基础上添加了 Makefile。<br>由于编译需要使用 linux，下文使用 ubuntu 16.04 作为示例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"># 启动 ubuntu 16.04 的 docker 并运行 bash，绑定本机 wechat-speex-declib 的地址到 docker 的 /opt/speex 上</div><div class="line">docker pull ubuntu:16.04</div><div class="line">docker run -i -t --mount type=bind,source=(wechat-speex-declib 的绝对地址替换),target=/opt/speex ubuntu:16.04 /bin/bash</div><div class="line"></div><div class="line"># 修改为阿里云的镜像源，提升 apt-get 的速度</div><div class="line">cat &gt; /etc/apt/sources.list &lt;&lt; END</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">END</div><div class="line"></div><div class="line"># 安装 gcc 等编译工具</div><div class="line">apt-get build-essential</div><div class="line"># 安装 speex 开发库</div><div class="line">apt-get libspeex-dev</div><div class="line"></div><div class="line">cd /opt/speex</div><div class="line">make</div></pre></td></tr></table></figure>
+<p>注意这里安装的 speex 开发库是 libspeex-dev，而不是 speex。speex 库提供了 speex 编码、解码的命令行，而 libspeex-dev 库提供了开发所需的文件。</p>
+<p>执行完后在 bin 目录下会新增 speex_decode，也就是编译出的可执行文件。<br>通过执行 <code>./speex_decode test.speex test.wav</code> 就可以将微信定制的 speex 转码成标准的 wav 格式了。<br>提醒下，转码产生的 wav 格式未压缩，体积很大。可以通过 ffmpeg 等工具进行处理。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a></li>
+<li><a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a></li>
+<li><a href="https://github.com/ppninja/wechat-speex-declib" target="_blank" rel="external">wechat speex declib</a></li>
+<li><a href="https://packages.qa.debian.org/s/speex.html" target="_blank" rel="external">speex binaries</a></li>
+</ul>
+<!-- 获取临时素材 -->
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/微信/">微信</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2018 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

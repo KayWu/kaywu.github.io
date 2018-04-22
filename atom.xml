@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.xyz/"/>
-  <updated>2018-03-12T15:38:10.000Z</updated>
+  <updated>2018-04-22T08:23:12.000Z</updated>
   <id>http://kaywu.xyz/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>转码微信 speex</title>
+    <link href="http://kaywu.xyz/2018/04/22/wechat-speex/"/>
+    <id>http://kaywu.xyz/2018/04/22/wechat-speex/</id>
+    <published>2018-04-22T06:29:35.000Z</published>
+    <updated>2018-04-22T08:23:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p><a id="more"></a><h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先 <code>git clone https://github.com/ppninja/wechat-speex-declib</code>。该仓库在<a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a> 的基础上添加了 Makefile。<br>由于编译需要使用 linux，下文使用 ubuntu 16.04 作为示例。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"># 启动 ubuntu 16.04 的 docker 并运行 bash，绑定本机 wechat-speex-declib 的地址到 docker 的 /opt/speex 上</div><div class="line">docker pull ubuntu:16.04</div><div class="line">docker run -i -t --mount type=bind,source=(wechat-speex-declib 的绝对地址替换),target=/opt/speex ubuntu:16.04 /bin/bash</div><div class="line"></div><div class="line"># 修改为阿里云的镜像源，提升 apt-get 的速度</div><div class="line">cat &gt; /etc/apt/sources.list &lt;&lt; END</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">END</div><div class="line"></div><div class="line"># 安装 gcc 等编译工具</div><div class="line">apt-get build-essential</div><div class="line"># 安装 speex 开发库</div><div class="line">apt-get libspeex-dev</div><div class="line"></div><div class="line">cd /opt/speex</div><div class="line">make</div></pre></td></tr></table></figure><p>注意这里安装的 speex 开发库是 libspeex-dev，而不是 speex。speex 库提供了 speex 编码、解码的命令行，而 libspeex-dev 库提供了开发所需的文件。</p><p>执行完后在 bin 目录下会新增 speex_decode，也就是编译出的可执行文件。<br>通过执行 <code>./speex_decode test.speex test.wav</code> 就可以将微信定制的 speex 转码成标准的 wav 格式了。<br>提醒下，转码产生的 wav 格式未压缩，体积很大。可以通过 ffmpeg 等工具进行处理。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a></li><li><a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a></li><li><a href="https://github.com/ppninja/wechat-speex-declib" target="_blank" rel="external">wechat speex declib</a></li><li><a href="https://packages.qa.debian.org/s/speex.html" target="_blank" rel="external">speex binaries</a></li></ul><!-- 获取临时素材 -->]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过&lt;a href=&quot;https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;amp;id=mp1444738727&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;获取微信录音&lt;/a&gt;的接口下载录音。&lt;br&gt;录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。&lt;br&gt;不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。&lt;br&gt;下文介绍如何使用 docker 编译可转码微信 speex 的程序。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="微信" scheme="http://kaywu.xyz/tags/%E5%BE%AE%E4%BF%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>如何用 Markdown 写 PPT</title>
@@ -491,32 +511,6 @@
     
     
       <category term="Rails" scheme="http://kaywu.xyz/tags/Rails/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Ruby super 关键字</title>
-    <link href="http://kaywu.xyz/2016/11/20/ruby-super/"/>
-    <id>http://kaywu.xyz/2016/11/20/ruby-super/</id>
-    <published>2016-11-20T09:05:19.000Z</published>
-    <updated>2017-09-10T08:13:51.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。</p><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        arg</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>.a_method(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></div></pre></td></tr></table></figure><p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p><p>那想调用父类的其他方法要如何？可以使用 <code>method(:foo).super_method.call</code> 来调用父类的 foo 方法。</p><p>编程这事，果然不能想当然，不然坑得是自己。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method" target="_blank" rel="external">http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method</a></li><li><a href="http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034" target="_blank" rel="external">http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。&lt;/p&gt;
-&lt;figure class=&quot;highlight ruby&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div cla
-      
-    
-    </summary>
-    
-      <category term="Ruby" scheme="http://kaywu.xyz/categories/Ruby/"/>
-    
-    
-      <category term="Ruby" scheme="http://kaywu.xyz/tags/Ruby/"/>
     
   </entry>
   

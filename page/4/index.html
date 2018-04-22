@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-03T07:30:27.000Z"><a href="/2016/07/03/fragment/">2016-07-03</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/03/fragment/">Fragment 源码笔记</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
+<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</div></pre></td></tr></table></figure>
+<p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
+<h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-06-26T06:12:18.000Z"><a href="/2016/06/26/Longest-Palindromic-Substring/">2016-06-26</a></time>
       
       
@@ -395,44 +435,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-04-03T10:38:09.000Z"><a href="/2016/04/03/Python-OpenPyXL/">2016-04-03</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/04/03/Python-OpenPyXL/">使用 Python 处理 Excel 文件</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>最近在学着使用 Python 解决些重复枯燥的工作，也给自己省些时间。比如每天从网站上摘抄几个数据然后制成 Excel。偶尔倒还好，要是每天都要这样，岂不是很浪费时间？像这种重复性的操作就可以交给不辞辛劳的计算机。<br>解决上面的需求主要分两步，一是从网上摘抄数据，根据不同的情况，摘抄数据的手段也各异。简单的直接<code>curl</code>一下然后正则，复杂点的可能需要抓包，或者爬虫，这里就不做展开（自己还在学……）。二是处理 Excel，今天就着重讲讲怎么处理 Excel。</p>
-<p>Python 关于 Excel 的库主要有两个：Python-Excel（xlrd, xlwt, xlutils）和 OpenPyXL。前者主要用于 xls，后者用于 xlsx。现在多数文件都是 xlsx，且后者维护得很勤快，再加上 <a href="https://automatetheboringstuff.com/" target="_blank" rel="external">Automate the Boring Stuff with Python</a> 也是用的 OpenPyXL，就愉快地决定用它了。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/04/03/Python-OpenPyXL/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -478,7 +480,7 @@
   
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
-    <li><a href="/tags/微信/">微信</a><small>1</small></li>
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   

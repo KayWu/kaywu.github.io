@@ -66,6 +66,48 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-11-20T09:05:19.000Z"><a href="/2016/11/20/ruby-super/">2016-11-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/11/20/ruby-super/">Ruby super 关键字</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        arg</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>.a_method(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></div></pre></td></tr></table></figure>
+<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>那想调用父类的其他方法要如何？可以使用 <code>method(:foo).super_method.call</code> 来调用父类的 foo 方法。</p>
+<p>编程这事，果然不能想当然，不然坑得是自己。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method" target="_blank" rel="external">http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method</a></li>
+<li><a href="http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034" target="_blank" rel="external">http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-10-16T08:49:33.000Z"><a href="/2016/10/16/meta-programming/">2016-10-16</a></time>
       
       
@@ -408,46 +450,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-03T07:30:27.000Z"><a href="/2016/07/03/fragment/">2016-07-03</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/03/fragment/">Fragment 源码笔记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
-<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</div></pre></td></tr></table></figure>
-<p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
-<h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -493,7 +495,7 @@
   
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
-    <li><a href="/tags/微信/">微信</a><small>1</small></li>
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   

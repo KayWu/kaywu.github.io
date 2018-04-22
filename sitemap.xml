@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.xyz/2018/04/22/wechat-speex/</loc>
+    
+    <lastmod>2018-04-22T08:23:12.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2017/10/17/default_url_options/</loc>
     
     <lastmod>2018-03-12T15:38:10.000Z</lastmod>
@@ -16,20 +23,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
-    
-    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2015/04/03/DoubanDemo/</loc>
-    
-    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2015/04/04/GoogleMusicPlayer/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
@@ -38,6 +31,13 @@
   
   <url>
     <loc>http://kaywu.xyz/2015/12/12/Programmming-Language-Concepts/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
     
@@ -58,6 +58,13 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2015/04/03/DoubanDemo/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2017/09/10/wechat-development/</loc>
     
     <lastmod>2017-09-17T15:40:42.000Z</lastmod>
@@ -65,14 +72,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/03/13/Java-Exception/</loc>
+    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -121,7 +121,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
+    <loc>http://kaywu.xyz/2016/07/17/Android-Storage-Note/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -184,21 +184,21 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/07/17/Android-Storage-Note/</loc>
+    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2017/07/13/core-tech/</loc>
+    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
+    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -247,14 +247,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
+    <loc>http://kaywu.xyz/2016/10/16/meta-programming/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/10/16/meta-programming/</loc>
+    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -268,14 +268,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2017/01/21/mysql-system-error-32/</loc>
+    <loc>http://kaywu.xyz/2016/09/25/pointer-index-out-of-range/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/09/25/pointer-index-out-of-range/</loc>
+    <loc>http://kaywu.xyz/2017/01/21/mysql-system-error-32/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -338,6 +338,13 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2015/05/14/Experience/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
@@ -345,14 +352,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
+    <loc>http://kaywu.xyz/2016/04/24/Gradle/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/04/24/Gradle/</loc>
+    <loc>http://kaywu.xyz/2016/03/13/Java-Exception/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     

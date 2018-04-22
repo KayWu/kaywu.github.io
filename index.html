@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2018-04-22T06:29:35.000Z"><a href="/2018/04/22/wechat-speex/">2018-04-22</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2018/04/22/wechat-speex/">转码微信 speex</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2018/04/22/wechat-speex/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-10-19T06:21:21.000Z"><a href="/2017/10/19/reveal-md/">2017-10-19</a></time>
       
       
@@ -427,45 +464,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-19T10:07:19.000Z"><a href="/2017/03/19/rails-concern/">2017-03-19</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/19/rails-concern/">Rails Concern 源码研究</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>ActiveSupport::Concern 是为了更方便地 include 模块而推出的工具类。</p>
-<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先来看下它的使用方法。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 传统的 Module 引入</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">included</span><span class="params">(base)</span></span></div><div class="line">    base.extend ClassMethods</div><div class="line">    base.class_eval <span class="keyword">do</span></div><div class="line">      scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">ClassMethods</span></span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># 使用 Concern</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  extend ActiveSupport::Concern</div><div class="line"></div><div class="line">  included <span class="keyword">do</span></div><div class="line">    scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  class_methods <span class="keyword">do</span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
-<p>可见，通过 included 和 class_method 两个类方法使得 Module 的写法更加清晰。<br>你可能有些疑问，对比传统的引入，使用 Concern 虽然更加清晰了，但没什么巨大的优点。而传统的引入也可以通过将方法分成两个 module，如 InstanceMethods、ClassMethods，来达到同样的效果。<br>在这个简单的例子上，确实如此。但在一些嵌套的 include 上 Concern 的优势就体现出来了。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/03/19/rails-concern/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -509,7 +507,7 @@
   
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
-    <li><a href="/tags/微信/">微信</a><small>1</small></li>
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   

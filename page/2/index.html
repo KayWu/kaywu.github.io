@@ -66,6 +66,45 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-03-19T10:07:19.000Z"><a href="/2017/03/19/rails-concern/">2017-03-19</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/03/19/rails-concern/">Rails Concern 源码研究</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>ActiveSupport::Concern 是为了更方便地 include 模块而推出的工具类。</p>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先来看下它的使用方法。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 传统的 Module 引入</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">included</span><span class="params">(base)</span></span></div><div class="line">    base.extend ClassMethods</div><div class="line">    base.class_eval <span class="keyword">do</span></div><div class="line">      scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">ClassMethods</span></span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># 使用 Concern</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  extend ActiveSupport::Concern</div><div class="line"></div><div class="line">  included <span class="keyword">do</span></div><div class="line">    scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  class_methods <span class="keyword">do</span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>可见，通过 included 和 class_method 两个类方法使得 Module 的写法更加清晰。<br>你可能有些疑问，对比传统的引入，使用 Concern 虽然更加清晰了，但没什么巨大的优点。而传统的引入也可以通过将方法分成两个 module，如 InstanceMethods、ClassMethods，来达到同样的效果。<br>在这个简单的例子上，确实如此。但在一些嵌套的 include 上 Concern 的优势就体现出来了。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/03/19/rails-concern/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-02-19T09:08:10.000Z"><a href="/2017/02/19/ruby-constant/">2017-02-19</a></time>
       
       
@@ -454,48 +493,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-11-20T09:05:19.000Z"><a href="/2016/11/20/ruby-super/">2016-11-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/11/20/ruby-super/">Ruby super 关键字</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        arg</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>.a_method(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></div></pre></td></tr></table></figure>
-<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
-<p>那想调用父类的其他方法要如何？可以使用 <code>method(:foo).super_method.call</code> 来调用父类的 foo 方法。</p>
-<p>编程这事，果然不能想当然，不然坑得是自己。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method" target="_blank" rel="external">http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method</a></li>
-<li><a href="http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034" target="_blank" rel="external">http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -541,7 +538,7 @@
   
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
-    <li><a href="/tags/微信/">微信</a><small>1</small></li>
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
