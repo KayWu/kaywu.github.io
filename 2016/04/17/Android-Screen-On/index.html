@@ -79,14 +79,14 @@
       
         <p>开发视频功能时，遇到了播放一段时间后屏幕自动变暗的问题，这里总结下解决方法。<br><a id="more"></a></p>
 <h2 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h2><p>如果使用的是 MediaPlayer 和 SurfaceView 的话，有一个现成的方法可以使用，<code>setScreenOnWhilePlaying(true)</code>。但是项目中采用的是TextureView，不支持这种方法。具体原因看下 <code>setScreenOnWhilePlaying</code> 的源码和 <code>setDisplay</code>的注释就明白了。</p>
-<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>另一种大家比较熟悉的是使用 <code>WAKE_LOCK</code>。<br>首先声明 <code>&lt;uses-permission android:name=&quot;android.permission.WAKE_LOCK&quot; /&gt;</code>这个权限，并添加以下代码，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);</div><div class="line">WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, <span class="string">"MyWakelockTag"</span>);</div><div class="line">wakeLock.acquire();</div></pre></td></tr></table></figure></p>
+<h2 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h2><p>另一种大家比较熟悉的是使用 <code>WAKE_LOCK</code>。<br>首先声明 <code>&lt;uses-permission android:name=&quot;android.permission.WAKE_LOCK&quot; /&gt;</code>这个权限，并添加以下代码，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);</span><br><span class="line">WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, <span class="string">"MyWakelockTag"</span>);</span><br><span class="line">wakeLock.acquire();</span><br></pre></td></tr></table></figure></p>
 <p>并注意在适当的时候调用 <code>wakelock.release()</code>。<br>该方法会影响电池的使用，若不及时释放会有严重的后果。官方文档建议只在必要的时候使用且保持尽量短的时间。<br>相比第一种方法，有点小题大做。</p>
-<h2 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h2><p>该方法不需要额外的权限，只需声明 <code>getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);</code>，或者直接在布局中加上 <code>keepScreenOn=true</code> 即可。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">RelativeLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></div><div class="line"><span class="tag">    <span class="attr">android:keepScreenOn</span>=<span class="string">"true"</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<h2 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h2><p>该方法不需要额外的权限，只需声明 <code>getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);</code>，或者直接在布局中加上 <code>keepScreenOn=true</code> 即可。<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">RelativeLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:keepScreenOn</span>=<span class="string">"true"</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>值得注意的是，view 的 keepScreenOn 属性只有在该 View 是 Visible 状态的时候才生效。</p>
 <p>对比来看，方法三简单实用，就选它了。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html" target="_blank" rel="external">https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html</a></li>
-<li><a href="http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app" target="_blank" rel="external">http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app</a></li>
+<li><a href="https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html" target="_blank" rel="noopener">https://developer.android.com/intl/zh-cn/training/scheduling/wakelock.html</a></li>
+<li><a href="http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app" target="_blank" rel="noopener">http://stackoverflow.com/questions/5712849/how-do-i-keep-the-screen-on-in-my-app</a></li>
 </ul>
 
       
@@ -164,7 +164,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -182,7 +182,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -208,6 +208,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

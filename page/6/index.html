@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-04-05T10:00:02.000Z"><a href="/2015/04/05/LayoutInfalter/">2015-04-05</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/04/05/LayoutInfalter/">从 LayoutInflater 谈起</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>LayoutInflater 是我们用来加载布局的类，经常用于 Adapter 的 getView，Fragment 的 onCreateView 方法中。但我在使用时，经常有些疑惑，比如 inflater 方法参数的数目有时候为 2 个，有时候 3 个。第 2 个参数经常为 null，而第 3 个参数在第 2 个参数不为 null 的情况下常为 false。这些到底有什么区别？通过一段时间的实践，稍微有了些体会，写文章来总结下。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2015/04/05/LayoutInfalter/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-04-04T10:47:05.000Z"><a href="/2015/04/04/GoogleMusicPlayer/">2015-04-04</a></time>
       
       
@@ -76,7 +113,7 @@
     </header>
     <div class="entry">
       
-        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="external">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
+        <p> <a href="https://github.com/googlesamples/android-UniversalMusicPlayer" target="_blank" rel="noopener">项目地址</a><br>Google 最近开源了一款播放器，android-UniversalMusicPlayer，可以在 phones, tablets, Auto, Wear and Cast devices 提供一致的用户体验。<br>而且项目不算复杂，再加上编译起来很简单，就是 Android Studio 直接导入就可以了，很适合我这种新手学习。<br>
       
     </div>
     <footer>
@@ -181,7 +218,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -199,7 +236,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -225,6 +262,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

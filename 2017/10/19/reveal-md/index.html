@@ -78,13 +78,13 @@ reveal-md 让你从这些繁琐">
     </header>
     <div class="entry">
       
-        <p><a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js</a> 是通过网页来制作 PPT 的 JavaScript 框架，通过它可以轻松制作精致的网页 PPT。它自身也支持 Markdown。<br>但使用过几次之后，感觉对于日常使用还是稍重了些。每次新建 PPT 都需要复制粘贴 boilerplate code。</p>
-<p><a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md</a> 让你从这些繁琐的步骤中解放出来。它使用 reveal-js 自带的 Markdown 功能，让你只需写 Markdown，其他的事它帮你搞定。</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单地说下如何使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir slides &amp;&amp; cd slides</div><div class="line">yarn init -y</div><div class="line">yarn add reveal-md</div><div class="line">yarn exec reveal-md demo</div></pre></td></tr></table></figure></p>
+        <p><a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="noopener">reveal-js</a> 是通过网页来制作 PPT 的 JavaScript 框架，通过它可以轻松制作精致的网页 PPT。它自身也支持 Markdown。<br>但使用过几次之后，感觉对于日常使用还是稍重了些。每次新建 PPT 都需要复制粘贴 boilerplate code。</p>
+<p><a href="https://github.com/webpro/reveal-md" target="_blank" rel="noopener">reveal-md</a> 让你从这些繁琐的步骤中解放出来。它使用 reveal-js 自带的 Markdown 功能，让你只需写 Markdown，其他的事它帮你搞定。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单地说下如何使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir slides &amp;&amp; cd slides</span><br><span class="line">yarn init -y</span><br><span class="line">yarn add reveal-md</span><br><span class="line">yarn exec reveal-md demo</span><br></pre></td></tr></table></figure></p>
 <p>此时炫酷的 PPT 网页就在你眼前呈现了。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>标准的 Markdown 语法，默认 <code>---</code> 作为 PPT 页面的分割线。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># Title</div><div class="line"></div><div class="line">* Point 1</div><div class="line">* Point 2</div><div class="line"></div><div class="line">---</div><div class="line"></div><div class="line">## Second slide</div><div class="line"></div><div class="line">&gt; Best quote ever.</div><div class="line"></div><div class="line">Note: speaker notes FTW!</div></pre></td></tr></table></figure></p>
-<h3 id="演示命令"><a href="#演示命令" class="headerlink" title="演示命令"></a>演示命令</h3><p>演示命令 <code>reveal-md</code>，启动本地 server 并使用 reveal.js 渲染 Markdown 文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yarn exec reveal-md demo.md</div></pre></td></tr></table></figure></p>
-<p>更详细的配置请查看 <a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md 文档</a> 和 <a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js 文档</a>。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>标准的 Markdown 语法，默认 <code>---</code> 作为 PPT 页面的分割线。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># Title</span><br><span class="line"></span><br><span class="line">* Point 1</span><br><span class="line">* Point 2</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">## Second slide</span><br><span class="line"></span><br><span class="line">&gt; Best quote ever.</span><br><span class="line"></span><br><span class="line">Note: speaker notes FTW!</span><br></pre></td></tr></table></figure></p>
+<h3 id="演示命令"><a href="#演示命令" class="headerlink" title="演示命令"></a>演示命令</h3><p>演示命令 <code>reveal-md</code>，启动本地 server 并使用 reveal.js 渲染 Markdown 文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn exec reveal-md demo.md</span><br></pre></td></tr></table></figure></p>
+<p>更详细的配置请查看 <a href="https://github.com/webpro/reveal-md" target="_blank" rel="noopener">reveal-md 文档</a> 和 <a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="noopener">reveal-js 文档</a>。</p>
 
       
     </div>
@@ -156,7 +156,7 @@ reveal-md 让你从这些繁琐">
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -174,7 +174,7 @@ reveal-md 让你从这些繁琐">
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -200,6 +200,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

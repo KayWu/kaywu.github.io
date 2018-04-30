@@ -79,13 +79,13 @@
     <div class="entry">
       
         <p>由于之前没接触过 Ruby super 的用法，想当然地按照 Java 的方法来使用，闹出了一个匪夷所思的 Bug。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        arg</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>.a_method(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></div></pre></td></tr></table></figure>
-<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></div><div class="line">        <span class="keyword">super</span>(arg)</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        arg</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        <span class="keyword">super</span>.a_method(arg)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">B.new.a_method(<span class="number">1</span>) <span class="comment"># =&gt; NoMethodError: undefined method `a_method' for 1:Fixnum</span></span><br></pre></td></tr></table></figure>
+<p>查了下才知，原来在 Ruby 中调用父类的同名方法， 只需使用 super，而不需再加上方法的名字。<br>上述代码改成如下即可。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &lt; A</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">a_method</span><span class="params">(arg)</span></span></span><br><span class="line">        <span class="keyword">super</span>(arg)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 <p>那想调用父类的其他方法要如何？可以使用 <code>method(:foo).super_method.call</code> 来调用父类的 foo 方法。</p>
 <p>编程这事，果然不能想当然，不然坑得是自己。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method" target="_blank" rel="external">http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method</a></li>
-<li><a href="http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034" target="_blank" rel="external">http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034</a></li>
+<li><a href="http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method" target="_blank" rel="noopener">http://stackoverflow.com/questions/2564391/how-do-i-call-a-super-class-method</a></li>
+<li><a href="http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034" target="_blank" rel="noopener">http://ruby-doc.org/docs/keywords/1.9/files/keywords_rb.html#M000034</a></li>
 </ul>
 
       
@@ -163,7 +163,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -181,7 +181,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -207,6 +207,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

@@ -81,14 +81,14 @@
         <p>截图是一个很常见的需求，但网上常见的截图方法都是在主线程运行的。而这有一个隐患，就是卡。因为截图是通过调用 view.draw(canvas)，而这就会阻塞主线程的绘制流程引起卡顿。</p>
 <p>我司的 App，为了解决卡顿的问题，是在后台线程进行截图的，同样也是调用 view.draw(canvas) 方法，如下方代码所示。第一次看到时挺讶异的，draw 还能在后台线程运行而不报错？介于使用该方法时一直很安全，从未报错，也就默默收起这个疑问。</p>
 <a id="more"></a>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 在后台线程调用该方法</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title">getBitmapByView</span><span class="params">(LinearLayout linearLayout)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> h = <span class="number">0</span>;</div><div class="line">        Bitmap bitmap = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; linearLayout.getChildCount(); i++) &#123;</div><div class="line">            <span class="keyword">if</span> (linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) &#123;</div><div class="line">                h += linearLayout.getChildAt(i).getHeight();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        bitmap = Bitmap.createBitmap(linearLayout.getWidth(), h,</div><div class="line">                Config.ARGB_8888);</div><div class="line">        <span class="keyword">final</span> Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);</div><div class="line">        linearLayout.draw(canvas);</div><div class="line">        <span class="keyword">return</span> bitmap;</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">        e.printStackTrace();</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在后台线程调用该方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Bitmap <span class="title">getBitmapByView</span><span class="params">(LinearLayout linearLayout)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">0</span>;</span><br><span class="line">        Bitmap bitmap = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; linearLayout.getChildCount(); i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (linearLayout.getChildAt(i).getVisibility() == View.VISIBLE) &#123;</span><br><span class="line">                h += linearLayout.getChildAt(i).getHeight();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        bitmap = Bitmap.createBitmap(linearLayout.getWidth(), h,</span><br><span class="line">                Config.ARGB_8888);</span><br><span class="line">        <span class="keyword">final</span> Canvas canvas = <span class="keyword">new</span> Canvas(bitmap);</span><br><span class="line">        linearLayout.draw(canvas);</span><br><span class="line">        <span class="keyword">return</span> bitmap;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>但没想到之后有一个类似的方法，仅是将参数从 LinearLayout 改为 ScrollView，竟然会偶发性地报错。报错截图如下：<br><img src="/img/thread_exception.png" alt=""></p>
 <p>这样看来，draw 是只能在主线程调用了？那之前的方法为什么一直没事呢？</p>
 <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>我们先来研究下这个 Exception 是怎么产生的。<br>从上面的堆栈看出，是由 ViewRootImpl 的 checkThread 引起的。该方法是为了防止我们在非 UI 线程更新 UI。当我们调用 requestLayout、invalidate 时最终都会调用到 checkThread 方法。</p>
 <p>那又是如何调用到 checkThread 的呢？首先我们调用了 ScrollView.draw 方法，通过 super.draw 调用了 View.draw 方法。而 Draw 方法中又包含 onDrawScrollBars，它调用了 invalidate 而使得 checkThread 抛出异常。</p>
 <p>我们大胆猜测 onDrawScrollBars 是 LinearLayout、ScrollView 调用相同方法却引发不同结果的关键。我们可以把 ScrollView 的 scrollbar 设为 none 来验证一下猜想。果不其然，之后就再不报这个错了。看代码的逻辑，LinearLayout、ScrollView 都会调用 onDrawScrollBars。但由于 LinearLayout 的 scrollbar 为 none 直接返回，而 ScrollView 走进了 onDrawScrollBars 的逻辑引发了 invalidate。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上面的分析可得，使用 view.draw 后台截图时需要十分小心，不然容易出现类似 ScrollView 的情况而报错。<br>使用 view.draw 方法截的图和屏幕展示出来的效果是一样的。但某些软件的截图功能两者是不一致的。比如高德地图的路线截图保存功能，屏幕上显示的路线没有完全展开，而截图显示的是完全展开的路线。猜测可能在自定义 View 中写了类似 draw 的方法然后调用，原理应该还是通过 canvas 来实现的。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://blog.csdn.net/zhaokaiqiang1992/article/details/43410351" target="_blank" rel="external">讨论一下“只能在UI主线程更新View”这件小事</a><br><a href="http://blog.csdn.net/aigestudio/article/details/43449123" target="_blank" rel="external">为什么我们可以在非UI线程中更新UI</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="http://blog.csdn.net/zhaokaiqiang1992/article/details/43410351" target="_blank" rel="noopener">讨论一下“只能在UI主线程更新View”这件小事</a><br><a href="http://blog.csdn.net/aigestudio/article/details/43449123" target="_blank" rel="noopener">为什么我们可以在非UI线程中更新UI</a></p>
 
       
     </div>
@@ -165,7 +165,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -183,7 +183,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -209,6 +209,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

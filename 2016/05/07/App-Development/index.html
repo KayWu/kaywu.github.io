@@ -80,7 +80,7 @@
         <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br><a id="more"></a></p>
 <h2 id="高效-App-框架设计与重构"><a href="#高效-App-框架设计与重构" class="headerlink" title="高效 App 框架设计与重构"></a>高效 App 框架设计与重构</h2><p>这部分讲的是开发规范以及基础库的设计，都是些实际开发会碰到的问题，如项目大了之后混乱的目录、臃肿的 Activity、Html 与 App 之间的跳转等等。每看到一个问题时，最好想想自己是怎么做的，然后对比总结。比如以前自己做项目时 Html 与 App 之间的跳转是通过 int 值来进行判断的，页面越来越多后哪个数字对应于哪个页面就会变得很混乱，每次都要打开文档或代码进行确认，可读性比较差。而书中采取字符串定义协议的方式就清楚很多，要跳转哪个页面一目了然。我们可以再优化一下，协议以 <code>app://</code> 开头，如 <code>app://user_profile</code>，可读性就更强了。<br>现在如网络请求、图片加载都已经有相当成熟的库了，不需要重新造轮子。但是了解其基本原理仍然是很有必要的，方便我们增加新功能。如在后端接口还未好时 App 的开发不能因此停滞，就需要 Mock Api 的数据。这时我们可以将网络库再封装一层，在未好的接口上使用本地假数据来继续开发。</p>
 <h2 id="Crash-异常收集与统计"><a href="#Crash-异常收集与统计" class="headerlink" title="Crash 异常收集与统计"></a>Crash 异常收集与统计</h2><p>异常收集大部分公司都是采用第三方服务，这部分功夫可以省了。作者花了大力气在 Crash 分析这章，对八十多种线上崩溃追根溯源。众所周知，Android App 经常会出现一些诡异的 Bug，大部分情况下都是正常的但总有一定的概率报错，让人百思不得其解。比如 Resources$NotFoundException，明明 apk 里有这个资源文件。书中分析是由于内存溢出，解了长久的疑惑。建议遇到诡异的 Bug 时，就到这章搜寻下，即使没有直接的解决方案，就如上文的 Resources$NotFoundException，但定位了异常的原因，省了不少的功夫。</p>
-<h2 id="App-竞品技术分析"><a href="#App-竞品技术分析" class="headerlink" title="App 竞品技术分析"></a>App 竞品技术分析</h2><p>竞品分析真是相当接地气的章节，分析竞争对手 App 的技术实现，掌握他们先进的思想和技术。别的不说，通过其他 App 包里面的 META_INF 目录下会有一个名为某个渠道的 0 字节的文件，猜测是用来批量打渠道包再加以实践验证，不得不谓之高。当然，美团分享<a href="http://tech.meituan.com/mt-apk-packaging.html" target="_blank" rel="external">多渠道打包方案</a>是后话了。<br>其他如把 HTML5 页面嵌入到 Zip 包中、将 icon 做成 ttf 文件等针对实际问题的解决方案也让人耳目一新。</p>
+<h2 id="App-竞品技术分析"><a href="#App-竞品技术分析" class="headerlink" title="App 竞品技术分析"></a>App 竞品技术分析</h2><p>竞品分析真是相当接地气的章节，分析竞争对手 App 的技术实现，掌握他们先进的思想和技术。别的不说，通过其他 App 包里面的 META_INF 目录下会有一个名为某个渠道的 0 字节的文件，猜测是用来批量打渠道包再加以实践验证，不得不谓之高。当然，美团分享<a href="http://tech.meituan.com/mt-apk-packaging.html" target="_blank" rel="noopener">多渠道打包方案</a>是后话了。<br>其他如把 HTML5 页面嵌入到 Zip 包中、将 icon 做成 ttf 文件等针对实际问题的解决方案也让人耳目一新。</p>
 <h2 id="项目管理和团队建设"><a href="#项目管理和团队建设" class="headerlink" title="项目管理和团队建设"></a>项目管理和团队建设</h2><p>敏捷开发这节有个很有意思的点，App 在经过几天的集中测试后会进入 Code Freeze，除非发现很严重的 Bug，否则不再改动代码。初看挺没道理的，明明还有时间去修复 Bug 却不做。但要是有过在上线前几个小时还在改 Bug 的经历就能体会到 Code Freeze 的意义。由于急着上线，修复 Bug 时很容易考虑不周，测试也只来得及测相关功能，一个不小心后果就比较严重。所以距离上线一段时间之内最好不要修改代码，也就是 Code Freeze。</p>
 <p>《App 研发录》是本踏实的书，书中没有高大上的技术，只有应对不同场景的具体解决方案，读之颇有“重剑无锋”之感。</p>
 
@@ -159,7 +159,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -177,7 +177,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -203,6 +203,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

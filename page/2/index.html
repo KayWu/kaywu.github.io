@@ -66,6 +66,56 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-03-26T09:55:35.000Z"><a href="/2017/03/26/mysql-explain/">2017-03-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/03/26/mysql-explain/">MySQL EXPLAIN 解读</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 <code>EXPLAIN</code> 关键字就可以。<br>下面是一个简单的例子，测试数据在文章末尾。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># 例 1</span><br><span class="line">mysql&gt; EXPLAIN SELECT name FROM users WHERE id = 1\G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">           id: 1</span><br><span class="line">  select_type: SIMPLE</span><br><span class="line">        table: users</span><br><span class="line">         type: const</span><br><span class="line">possible_keys: PRIMARY</span><br><span class="line">          key: PRIMARY</span><br><span class="line">      key_len: 4</span><br><span class="line">          ref: const</span><br><span class="line">         rows: 1</span><br><span class="line">        Extra: NULL</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>EXPLAIN 列的解释：</p>
+<ul>
+<li>id：SELECT 标识符，下面具体分析</li>
+<li>select_type: SELECT 类型，下面会具体分析</li>
+<li>table: 查询所使用的表</li>
+<li>type: JOIN 的类型，下面会具体分析</li>
+<li>possible_keys: 可能使用的索引，但不一定会真正使用</li>
+<li>key: 真正使用的索引</li>
+<li>key_len: 所使用的索引长度</li>
+<li>ref: 与索引比较的列</li>
+<li>rows: 预估需要扫描的行数</li>
+<li>Extra: 额外信息</li>
+</ul>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/03/26/mysql-explain/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-03-19T10:07:19.000Z"><a href="/2017/03/19/rails-concern/">2017-03-19</a></time>
       
       
@@ -77,7 +127,7 @@
     <div class="entry">
       
         <p>ActiveSupport::Concern 是为了更方便地 include 模块而推出的工具类。</p>
-<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先来看下它的使用方法。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 传统的 Module 引入</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">included</span><span class="params">(base)</span></span></div><div class="line">    base.extend ClassMethods</div><div class="line">    base.class_eval <span class="keyword">do</span></div><div class="line">      scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">ClassMethods</span></span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="comment"># 使用 Concern</span></div><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></div><div class="line">  extend ActiveSupport::Concern</div><div class="line"></div><div class="line">  included <span class="keyword">do</span></div><div class="line">    scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  class_methods <span class="keyword">do</span></div><div class="line">    ...</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>首先来看下它的使用方法。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 传统的 Module 引入</span></span><br><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">included</span><span class="params">(base)</span></span></span><br><span class="line">    base.extend ClassMethods</span><br><span class="line">    base.class_eval <span class="keyword">do</span></span><br><span class="line">      scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">ClassMethods</span></span></span><br><span class="line">    ...</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 Concern</span></span><br><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">M</span></span></span><br><span class="line">  extend ActiveSupport::Concern</span><br><span class="line"></span><br><span class="line">  included <span class="keyword">do</span></span><br><span class="line">    scope <span class="symbol">:disabled</span>, -&gt; &#123; where(<span class="symbol">disabled:</span> <span class="literal">true</span>) &#125;</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  class_methods <span class="keyword">do</span></span><br><span class="line">    ...</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 <p>可见，通过 included 和 class_method 两个类方法使得 Module 的写法更加清晰。<br>你可能有些疑问，对比传统的引入，使用 Concern 虽然更加清晰了，但没什么巨大的优点。而传统的引入也可以通过将方法分成两个 module，如 InstanceMethods、ClassMethods，来达到同样的效果。<br>在这个简单的例子上，确实如此。但在一些嵌套的 include 上 Concern 的优势就体现出来了。</p>
       
     </div>
@@ -116,7 +166,7 @@
     <div class="entry">
       
         <p>对 Ruby 中常量查找只有基础的认识，使用上还是有不少疑问，比如 “::A” 的含义、为什么有时使用 “A::B” 而有时直接用 “B”。<br>花时间查了资料来加深对此的理解。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">    puts <span class="string">'outer'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># outer</span></div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">        puts <span class="string">'inner'</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># inner</span></div><div class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></div><div class="line">    Music::Record.method <span class="comment"># inner</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">    puts <span class="string">'outer'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></span><br><span class="line"></span><br><span class="line">    Record.method <span class="comment"># outer</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">        puts <span class="string">'inner'</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    Record.method <span class="comment"># inner</span></span><br><span class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></span><br><span class="line">    Music::Record.method <span class="comment"># inner</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>我们从简单的例子出发。在上文的代码中，共存在着两个名为 Record 的 module。一个是在最外层，一个是在 Music 内部。<br>当第 9 行调用 Record.method 时，由于 Music 内的 Record 还未被定义，因此调用的只能是最外层的 Record module。<br>而在第 17 行，当我们重新调用时，却发现调用的已经是内部的 Record 了。<br>可见常量的调用时是有一个先后顺序的，简单的说就是从近及远，先使用近的。虽然我们从直观上很容易理解近的含义，但严格上的顺序是通过 <code>Module.nesting</code> 得到的。在 Music 内部调用得到 [Record::Music, Record]，可见 Record::Music 确实比 Record 有更高的优先级。</p>
       
     </div>
@@ -155,12 +205,12 @@
     <div class="entry">
       
         <p>不知为何，在升级了 macOS 系统之后，Rails 连接 MySQL 经常性会报 <code>Mysql2::Error: Lost connection to MySQL server at &#39;sending authentication information&#39;, system error: 32</code> 的错误。重启 MySQL 就好了，过段时间又会报错，烦不胜烦。下定决心解决下。</p>
-<p>参考了<a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">这个帖子</a>后，大致看到有两种解决方法。一种是调大系统 <code>ulimit -n</code> 的值，另一种是调小 <code>table_open_cache</code> 的值。<br>从帖子的回复以及 <code>ulimit -n</code> 表示系统的文件句柄限制来看，个人认为调节 <code>ulimit -n</code> 的值是一个治标不治本的方法。本机的值已经 4k+，应该足够了。</p>
+<p>参考了<a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="noopener">这个帖子</a>后，大致看到有两种解决方法。一种是调大系统 <code>ulimit -n</code> 的值，另一种是调小 <code>table_open_cache</code> 的值。<br>从帖子的回复以及 <code>ulimit -n</code> 表示系统的文件句柄限制来看，个人认为调节 <code>ulimit -n</code> 的值是一个治标不治本的方法。本机的值已经 4k+，应该足够了。</p>
 <p>正巧有次出现问题时，MySQL 还连接着。查了下当时的 status，发现 <code>open_tables</code> 不过几十，而 <code>open_files</code> 却几千。<br>执行 <code>flush tables</code> 清除缓存后就可以重新连接了。确实和 <code>table_open_cache</code> 有一定的关系。</p>
 <p>查看了下 <code>table_open_cache</code> 的值，默认值是 2000。通过在 <code>my.cnf</code> 中添加 <code>table_open_cache = 500</code>，MySQL 这几天就没有闹别扭，希望能一直安稳下去。</p>
-<h4 id="MySQL-相关命令"><a href="#MySQL-相关命令" class="headerlink" title="MySQL 相关命令"></a>MySQL 相关命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">show status like &apos;%open_files%&apos;; # 查看 open_files 的值，open_tables 同理</div><div class="line">show variables like &apos;%table_open_cache%&apos;; # 查看 table_open_cache 的值</div></pre></td></tr></table></figure>
+<h4 id="MySQL-相关命令"><a href="#MySQL-相关命令" class="headerlink" title="MySQL 相关命令"></a>MySQL 相关命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show status like &apos;%open_files%&apos;; # 查看 open_files 的值，open_tables 同理</span><br><span class="line">show variables like &apos;%table_open_cache%&apos;; # 查看 table_open_cache 的值</span><br></pre></td></tr></table></figure>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">http://bugs.mysql.com/bug.php?id=71960</a></li>
+<li><a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="noopener">http://bugs.mysql.com/bug.php?id=71960</a></li>
 </ul>
 
       
@@ -196,8 +246,8 @@
     <div class="entry">
       
         <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Product.select(<span class="symbol">:id</span>).to_a</div><div class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></div><div class="line"></div><div class="line">Product.pluck(<span class="symbol">:id</span>)</div><div class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [2, 1]</span></div></pre></td></tr></table></figure>
-<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</div><div class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Product.select(<span class="symbol">:id</span>).to_a</span><br><span class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></span><br><span class="line"></span><br><span class="line">Product.pluck(<span class="symbol">:id</span>)</span><br><span class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [2, 1]</span></span><br></pre></td></tr></table></figure>
+<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</span><br><span class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</span><br></pre></td></tr></table></figure></p>
 <table>
 <thead>
 <tr>
@@ -225,11 +275,11 @@
 </tr>
 </tbody>
 </table>
-<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></div><div class="line"></div><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></div><div class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></div></pre></td></tr></table></figure></p>
+<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></span><br><span class="line"></span><br><span class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></span><br><span class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></span><br></pre></td></tr></table></figure></p>
 <p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
-<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="external">Select Vs Pluck in Rails</a></li>
+<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="noopener">Getting to Know Pluck and Select</a></li>
+<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="noopener">Select Vs Pluck in Rails</a></li>
 </ul>
 
       
@@ -264,9 +314,9 @@
     </header>
     <div class="entry">
       
-        <h2 id="使用-ETag-验证缓存"><a href="#使用-ETag-验证缓存" class="headerlink" title="使用 ETag 验证缓存"></a>使用 ETag 验证缓存</h2><p><img src="/img/etag.png" alt="etag.png-27.9kB"><br>来源：<a href="http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/" target="_blank" rel="external">Browser Cache: How ETags Works in Rails 3 and Rails 4</a><br>可以把 ETag 看成是响应的 token，客户端在下一个同样的请求中将其发送给服务器。服务器通过 token 来判断资源是否进行修改。若未修改，则返回 <code>304 Not Modified</code>，使客户端不需再去下载与缓存中已有的完全相同的字节。</p>
-<h2 id="fresh-when"><a href="#fresh-when" class="headerlink" title="fresh_when"></a>fresh_when</h2><p>在 Rails 中，我们可以通过 <code>stale</code> 或 <code>fresh_when</code> 方法来显式地使用 ETag。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductsController</span> &lt; ApplicationController</span></div><div class="line"></div><div class="line">  <span class="comment"># This will automatically send back a :not_modified if the request is fresh,</span></div><div class="line">  <span class="comment"># and will render the default template (product.*) if it's stale.</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span></div><div class="line">    @product = Product.find(params[<span class="symbol">:id</span>])</div><div class="line">    fresh_when <span class="symbol">last_modified:</span> @product.published_at.utc, <span class="symbol">etag:</span> @product</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
-<p>上例中通过 <code>@product.published_at.utc</code> 来判断资源是否过期。</p>
+        <h2 id="使用-ETag-验证缓存"><a href="#使用-ETag-验证缓存" class="headerlink" title="使用 ETag 验证缓存"></a>使用 ETag 验证缓存</h2><p><img src="/img/etag.png" alt="etag.png-27.9kB"><br>来源：<a href="http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/" target="_blank" rel="noopener">Browser Cache: How ETags Works in Rails 3 and Rails 4</a><br>可以把 ETag 看成是响应的 token，客户端在下一个同样的请求中将其发送给服务器。服务器通过 token 来判断资源是否进行修改。若未修改，则返回 <code>304 Not Modified</code>，使客户端不需再去下载与缓存中已有的完全相同的字节。</p>
+<h2 id="fresh-when"><a href="#fresh-when" class="headerlink" title="fresh_when"></a>fresh_when</h2><p>在 Rails 中，我们可以通过 <code>stale</code> 或 <code>fresh_when</code> 方法来显式地使用 ETag。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductsController</span> &lt; ApplicationController</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># This will automatically send back a :not_modified if the request is fresh,</span></span><br><span class="line">  <span class="comment"># and will render the default template (product.*) if it's stale.</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span></span><br><span class="line">    @product = Product.find(params[<span class="symbol">:id</span>])</span><br><span class="line">    fresh_when <span class="symbol">last_modified:</span> @product.published_at.utc, <span class="symbol">etag:</span> @product</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>上例中通过 <a href="mailto:`@product.publishe" target="_blank" rel="noopener">`@product.publishe</a>d_at.utc` 来判断资源是否过期。</p>
 <h2 id="默认开启的-ETag"><a href="#默认开启的-ETag" class="headerlink" title="默认开启的 ETag"></a>默认开启的 ETag</h2><p>最近才发现不用 fresh_when 返回的请求也会自带 ETag，查了下原来 Rails 框架默认使用 Rack::ETag middleware，会自动给无 ETag 的 response 根据其 body 添加上 ETag。</p>
       
     </div>
@@ -311,8 +361,8 @@
 <li>事件冒泡阶段</li>
 </ol>
 <p>事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。事件捕获的用意在于在事件到达预定目标之前捕获它。<br>事件冒泡指事件开始时由最具体的元素接收，然后逐级向上传播到较为不具体的节点。</p>
-<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="external">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
-<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;ul&gt;</div><div class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</div><div class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</div><div class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</div><div class="line">&lt;/ui&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="noopener">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
+<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</span><br><span class="line">&lt;/ui&gt;</span><br></pre></td></tr></table></figure></p>
 <p>以上面的 HTML 代码为例，按照传统的做法，若要使每个列表项单击后执行相关操作，则需要分别为它们各自添加 click 事件，共 3 个事件。若后续增加了更多的列表项，还需额外为它们添加相应的事件。<br>而使用事件委托，则只需在 <code>&lt;ul&gt;</code> 上添加 click 事件即可。由于所有列表项都是这个元素的子节点，而且它们的事件会冒泡，所以单击事件最终会被 <code>&lt;ul&gt;</code> 的事件处理。与前面的传统做法相比，事件委托占用的内存更小且更为便捷。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li>JavaScript 高级程序设计 第 13 章</li>
@@ -350,10 +400,10 @@
     </header>
     <div class="entry">
       
-        <h3 id="简洁地设置-Association"><a href="#简洁地设置-Association" class="headerlink" title="简洁地设置 Association"></a>简洁地设置 Association</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></div><div class="line">    association <span class="symbol">:author</span>, <span class="symbol">factory:</span> <span class="symbol">:author</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
-<p>我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可以省略其 factory 的设置。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></div><div class="line">    auther</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
-<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></div><div class="line">  title <span class="string">"A title"</span></div><div class="line"></div><div class="line">  factory <span class="symbol">:approved_post</span> <span class="keyword">do</span></div><div class="line">    approved <span class="literal">true</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">approved_post = create(<span class="symbol">:approved_post</span>)</div><div class="line">approved_post.title    <span class="comment"># =&gt; "A title"</span></div><div class="line">approved_post.approved <span class="comment"># =&gt; true</span></div></pre></td></tr></table></figure>
-<p>也能明确指定 parent。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></div><div class="line">  title <span class="string">"A title"</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">factory <span class="symbol">:approved_post</span>, <span class="symbol">parent:</span> <span class="symbol">:post</span> <span class="keyword">do</span></div><div class="line">  approved <span class="literal">true</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+        <h3 id="简洁地设置-Association"><a href="#简洁地设置-Association" class="headerlink" title="简洁地设置 Association"></a>简洁地设置 Association</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    association <span class="symbol">:author</span>, <span class="symbol">factory:</span> <span class="symbol">:author</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可以省略其 factory 的设置。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    auther</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:approved_post</span> <span class="keyword">do</span></span><br><span class="line">    approved <span class="literal">true</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">approved_post = create(<span class="symbol">:approved_post</span>)</span><br><span class="line">approved_post.title    <span class="comment"># =&gt; "A title"</span></span><br><span class="line">approved_post.approved <span class="comment"># =&gt; true</span></span><br></pre></td></tr></table></figure>
+<p>也能明确指定 parent。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">factory <span class="symbol">:approved_post</span>, <span class="symbol">parent:</span> <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  approved <span class="literal">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
       
     </div>
     <footer>
@@ -390,7 +440,7 @@
     </header>
     <div class="entry">
       
-        <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>最主要的区别，== 会在比较前进行转化，而 === 比较前不进行转化。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">var result1 = (&apos;55&apos; == 55) // true，因为转换后相等</div><div class="line">var result2 = (&apos;55&apos; === 55) // false，因为不同的数据类型不相等</div></pre></td></tr></table></figure></p>
+        <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>最主要的区别，== 会在比较前进行转化，而 === 比较前不进行转化。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var result1 = (&apos;55&apos; == 55) // true，因为转换后相等</span><br><span class="line">var result2 = (&apos;55&apos; === 55) // false，因为不同的数据类型不相等</span><br></pre></td></tr></table></figure></p>
 <h2 id="相等"><a href="#相等" class="headerlink" title="相等 =="></a>相等 ==</h2><p>相等操作符会先转换操作数（通常称为强制转型），然后再比较它们的相等性。</p>
 <p>在转换时：<br>如果有一个操作数是布尔值，则在比较相等性之前将其转换为数值—— false 为 0，true 为 1。<br>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值。<br>如果一个操作数是对象，另一个操作数不是，则调用对象的 valueOf() 方法，用得到的基本类型值按照前面的规则进行比较。</p>
 <p>在比较时：<br>null 和 undefined 是相等的。<br>要比较相等性之前，不能将 null 和 undefined 转换成其他任何值。<br>如果有一个操作数是 NaN（两个 NaN也是），则相等操作符返回 false。<br>如果两个操作数都是对象，则比较它们是不是同一个对象。如果指向同一个对象则返回 true。</p>
@@ -432,55 +482,16 @@
     <div class="entry">
       
         <p>当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 <code>Incorrect string value</code>。<br>仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQL 表来说报错实在是太不应该了。<br>查了之后，才发现原来 MySQL 的 utf-8 是不完全的，只支持 1-3 个字节，而 emoji 的 utf-8 编码大多为 4 个字节。为了支持更多的字符集，MySQL 5.5 推出了编码 utf8mb4，使其可以兼容 4 字节的 emoji。<br>因此，若要让数据库支持 emoji，可以将编码从 utf-8 改为 utf8mb4。</p>
-<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></div><div class="line">    serialize <span class="symbol">:content</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></span><br><span class="line">    serialize <span class="symbol">:content</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 <p>这时存储 emoji 时，就会先进行 serialize 再存入数据库。由于不是直接以 emoji 的 utf-8 编码存储，MySQL 也就不会报错了。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="external">Quick, no-hack emoji support with MySQL &amp; Rails</a></li>
+<li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="noopener">Quick, no-hack emoji support with MySQL &amp; Rails</a></li>
 </ul>
 
       
     </div>
     <footer>
       
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-11-27T10:15:49.000Z"><a href="/2016/11/27/rails-form-for/">2016-11-27</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/11/27/rails-form-for/">Rails form_for 源码阅读</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>初学 Rails 时，觉得 form_for 很强大，这么简单就能完成一个表单。<br>现在想来，它其实就是通过配置来输出 Html。但由于做法很巧妙，使用时颇为爽快。<br>于是阅读下源码来研究下它的神奇之处。</p>
-<h4 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h4><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">&lt;%= form_for @person <span class="keyword">do</span> <span class="params">|f|</span> %&gt;</div><div class="line">  &lt;%= f.label <span class="symbol">:first_name</span> %&gt;<span class="symbol">:</span></div><div class="line">  &lt;%= f.text_field <span class="symbol">:first_name</span> %&gt;&lt;br /&gt;</div><div class="line"></div><div class="line">  &lt;%= f.label <span class="symbol">:last_name</span> %&gt;<span class="symbol">:</span></div><div class="line">  &lt;%= f.text_field <span class="symbol">:last_name</span> %&gt;&lt;br /&gt;</div><div class="line"></div><div class="line">  &lt;%= f.submit %&gt;</div><div class="line">&lt;% <span class="keyword">end</span> %&gt;</div></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"/people"</span> <span class="attr">class</span>=<span class="string">"new_person"</span> <span class="attr">id</span>=<span class="string">"new_person"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"authenticity_token"</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">value</span>=<span class="string">"NrOp5bsjoLRuK8IW5+dQEYjKGUJDe7TQoZVvq95Wteg="</span> /&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"person_first_name"</span>&gt;</span>First name<span class="tag">&lt;/<span class="name">label</span>&gt;</span>:</div><div class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"person_first_name"</span> <span class="attr">name</span>=<span class="string">"person[first_name]"</span> <span class="attr">type</span>=<span class="string">"text"</span> /&gt;</span><span class="tag">&lt;<span class="name">br</span> /&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"person_last_name"</span>&gt;</span>Last name<span class="tag">&lt;/<span class="name">label</span>&gt;</span>:</div><div class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"person_last_name"</span> <span class="attr">name</span>=<span class="string">"person[last_name]"</span> <span class="attr">type</span>=<span class="string">"text"</span> /&gt;</span><span class="tag">&lt;<span class="name">br</span> /&gt;</span></div><div class="line"></div><div class="line">  <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"commit"</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"Create Person"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></div></pre></td></tr></table></figure>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/11/27/rails-form-for/#more" class="more-link">Read More</a>
-          </div>
         
         
       
@@ -542,7 +553,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -560,7 +571,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -586,6 +597,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

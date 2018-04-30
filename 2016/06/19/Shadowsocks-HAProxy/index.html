@@ -78,19 +78,19 @@
     </header>
     <div class="entry">
       
-        <p>最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。<br>后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">客户端 &lt; - &gt; 中继服务器 &lt; - &gt; Shadowsocks 服务器</div></pre></td></tr></table></figure></p>
+        <p>最近用 ss 上网的速度越来越慢，工作日晚上 Google 都很难连上。ping 了下服务器，发现都在 300、400 ms，或者 time_out，得想些方法加速一下。<br>后来发现 ss 支持中继，那么只要有一个服务器，连接自己电脑和 ss 服务器都很快的话就能实现加速。下面选了阿里云作为中继服务器进行实践。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端 &lt; - &gt; 中继服务器 &lt; - &gt; Shadowsocks 服务器</span><br></pre></td></tr></table></figure></p>
 <p>在自己电脑上 ping 中继服务器，中继服务器 ping ss 服务器，延迟分别为 10+ ms、60+ ms。阿里云的出口带宽果然不一样。加速条件满足，开始进入安装配置。</p>
 <a id="more"></a>
 <h2 id="HAProxy"><a href="#HAProxy" class="headerlink" title="HAProxy"></a>HAProxy</h2><p>简单介绍下 HAProxy，HAProxy 是一个高效的负载均衡软件，可以实现 TCP/HTTP 的代理。这里使用它将我们发给它的请求转发给 ss 服务器。</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// 以 CentOS 7 为例</div><div class="line">yum install haproxy</div></pre></td></tr></table></figure>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>编辑 <code>/etc/haproxy/haproxy.cfg</code>，保存以下内容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">global</div><div class="line">        <span class="built_in">ulimit</span>-n  51200</div><div class="line"></div><div class="line">defaults</div><div class="line">        <span class="built_in">log</span> global</div><div class="line">        mode    tcp</div><div class="line">        option  dontlognull</div><div class="line">        contimeout 1000</div><div class="line">        clitimeout 150000</div><div class="line">        srvtimeout 150000</div><div class="line"></div><div class="line">frontend ss-in</div><div class="line">        <span class="built_in">bind</span> *:8388</div><div class="line">        default_backend ss-out</div><div class="line"></div><div class="line">backend ss-out</div><div class="line">        server server1 222.222.222.222:2222 maxconn 20480</div></pre></td></tr></table></figure></p>
-<p>其中，<code>*:8388</code> 中的 8388 是中继服务器接受请求的端口，<code>222.222.222.222:2222</code> 是 ss 服务器的 IP 地址加端口号。<br>然后执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">service haproxy restart</div></pre></td></tr></table></figure></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 以 CentOS 7 为例</span><br><span class="line">yum install haproxy</span><br></pre></td></tr></table></figure>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>编辑 <code>/etc/haproxy/haproxy.cfg</code>，保存以下内容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">global</span><br><span class="line">        <span class="built_in">ulimit</span>-n  51200</span><br><span class="line"></span><br><span class="line">defaults</span><br><span class="line">        <span class="built_in">log</span> global</span><br><span class="line">        mode    tcp</span><br><span class="line">        option  dontlognull</span><br><span class="line">        contimeout 1000</span><br><span class="line">        clitimeout 150000</span><br><span class="line">        srvtimeout 150000</span><br><span class="line"></span><br><span class="line">frontend ss-in</span><br><span class="line">        <span class="built_in">bind</span> *:8388</span><br><span class="line">        default_backend ss-out</span><br><span class="line"></span><br><span class="line">backend ss-out</span><br><span class="line">        server server1 222.222.222.222:2222 maxconn 20480</span><br></pre></td></tr></table></figure></p>
+<p>其中，<code>*:8388</code> 中的 8388 是中继服务器接受请求的端口，<code>222.222.222.222:2222</code> 是 ss 服务器的 IP 地址加端口号。<br>然后执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service haproxy restart</span><br></pre></td></tr></table></figure></p>
 <p>HAProxy 就会在后台进行启动。可以使用 <code>ps -ef</code> 查看进程，<code>lsof -i</code> 查看端口占用情况来验证 HAProxy 是否已经运行。若无法连接中继服务器，使用 <code>iptables -L</code> 查看防火墙规则是否有问题。</p>
 <p>客户端的配置，只要将原来配置的 ip 地址和端口更换成中继服务器的 ip 地址和端口号就可以了。</p>
 <h3 id="未解之迷"><a href="#未解之迷" class="headerlink" title="未解之迷"></a>未解之迷</h3><p>加速之后，公司电脑和手机使用都没问题，个人电脑却死活连不上去，一直显示 <code>ERR_CONNECTION_CLOSED</code>，将原来的 Shadowsocks Mac 客户端替换成 <code>Shadowsocks-libev</code> 之后才行，但明明公司电脑使用的客户端是一样的。</p>
-<h2 id="其他加速方法"><a href="#其他加速方法" class="headerlink" title="其他加速方法"></a>其他加速方法</h2><p>除 HAProxy 加速之外，还可以使用微林加速，具体可以参考代码家的<a href="http://www.jianshu.com/p/475182d8c503" target="_blank" rel="external">提速 Shadowsocks</a>。还有个更偷懒的方法，直接购买 CN2 线路的 Shadowsocks。</p>
+<h2 id="其他加速方法"><a href="#其他加速方法" class="headerlink" title="其他加速方法"></a>其他加速方法</h2><p>除 HAProxy 加速之外，还可以使用微林加速，具体可以参考代码家的<a href="http://www.jianshu.com/p/475182d8c503" target="_blank" rel="noopener">提速 Shadowsocks</a>。还有个更偷懒的方法，直接购买 CN2 线路的 Shadowsocks。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://github.com/shadowsocks/shadowsocks/wiki/Setup-a-Shadowsocks-relay" target="_blank" rel="external">官方文档</a></li>
+<li><a href="https://github.com/shadowsocks/shadowsocks/wiki/Setup-a-Shadowsocks-relay" target="_blank" rel="noopener">官方文档</a></li>
 </ul>
 
       
@@ -168,7 +168,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -186,7 +186,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -212,6 +212,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

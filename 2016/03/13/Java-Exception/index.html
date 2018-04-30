@@ -79,8 +79,8 @@
     </header>
     <div class="entry">
       
-        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">new</span> Thread() &#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mRestAdapter.create(Api.class).sendRequst();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="comment">// handle Exception</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;.start();</div></pre></td></tr></table></figure></p>
-<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</div><div class="line">  String firstLine = reader.readLine();</div><div class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+        <p>调用 Retrofit 同步方法常会写成以下代码的形式，catch 语句容易漏掉，而编译器也不提醒你。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mRestAdapter.create(Api.class).sendRequst();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// handle Exception</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;.start();</span><br></pre></td></tr></table></figure></p>
+<p>但当你使用 BufferedReader 时，编译器死命地提醒你，这有一个 IOException，非让你处理了才行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  BufferedReader reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(Path));</span><br><span class="line">  String firstLine = reader.readLine();</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>那么问题来了，这两种 Exception 有什么区别使得编译器区别对待呢？<br><a id="more"></a></p>
 <h2 id="Exception-机制"><a href="#Exception-机制" class="headerlink" title="Exception 机制"></a>Exception 机制</h2><p>这就得从 Java 的 Exception 机制开始说起了。<br><img src="/img/java_throwable.gif" alt=""><br>Throwable 表示任何可以作为异常被抛出的类。Throwable 对象分为两种类型，Error 表示系统级错误，如资源不足、约束失败，或者其他使程序无法继续执行的条件，一般无需我们关心。而 Exception 是所有异常的父类，可分为两大类型。一种是 RuntimeException 及其子类，表示运行时异常。另一种是除了 RuntimeException 及其子类之外的 Exception，称为受检异常。<br>那运行时异常和受检异常有什么区别呢？在使用上最大的区别就是，受检异常强迫调用者使用显式的 catch 语句处理或者将它传播出去。写代码时如果 IDE 提示你使用 catch 语句或者在方法中添加 throws 声明，这种异常都是受检异常，要扼杀在摇篮里，否则编译都无法通过。而运行时异常则不需要这样做。<br>除了使用上的差异，两者的使用场景也有区别。《Effective Java》是这样建议的：如果可恢复的情况使用受检异常，对编程错误使用运行时异常。</p>
 <p>让我们回到问题，现在答案已经很明显了。Retrofit 抛出的是运行时异常，而 BufferedReader 抛出的是受检异常。</p>
@@ -164,7 +164,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -182,7 +182,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -208,6 +208,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

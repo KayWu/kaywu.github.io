@@ -80,7 +80,7 @@
     <div class="entry">
       
         <p>对 Ruby 中常量查找只有基础的认识，使用上还是有不少疑问，比如 “::A” 的含义、为什么有时使用 “A::B” 而有时直接用 “B”。<br>花时间查了资料来加深对此的理解。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">    puts <span class="string">'outer'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># outer</span></div><div class="line"></div><div class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></div><div class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></div><div class="line">        puts <span class="string">'inner'</span></div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    Record.method <span class="comment"># inner</span></div><div class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></div><div class="line">    Music::Record.method <span class="comment"># inner</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">    puts <span class="string">'outer'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">module</span> <span class="title">Music</span></span></span><br><span class="line"></span><br><span class="line">    Record.method <span class="comment"># outer</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">module</span> <span class="title">Record</span></span></span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">self</span>.<span class="title">method</span></span></span><br><span class="line">        puts <span class="string">'inner'</span></span><br><span class="line">      <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">    Record.method <span class="comment"># inner</span></span><br><span class="line">    <span class="symbol">:</span><span class="symbol">:Record</span>.method <span class="comment"># outer</span></span><br><span class="line">    Music::Record.method <span class="comment"># inner</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>我们从简单的例子出发。在上文的代码中，共存在着两个名为 Record 的 module。一个是在最外层，一个是在 Music 内部。<br>当第 9 行调用 Record.method 时，由于 Music 内的 Record 还未被定义，因此调用的只能是最外层的 Record module。<br>而在第 17 行，当我们重新调用时，却发现调用的已经是内部的 Record 了。<br>可见常量的调用时是有一个先后顺序的，简单的说就是从近及远，先使用近的。虽然我们从直观上很容易理解近的含义，但严格上的顺序是通过 <code>Module.nesting</code> 得到的。在 Music 内部调用得到 [Record::Music, Record]，可见 Record::Music 确实比 Record 有更高的优先级。</p>
 <a id="more"></a>
 <p>我们再来看看 <code>::Record.method</code>，在使用 <code>::</code> 之后，调用的就变成了外层的 Record 。<code>::</code>的作用是从 top level 来查找相关常量，也就是调用最外层的 Record。</p>
@@ -88,11 +88,11 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Module.nesting 只是查找常量的一部分，更完整的常量查找步骤如下：</p>
 <ol>
 <li>向外找，从 Module.nesting 依次查找</li>
-<li>向上找，从打开类 的 ancestors 依次查找（打开类：Module.nesting.first，若为空则为 Object）<br><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="external">Everything you ever wanted to know about constant lookup in Ruby</a> 讲得非常详情，就不多述了。</li>
+<li>向上找，从打开类 的 ancestors 依次查找（打开类：Module.nesting.first，若为空则为 Object）<br><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="noopener">Everything you ever wanted to know about constant lookup in Ruby</a> 讲得非常详情，就不多述了。</li>
 </ol>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="external">Everything you ever wanted to know about constant lookup in Ruby</a></li>
-<li><a href="http://stackoverflow.com/questions/5032844/ruby-what-does-prefix-do" target="_blank" rel="external">Ruby: what does :: prefix do?</a></li>
+<li><a href="https://cirw.in/blog/constant-lookup" target="_blank" rel="noopener">Everything you ever wanted to know about constant lookup in Ruby</a></li>
+<li><a href="http://stackoverflow.com/questions/5032844/ruby-what-does-prefix-do" target="_blank" rel="noopener">Ruby: what does :: prefix do?</a></li>
 </ul>
 
       
@@ -170,7 +170,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -188,7 +188,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -214,6 +214,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

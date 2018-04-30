@@ -78,12 +78,12 @@
     <div class="entry">
       
         <p>不知为何，在升级了 macOS 系统之后，Rails 连接 MySQL 经常性会报 <code>Mysql2::Error: Lost connection to MySQL server at &#39;sending authentication information&#39;, system error: 32</code> 的错误。重启 MySQL 就好了，过段时间又会报错，烦不胜烦。下定决心解决下。</p>
-<p>参考了<a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">这个帖子</a>后，大致看到有两种解决方法。一种是调大系统 <code>ulimit -n</code> 的值，另一种是调小 <code>table_open_cache</code> 的值。<br>从帖子的回复以及 <code>ulimit -n</code> 表示系统的文件句柄限制来看，个人认为调节 <code>ulimit -n</code> 的值是一个治标不治本的方法。本机的值已经 4k+，应该足够了。</p>
+<p>参考了<a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="noopener">这个帖子</a>后，大致看到有两种解决方法。一种是调大系统 <code>ulimit -n</code> 的值，另一种是调小 <code>table_open_cache</code> 的值。<br>从帖子的回复以及 <code>ulimit -n</code> 表示系统的文件句柄限制来看，个人认为调节 <code>ulimit -n</code> 的值是一个治标不治本的方法。本机的值已经 4k+，应该足够了。</p>
 <p>正巧有次出现问题时，MySQL 还连接着。查了下当时的 status，发现 <code>open_tables</code> 不过几十，而 <code>open_files</code> 却几千。<br>执行 <code>flush tables</code> 清除缓存后就可以重新连接了。确实和 <code>table_open_cache</code> 有一定的关系。</p>
 <p>查看了下 <code>table_open_cache</code> 的值，默认值是 2000。通过在 <code>my.cnf</code> 中添加 <code>table_open_cache = 500</code>，MySQL 这几天就没有闹别扭，希望能一直安稳下去。</p>
-<h4 id="MySQL-相关命令"><a href="#MySQL-相关命令" class="headerlink" title="MySQL 相关命令"></a>MySQL 相关命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">show status like &apos;%open_files%&apos;; # 查看 open_files 的值，open_tables 同理</div><div class="line">show variables like &apos;%table_open_cache%&apos;; # 查看 table_open_cache 的值</div></pre></td></tr></table></figure>
+<h4 id="MySQL-相关命令"><a href="#MySQL-相关命令" class="headerlink" title="MySQL 相关命令"></a>MySQL 相关命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">show status like &apos;%open_files%&apos;; # 查看 open_files 的值，open_tables 同理</span><br><span class="line">show variables like &apos;%table_open_cache%&apos;; # 查看 table_open_cache 的值</span><br></pre></td></tr></table></figure>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="external">http://bugs.mysql.com/bug.php?id=71960</a></li>
+<li><a href="http://bugs.mysql.com/bug.php?id=71960" target="_blank" rel="noopener">http://bugs.mysql.com/bug.php?id=71960</a></li>
 </ul>
 
       
@@ -161,7 +161,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -179,7 +179,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -205,6 +205,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

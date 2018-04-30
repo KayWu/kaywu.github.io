@@ -79,8 +79,8 @@
     <div class="entry">
       
         <p><code>select</code>、<code>pluck</code> 都可以从数据库读取指定的字段，但两者存在不小的差别。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Product.select(<span class="symbol">:id</span>).to_a</div><div class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></div><div class="line"></div><div class="line">Product.pluck(<span class="symbol">:id</span>)</div><div class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></div><div class="line"><span class="comment"># [2, 1]</span></div></pre></td></tr></table></figure>
-<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</div><div class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Product.select(<span class="symbol">:id</span>).to_a</span><br><span class="line"><span class="comment"># Product Load (0.5ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [#&lt;Product id: 2&gt;, #&lt;Product id: 1&gt;]</span></span><br><span class="line"></span><br><span class="line">Product.pluck(<span class="symbol">:id</span>)</span><br><span class="line"><span class="comment"># Product Load (0.4ms)  SELECT `products`.`id` FROM `products`</span></span><br><span class="line"><span class="comment"># [2, 1]</span></span><br></pre></td></tr></table></figure>
+<p><code>select</code> 返回的是仅含有 id 的 Product Model 数组，而 <code>pluck</code> 返回的是 id 的数组。<br>两者相比较，<code>pluck</code> 省却了构造 ActiveRecord 的过程，效率更优。我们可以通过 Benchmark.measure 来验证下。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts Benchmark.measure &#123;Product.select(<span class="symbol">:id</span>).to_a&#125;</span><br><span class="line">puts Benchmark.measure &#123;Product.pluck(<span class="symbol">:id</span>)&#125;</span><br></pre></td></tr></table></figure></p>
 <table>
 <thead>
 <tr>
@@ -108,11 +108,11 @@
 </tr>
 </tbody>
 </table>
-<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></div><div class="line"></div><div class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</div><div class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></div><div class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></div></pre></td></tr></table></figure></p>
+<p>除此之外，两者还有一个区别，即查询时机的不同。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"> <span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` NOT IN (SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'))</span></span><br><span class="line"></span><br><span class="line">ProductOrder.where.<span class="keyword">not</span>(<span class="symbol">id:</span> SubOrder.where(<span class="symbol">sub_order_no:</span> <span class="string">'001'</span>).pluck(<span class="symbol">:order_id</span>))</span><br><span class="line"><span class="comment"># SELECT `sub_orders`.`order_id` FROM `sub_orders` WHERE `sub_orders`.`sub_order_no` = '001'</span></span><br><span class="line"><span class="comment"># SELECT `orders`.* FROM `orders` WHERE `orders`.`type` IN ('ProductOrder') AND (`orders`.`id` != 3)</span></span><br></pre></td></tr></table></figure></p>
 <p>在上面这个例子中，通过 <code>pluck</code> 的调用进行了两次查询，而 <code>select</code> 只进行了一次查询。可见调用 <code>pluck</code> 会立即进行数据库查询。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="external">Getting to Know Pluck and Select</a></li>
-<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="external">Select Vs Pluck in Rails</a></li>
+<li><a href="http://gavinmiller.io/2013/getting-to-know-pluck-and-select/" target="_blank" rel="noopener">Getting to Know Pluck and Select</a></li>
+<li><a href="http://findnerd.com/list/view/Select-Vs-Pluck-in-Rails/19258/" target="_blank" rel="noopener">Select Vs Pluck in Rails</a></li>
 </ul>
 
       
@@ -190,7 +190,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -208,7 +208,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -234,6 +234,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

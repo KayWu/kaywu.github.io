@@ -77,17 +77,17 @@
     </header>
     <div class="entry">
       
-        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
+        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="noopener">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
 <a id="more"></a>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先 <code>git clone https://github.com/ppninja/wechat-speex-declib</code>。该仓库在<a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a> 的基础上添加了 Makefile。<br>由于编译需要使用 linux，下文使用 ubuntu 16.04 作为示例。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"># 启动 ubuntu 16.04 的 docker 并运行 bash，绑定本机 wechat-speex-declib 的地址到 docker 的 /opt/speex 上</div><div class="line">docker pull ubuntu:16.04</div><div class="line">docker run -i -t --mount type=bind,source=(wechat-speex-declib 的绝对地址替换),target=/opt/speex ubuntu:16.04 /bin/bash</div><div class="line"></div><div class="line"># 修改为阿里云的镜像源，提升 apt-get 的速度</div><div class="line">cat &gt; /etc/apt/sources.list &lt;&lt; END</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</div><div class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</div><div class="line">END</div><div class="line"></div><div class="line"># 安装 gcc 等编译工具</div><div class="line">apt-get build-essential</div><div class="line"># 安装 speex 开发库</div><div class="line">apt-get libspeex-dev</div><div class="line"></div><div class="line">cd /opt/speex</div><div class="line">make</div></pre></td></tr></table></figure>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>首先 <code>git clone https://github.com/ppninja/wechat-speex-declib</code>。该仓库在<a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="noopener">微信解码库示例</a> 的基础上添加了 Makefile。<br>由于编译需要使用 linux，下文使用 ubuntu 16.04 作为示例。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 启动 ubuntu 16.04 的 docker 并运行 bash，绑定本机 wechat-speex-declib 的地址到 docker 的 /opt/speex 上</span><br><span class="line">docker pull ubuntu:16.04</span><br><span class="line">docker run -i -t --mount type=bind,source=(wechat-speex-declib 的绝对地址替换),target=/opt/speex ubuntu:16.04 /bin/bash</span><br><span class="line"></span><br><span class="line"># 修改为阿里云的镜像源，提升 apt-get 的速度</span><br><span class="line">cat &gt; /etc/apt/sources.list &lt;&lt; END</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</span><br><span class="line">deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-proposed main restricted universe multiverse</span><br><span class="line">deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse</span><br><span class="line">END</span><br><span class="line"></span><br><span class="line"># 安装 gcc 等编译工具</span><br><span class="line">apt-get build-essential</span><br><span class="line"># 安装 speex 开发库</span><br><span class="line">apt-get libspeex-dev</span><br><span class="line"></span><br><span class="line">cd /opt/speex</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
 <p>注意这里安装的 speex 开发库是 libspeex-dev，而不是 speex。speex 库提供了 speex 编码、解码的命令行，而 libspeex-dev 库提供了开发所需的文件。</p>
 <p>执行完后在 bin 目录下会新增 speex_decode，也就是编译出的可执行文件。<br>通过执行 <code>./speex_decode test.speex test.wav</code> 就可以将微信定制的 speex 转码成标准的 wav 格式了。<br>提醒下，转码产生的 wav 格式未压缩，体积很大。可以通过 ffmpeg 等工具进行处理。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a></li>
-<li><a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="external">微信解码库示例</a></li>
-<li><a href="https://github.com/ppninja/wechat-speex-declib" target="_blank" rel="external">wechat speex declib</a></li>
-<li><a href="https://packages.qa.debian.org/s/speex.html" target="_blank" rel="external">speex binaries</a></li>
+<li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="noopener">获取微信录音</a></li>
+<li><a href="http://wximg.gtimg.com/shake_tv/mpwiki/declib.zip" target="_blank" rel="noopener">微信解码库示例</a></li>
+<li><a href="https://github.com/ppninja/wechat-speex-declib" target="_blank" rel="noopener">wechat speex declib</a></li>
+<li><a href="https://packages.qa.debian.org/s/speex.html" target="_blank" rel="noopener">speex binaries</a></li>
 </ul>
 <!-- 获取临时素材 -->
 
@@ -161,7 +161,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -179,7 +179,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -205,6 +205,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

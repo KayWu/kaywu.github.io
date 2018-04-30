@@ -81,9 +81,9 @@ PS: 没有公众号的朋友可以通过微信的测试号来试验除微信支�
     <div class="entry">
       
         <p>最近开发了基于微信的相关项目，主要是微信的网页开发、微信支付以及发送消息这块的内容。项目本身没什么难度，但由于微信封闭的体系、混乱的配置以及分散的文档，爬了不少的坑，这里总结下经验。</p>
-<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>先说说微信的文档。微信的文档不是统一的，比如公众平台技术文档在<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="external">一个网站</a>，而支付文档在<a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="external">另一个网站</a>，但支付文档所使用的 js 的相关文档又在前一个网站。除此之外，还有<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/index.html" target="_blank" rel="external">小程序文档</a>、<a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=open1419318292&amp;token=&amp;lang=zh_CN" target="_blank" rel="external">开放平台文档</a>。从这混乱的文档相信你也能或多或少体会到开发的难处。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>出于安全性（更多是封闭性）的考虑，微信的配置繁琐且复杂，这里我把整个流程都记录下来以供参考。<br>首先登录公众平台，在开发-基本配置里获得 <code>AppSecret</code> 并保存下来，之后网站就不会再显示开发者密码，只能重置。<br>同样在该页面，配置 IP 白名单。如果你需要接收用户公众号的消息以及事件推送，同一页面添加服务器配置。<br>然后，在设置-公众号设置-功能设置，按照说明对业务域名、JS 接口安全域名、网页授权域名进行设置。<br>如果有微信支付的需求，去<a href="https://pay.weixin.qq.com" target="_blank" rel="external">微信商户平台</a>，商户平台-产品中心-开发配置中设置公众号支付的授权目录。注意，授权目录必须是发起支付网址的上一级目录。举例来说，<br>发起支付的网址为 <code>www.xxx.com/orders/22/pay</code>，那么支付目录就必须为 <code>www.xxx.com/orders/22/</code>，填 <code>www.xxx.com/</code> 或者 <code>www.xxx.com/orders/</code> 都是不行的。再加上支付的授权目录只能填 5 个，发起支付的域名得注意设计。</p>
-<p>PS: 没有公众号的朋友可以通过微信的<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">测试号</a>来试验除微信支付以外大部分的功能。</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>先说说微信的文档。微信的文档不是统一的，比如公众平台技术文档在<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="noopener">一个网站</a>，而支付文档在<a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="noopener">另一个网站</a>，但支付文档所使用的 js 的相关文档又在前一个网站。除此之外，还有<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/index.html" target="_blank" rel="noopener">小程序文档</a>、<a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=open1419318292&amp;token=&amp;lang=zh_CN" target="_blank" rel="noopener">开放平台文档</a>。从这混乱的文档相信你也能或多或少体会到开发的难处。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>出于安全性（更多是封闭性）的考虑，微信的配置繁琐且复杂，这里我把整个流程都记录下来以供参考。<br>首先登录公众平台，在开发-基本配置里获得 <code>AppSecret</code> 并保存下来，之后网站就不会再显示开发者密码，只能重置。<br>同样在该页面，配置 IP 白名单。如果你需要接收用户公众号的消息以及事件推送，同一页面添加服务器配置。<br>然后，在设置-公众号设置-功能设置，按照说明对业务域名、JS 接口安全域名、网页授权域名进行设置。<br>如果有微信支付的需求，去<a href="https://pay.weixin.qq.com" target="_blank" rel="noopener">微信商户平台</a>，商户平台-产品中心-开发配置中设置公众号支付的授权目录。注意，授权目录必须是发起支付网址的上一级目录。举例来说，<br>发起支付的网址为 <code>www.xxx.com/orders/22/pay</code>，那么支付目录就必须为 <code>www.xxx.com/orders/22/</code>，填 <code>www.xxx.com/</code> 或者 <code>www.xxx.com/orders/</code> 都是不行的。再加上支付的授权目录只能填 5 个，发起支付的域名得注意设计。</p>
+<p>PS: 没有公众号的朋友可以通过微信的<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="noopener">测试号</a>来试验除微信支付以外大部分的功能。</p>
 <a id="more"></a>
 <h2 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h2><p>先简单地介绍下常见的开发概念。</p>
 <ul>
@@ -91,7 +91,7 @@ PS: 没有公众号的朋友可以通过微信的测试号来试验除微信支�
 <li>jsapi_ticket：通过 access_token 获取，是公众号用于调用微信 JS 接口的临时票据。网页在使用 JS-SDK 的时需要先调用 config 接口，其中的参数 signature 需要用到 jsapi_ticket 生成。</li>
 </ul>
 <p>注意下 access_token、jsapi_ticket 有效期都为 2 小时，且每天的调用次数有限，需要做全局缓存以及过期自动刷新的处理。</p>
-<p>我开发的项目使用了 Rails + <a href="https://github.com/Eric-Guo/wechat" target="_blank" rel="external">wechat gem</a> + <a href="https://github.com/jasl/wx_pay" target="_blank" rel="external">wx_pay gem</a>。wechat gem 自动管理 access_token、jsapi_ticket，封装了公众号的接口并提供了授权地址、调用 JS-SDK 的便捷方法，wx_pay gem 封装了支付相关的接口。强烈推荐使用，能够省去不少功夫。</p>
+<p>我开发的项目使用了 Rails + <a href="https://github.com/Eric-Guo/wechat" target="_blank" rel="noopener">wechat gem</a> + <a href="https://github.com/jasl/wx_pay" target="_blank" rel="noopener">wx_pay gem</a>。wechat gem 自动管理 access_token、jsapi_ticket，封装了公众号的接口并提供了授权地址、调用 JS-SDK 的便捷方法，wx_pay gem 封装了支付相关的接口。强烈推荐使用，能够省去不少功夫。</p>
 <h3 id="网页授权"><a href="#网页授权" class="headerlink" title="网页授权"></a>网页授权</h3><p>微信的网页授权也是常见的 OAuth 2.0，与其他网页不同的是有两个不同的 scope。</p>
 <ul>
 <li>以 snsapi_base 为 scope 发起的网页授权，可以获取进入页面的用户的openid，静默授权并自动跳转到回调页的。用户感知的就是直接进入了回调页。</li>
@@ -100,10 +100,10 @@ PS: 没有公众号的朋友可以通过微信的测试号来试验除微信支�
 <h3 id="微信支付"><a href="#微信支付" class="headerlink" title="微信支付"></a>微信支付</h3><p>在调用微信支付前，需要从后端发起 unifiedorder 统一下单请求获取到 prepay_id，通过 prepay_id、AppID、商品平台的 key 等参数生成签名，最后调用 wx.chooseWXPay 发起微信支付。<br>注意，生成支付签名这边有很多的坑，比如 timestamp 在 wx.chooseWxPay 里是小写，而在生成签名时使用的是 timeStamp。尽量使用成熟的库来避免这种不知所谓的坑。<br>统一下单请求时会要求传入参数 notify_url，这个是异步接受微信支付结果通知的回调地址。注意该地址不能携带参数。举例来说 <code>https://www.xxx.com?a=1</code>，回调时 <code>a=1</code>会被省略。</p>
 <h3 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h3><p>发送消息主要有两大部分，其一是模板消息。<br>微信对模板消息有着严格的管理，所在行业有相应的模板库，你只能从模板库里选择添加到我的模板，向模板库里新增模板需要经过审核。<br>新增模板时最好记录下模板编号，因为添加到我的模板后，只能看见模板 ID，看不到原始的模板编号。而每一个公众号添加相同的模板时对应的模板 ID 是不一样的。</p>
 <p>除模板消息之外，还有客服消息。客服消息又分文本消息、图片消息、语音消息等。文档里虽然没提，文本消息支持 <code>&lt;br&gt;</code> 换行、<code>&lt;a href=&quot;#&quot;&gt;</code> 超链接这些功能。</p>
-<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>刚开始开发微信时有一个很头疼的事，怎么才能做到本机调试呢。这里说下我个人的方法。<br>假设开发网站的域名是 <code>http://www.example.com</code>，通过修改 hosts、nginx 转发等方法，将 <code>http://www.example.com</code> 映射到本地端口如 <code>http://localhost:3000</code> 上。之后通过 <a href="https://mp.weixin.qq.com/debug/wxadoc/dev/devtools/download.html" target="_blank" rel="external">微信开发者工具</a> 就可以本机调试了。<br>但是微信开发者工具也有其限制，比如不能模拟微信支付，这时候就需要用到手机了。手机通过 charles 代理，由于本机 <code>http://www.example.com</code> 的请求已经转发到本地端口，也就实现了本机调试。<br>同时还有 TBS Studio，可以通过 USB 连接手机实现真机调试。实际使用感觉效率一般，建议补充使用。</p>
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>刚开始开发微信时有一个很头疼的事，怎么才能做到本机调试呢。这里说下我个人的方法。<br>假设开发网站的域名是 <code>http://www.example.com</code>，通过修改 hosts、nginx 转发等方法，将 <code>http://www.example.com</code> 映射到本地端口如 <code>http://localhost:3000</code> 上。之后通过 <a href="https://mp.weixin.qq.com/debug/wxadoc/dev/devtools/download.html" target="_blank" rel="noopener">微信开发者工具</a> 就可以本机调试了。<br>但是微信开发者工具也有其限制，比如不能模拟微信支付，这时候就需要用到手机了。手机通过 charles 代理，由于本机 <code>http://www.example.com</code> 的请求已经转发到本地端口，也就实现了本机调试。<br>同时还有 TBS Studio，可以通过 USB 连接手机实现真机调试。实际使用感觉效率一般，建议补充使用。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="external">微信公众平台技术文档</a></li>
-<li><a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="external">微信支付开发文档</a></li>
+<li><a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="noopener">微信公众平台技术文档</a></li>
+<li><a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="noopener">微信支付开发文档</a></li>
 </ul>
 <!-- 公众平台文档 -->
 <!-- 微信支付文档 -->
@@ -186,7 +186,7 @@ PS: 没有公众号的朋友可以通过微信的测试号来试验除微信支�
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -204,7 +204,7 @@ PS: 没有公众号的朋友可以通过微信的测试号来试验除微信支�
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -230,6 +230,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

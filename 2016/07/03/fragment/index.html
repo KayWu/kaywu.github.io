@@ -78,12 +78,12 @@ Transaction co">
     </header>
     <div class="entry">
       
-        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
-<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</div></pre></td></tr></table></figure>
+        <p>说来惭愧，用了 Fragment 这么久却没怎么看过它的源码。原因么，一个字懒。每次碰到疑难杂症，Copy and Paste from StackOverflow。前几天看了<a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="noopener">通过源码解析 Fragment 启动过程</a>，跟着流程走了遍，颇有体会，下面就简单记录下几个要点。</p>
+<h2 id="Transaction-commit-是异步操作"><a href="#Transaction-commit-是异步操作" class="headerlink" title="Transaction commit 是异步操作"></a>Transaction commit 是异步操作</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getSupportFragmentManager().beginTransaction().add(R.id.container, fragment).commit();</span><br></pre></td></tr></table></figure>
 <p>上面是常常使用的一段代码。<code>beginTransacton()</code> 返回的是 BackStackRecord。BackStackRecord 的 <code>commit()</code> 最终调用的是 <code>mHandler.post()</code>。<code>post()</code> 中的操作不是同步执行的，而是在 UI 线程的 Handler 队列的尾部被提交。</p>
 <h2 id="Fragment-的状态同步"><a href="#Fragment-的状态同步" class="headerlink" title="Fragment 的状态同步"></a>Fragment 的状态同步</h2><p>依旧是上面那句代码，<code>beginTransaction.add(R.id.container, fragment)</code> 最终会调用 <code>mManager.addFragment(f, false)</code>。第二个参数含义为 moveToStateNow，表示是否立即变更 fragment 的状态。由于该参数为 false，因此在 addFragment 时，fragment 不会立即更变其状态，也就意味着 fragment 的回调函数，如 onAttach、onCreate 不会被调用。但 addFragment 会将 fragment 添加到 FragmentManagerImpl 的 mAdded、mActive 队列中。<br>当下一次 FragmentManagerImpl 的 <code>moveToState(int, boolean)</code> 被调用时，一般发生在 Activity 调用 FragmentManagerImpl 相关的方法时，如 Activity onCreate 时会调用 FragmentManagerImpl 的 dispatchCreate 方法，FragmentManagerImpl 会遍历 mActive 队列并调用 <code>moveToState(f, newState, transit, transitStyle, false)</code>，使 fragment 的状态和最新的状态同步。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="external">通过源码解析 Fragment 启动过程</a></li>
+<li><a href="http://www.jianshu.com/p/f2fcc670afd6" target="_blank" rel="noopener">通过源码解析 Fragment 启动过程</a></li>
 </ul>
 
       
@@ -161,7 +161,7 @@ Transaction co">
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -179,7 +179,7 @@ Transaction co">
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -205,6 +205,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

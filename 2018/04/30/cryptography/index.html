@@ -1,0 +1,244 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>图解密码技术 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="对称密码对称密码是一种用相同的密钥进行加密和解密的技术，用于确保消息的机密性。尽管对称密码能够确保消息的机密性，但需要解决将解密密钥配送给接受者的密钥配送问题。一次性密码本的原理是将明文与一串随机的比特序列进行 XOR 运算。即使用暴力破解法遍历整个密钥空间，也绝对无法被破译。随着计算机的进步，现在 DES 已经能够被暴力破解，强度大不如前了。AES 是取代其 DES 而成为新标准的一种对称密码算法。在 2000 年从候选算法中选出了一种名为 Rijndael 的对称密码算法，并将其确定为了 AES。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="图解密码技术"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2018-04-30T05:48:55.000Z"><a href="/2018/04/30/cryptography/">2018-04-30</a></time>
+      
+      
+  
+    <h1 class="title">图解密码技术</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="对称密码"><a href="#对称密码" class="headerlink" title="对称密码"></a>对称密码</h2><p>对称密码是一种用相同的密钥进行加密和解密的技术，用于确保消息的机密性。尽管对称密码能够确保消息的机密性，但需要解决将解密密钥配送给接受者的密钥配送问题。<br>一次性密码本的原理是将明文与一串随机的比特序列进行 XOR 运算。即使用暴力破解法遍历整个密钥空间，也绝对无法被破译。<br>随着计算机的进步，现在 DES 已经能够被暴力破解，强度大不如前了。<br>AES 是取代其 DES 而成为新标准的一种对称密码算法。在 2000 年从候选算法中选出了一种名为 Rijndael 的对称密码算法，并将其确定为了 AES。</p>
+<a id="more"></a>
+<h2 id="分组密码的模式"><a href="#分组密码的模式" class="headerlink" title="分组密码的模式"></a>分组密码的模式</h2><p>密码算法可以分为分组密码和流密码两种。<br>分组密码是每次只能处理特定长度的一块数据的一类密码算法，这里的“一块”就称为分组。此外，一个分组的比特数就称为分组长度。例如，DES 和三重 DES 的分组长度都是 64 比特。AES 的分组长度可以从 128 比特、192 比特、256 比特中进行选择。<br>流密码是对数据流进行连续处理的一类密码算法。一般以 1 比特、8 比特或 32 比特等为单位进行加密和解密。<br>分组密码算法只能加密固定长度的分组，当明文长度超过分组密码的分组长度时，就需要对分组密码算法进行迭代。而迭代的方式就成为分组密码的模式。</p>
+<h3 id="ECB-模式"><a href="#ECB-模式" class="headerlink" title="ECB 模式"></a>ECB 模式</h3><p>Electronic CodeBook，电子密码本模式，不应使用。<br>将明文分组加密之后的结果将直接成为密文分组。</p>
+<h3 id="CBC-模式"><a href="#CBC-模式" class="headerlink" title="CBC 模式"></a>CBC 模式</h3><p>Cipher Block Chaining，密文分组链接模式，推荐使用。<br>将明文分组与前一个密文分组进行 XOR 运算，然后再进行加密。</p>
+<h3 id="CFB-模式"><a href="#CFB-模式" class="headerlink" title="CFB 模式"></a>CFB 模式</h3><p>Ciper-Feedback，密文反馈模式，现在已不使用，推荐用 CTR 模式代替。<br>前一个密文分组被送回到密码算法的输入端。</p>
+<h3 id="OFB-模式"><a href="#OFB-模式" class="headerlink" title="OFB 模式"></a>OFB 模式</h3><p>Output-Feedback 输出反馈模式，推荐用 CTR 模式代替。<br>密码算法的输出会反馈到密码算法的输入中，属于流密码。</p>
+<h3 id="CTR-模式"><a href="#CTR-模式" class="headerlink" title="CTR 模式"></a>CTR 模式</h3><p>CounteT，计数器模式，推荐使用。<br>通过逐次累加的计数器进行加密来生成密钥流的流密码。</p>
+<h2 id="公钥密码"><a href="#公钥密码" class="headerlink" title="公钥密码"></a>公钥密码</h2><p>密钥配送问题解决方法</p>
+<ul>
+<li>事先共享密钥</li>
+<li>密钥分配中心</li>
+<li>Diffie-Hellman 密钥交换</li>
+<li>公钥密码</li>
+</ul>
+<p>公钥密码是一种用不同的密钥进行加密和解密的技术。公钥密码解决了密钥配送问题，但没有解决公钥认证问题，且它的处理速度只有对称密钥的几百分之一。<br>使用最广泛的一种公钥密码算法是 RSA。</p>
+<h3 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h3><p>$密文 = 明文^E mod N$<br>$明文 = 密文^D mod N$</p>
+<p>私钥：(D, N)<br>公钥：(E, N)</p>
+<h3 id="中间人攻击"><a href="#中间人攻击" class="headerlink" title="中间人攻击"></a>中间人攻击</h3><p>中间人攻击就是主动攻击者混入发送者和接收者的中间，对发送者伪装成接收者，对接收者伪装成发送者的攻击方式。</p>
+<h2 id="混合密码系统"><a href="#混合密码系统" class="headerlink" title="混合密码系统"></a>混合密码系统</h2><ul>
+<li>用公钥密码加密对称密码中所使用的密钥</li>
+<li>用对称密码来加密明文</li>
+</ul>
+<h2 id="单向散列函数"><a href="#单向散列函数" class="headerlink" title="单向散列函数"></a>单向散列函数</h2><p>单向散列函数有一个输入和一个输出，其中输入称为消息，输出称为散列值。单向散列函数可以根据信息的内容计算出散列值，而散列值就可以被用来检查消息的完整性。<br>难以发现碰撞的性质称为抗碰撞性。密码技术中所使用的单向散列函数，都需要具备抗碰撞性。<br>当给定某条消息的散列值时，单向散列函数必须确保要找到和该条消息具有相同散列值的另外一条消息是非常困难的，这一性质称为弱抗碰撞性。所谓强抗碰撞性，是指要找到散列值相同的两条不同的消息是非常困难的。<br>单向散列函数必须具备单向性。单向性指的是无法通过散列值反算出消息的性质。<br>使用单向散列函数可以辨别出篡改，但无法辨别出伪装。</p>
+<h2 id="消息认证码"><a href="#消息认证码" class="headerlink" title="消息认证码"></a>消息认证码</h2><p>消息认证码（message athentiation code）是一种确认完整性并进行认证的技术，取三个单词的首字母，简称为 MAC。<br>消息认证码的输入包括任意长度的消息和一个发送者与接受者之间的共享的密钥，它可以输出固定长度的数据，这个数据称为 MAC 值。<br>由于发送者和接收者共享相同的密钥，因为会产生无法对第三方证明以及无法防止否认等问题。</p>
+<h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>数字签名使用公钥和私钥组成的密钥对，用私钥加密相当于生成签名，用公钥解密则相当于验证签名。<br>通过数字签名我们可以识别篡改和伪装，还可以防止否认。</p>
+<h2 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h2><p>公钥证书包括姓名、组织、邮箱地址等个人信息以及属于此人的公钥，并由认证机构施加数字签名。</p>
+<h2 id="随机数"><a href="#随机数" class="headerlink" title="随机数"></a>随机数</h2><p>将随机数的性质分为以下三类：</p>
+<ul>
+<li>随机性：不存在统计学偏差，是完全杂乱的数列。弱伪随机数</li>
+<li>不可预测性：不能从过去的数列推测出下一个出现的数。强伪随机数</li>
+<li>不可重现性：除非将数列本身保存下来，否则不能重现相同的数列。真随机数<br>在密码技术中使用的伪随机数生成器，是以具备不可重现性的真随机数作为伪随机数的种子，来生成具备不可预测性的强伪随机数。</li>
+</ul>
+<h2 id="SSL-TLS"><a href="#SSL-TLS" class="headerlink" title="SSL/TLS"></a>SSL/TLS</h2><h3 id="握手阶段"><a href="#握手阶段" class="headerlink" title="握手阶段"></a>握手阶段</h3><p><img src="/img/tls_handshake.png" alt=""><br><a href="https://blog.cloudflare.com/announcing-keyless-ssl-all-the-benefits-of-cloudflare-without-having-to-turn-over-your-private-ssl-keys/" target="_blank" rel="noopener">来源</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>图解密码技术</li>
+<li><a href="https://blog.cloudflare.com/announcing-keyless-ssl-all-the-benefits-of-cloudflare-without-having-to-turn-over-your-private-ssl-keys/" target="_blank" rel="noopener">Announcing Keyless SSL™</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/读书笔记/">读书笔记</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2018 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+    </script>
+<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

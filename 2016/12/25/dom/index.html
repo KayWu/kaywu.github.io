@@ -90,8 +90,8 @@
 <li>事件冒泡阶段</li>
 </ol>
 <p>事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。事件捕获的用意在于在事件到达预定目标之前捕获它。<br>事件冒泡指事件开始时由最具体的元素接收，然后逐级向上传播到较为不具体的节点。</p>
-<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="external">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
-<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;ul&gt;</div><div class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</div><div class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</div><div class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</div><div class="line">&lt;/ui&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="noopener">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
+<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</span><br><span class="line">&lt;/ui&gt;</span><br></pre></td></tr></table></figure></p>
 <p>以上面的 HTML 代码为例，按照传统的做法，若要使每个列表项单击后执行相关操作，则需要分别为它们各自添加 click 事件，共 3 个事件。若后续增加了更多的列表项，还需额外为它们添加相应的事件。<br>而使用事件委托，则只需在 <code>&lt;ul&gt;</code> 上添加 click 事件即可。由于所有列表项都是这个元素的子节点，而且它们的事件会冒泡，所以单击事件最终会被 <code>&lt;ul&gt;</code> 的事件处理。与前面的传统做法相比，事件委托占用的内存更小且更为便捷。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li>JavaScript 高级程序设计 第 13 章</li>
@@ -172,7 +172,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -190,7 +190,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -216,6 +216,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

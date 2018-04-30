@@ -81,11 +81,11 @@
 <p><iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=number+%3D+0%0Adef+print_number(%29%3A%0A++++number+%3D+1%0A++++print(number%29%0A%0Aprint(number%29%0Aprint_number(%29%0Aprint(number%29%0A&origin=opt-frontend.js&cumulative=false&heapPrimitives=false&textReferences=false&py=3&rawInputLstJSON=%5B%5D&curInstr=9&codeDivWidth=350&codeDivHeight=400"> </iframe><br>实际上，在程序运行时，它会创建一个名字和内容的对照表，类似于 Map。它以变量或函数的名称为键，其内容为值。<br>以上面这段代码为例，运行时它会创建一个全局对照表，<code>{&quot;number&quot;: 0, &quot;print_number&quot;: print_number 函数}</code>。当调用 <code>print(number)</code> 时，它首先会查找到 number 对应的值是 0，然后将其打印出来。实际上，一个程序不只有一个对照表，它在每调用一个函数时都会创建新的对照表。在调用 print_number 时，它会创建一个对照表，<code>{&quot;number&quot;: 1}</code>。注意，这里的 number 不同于全局对照表中的 number，修改它的值并不会影响在全照对照表中的 number，可从最后一次调用 <code>print(number)</code> 得到 0 来验证。在 print_number 的调用结束后，它所创建的对照表也会被销毁。</p>
 <p>了解了对照表之后，我们再说说闭包是什么。</p>
 <p><iframe width="800" height="500" frameborder="0" src="http://pythontutor.com/iframe-embed.html#code=def+make_counter(%29%3A%0A++++count+%3D+0%0A++++def+push(%29%3A%0A++++++++nonlocal+count%0A++++++++count+%2B%3D+1%0A++++++++print(count%29%0A++++return+push%0A%0Ac+%3D+make_counter(%29%0Ac(%29++%23+-%3E+1%0Ac(%29++%23+-%3E+2%0Ac(%29++%23+-%3E+3&origin=opt-frontend.js&cumulative=false&heapPrimitives=false&textReferences=false&py=3&rawInputLstJSON=%5B%5D&curInstr=3&codeDivWidth=350&codeDivHeight=400"> </iframe><br>上面是一段简单的 Python 代码，实现了每调用一次显示的数字加 1 的函数 make_counter。函数 make_counter 中定义了变量 count 和 函数 push。通过调用函数 make_counter 将返回的 push 函数赋给变量 c，然后调用它 3 次。每调用一次，显示的值就加 1。注意，每次调用 c 时结果都是不一样的。<br>调用函数 make_counter 时创建了对照表 f1，<code>{&quot;count&quot;: 0, &quot;push&quot;: push 函数}</code>，并将返回的 push 函数赋值给 c。由于此时全局对照表中 c 指向 push 函数，而 push 函数又依赖于 f1，所以 f1 没有在 make_counter 调用结束后被销毁。 随后 c 每次被调用时，函数 push 会创建新的对照表，此对照表依赖于它被定义时的对照表，也就是 f1。它会从 f1 中查找到变量 count 的值，加 1 然后返回。<br>函数 push 使用了变量 count，但变量 count 并不是在函数 push 中定义的。这种变量被称为自由变量。函数 push 就是一个包含了自由变量的开放函数，也就是闭包。其实可以简单地把闭包想象成带有某种状态的函数。</p>
-<p>最后强烈推荐下 <a href="http://www.pythontutor.com/index.html" target="_blank" rel="external">Python Tutor</a>，可以直观地了解程序是怎么执行的。文中的代码执行过程都是由这个网站提供的。</p>
+<p>最后强烈推荐下 <a href="http://www.pythontutor.com/index.html" target="_blank" rel="noopener">Python Tutor</a>，可以直观地了解程序是怎么执行的。文中的代码执行过程都是由这个网站提供的。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://book.douban.com/subject/25927585/" target="_blank" rel="external">代码之髓</a></li>
-<li><a href="https://www.zhihu.com/question/34210214" target="_blank" rel="external">到底什么是闭包</a></li>
-<li><a href="http://www.pythontutor.com/index.html" target="_blank" rel="external">Python Tutor</a></li>
+<li><a href="https://book.douban.com/subject/25927585/" target="_blank" rel="noopener">代码之髓</a></li>
+<li><a href="https://www.zhihu.com/question/34210214" target="_blank" rel="noopener">到底什么是闭包</a></li>
+<li><a href="http://www.pythontutor.com/index.html" target="_blank" rel="noopener">Python Tutor</a></li>
 </ul>
 
       
@@ -163,7 +163,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -181,7 +181,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -207,6 +207,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>

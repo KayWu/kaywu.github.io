@@ -66,6 +66,43 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2018-04-30T05:48:55.000Z"><a href="/2018/04/30/cryptography/">2018-04-30</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2018/04/30/cryptography/">图解密码技术</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="对称密码"><a href="#对称密码" class="headerlink" title="对称密码"></a>对称密码</h2><p>对称密码是一种用相同的密钥进行加密和解密的技术，用于确保消息的机密性。尽管对称密码能够确保消息的机密性，但需要解决将解密密钥配送给接受者的密钥配送问题。<br>一次性密码本的原理是将明文与一串随机的比特序列进行 XOR 运算。即使用暴力破解法遍历整个密钥空间，也绝对无法被破译。<br>随着计算机的进步，现在 DES 已经能够被暴力破解，强度大不如前了。<br>AES 是取代其 DES 而成为新标准的一种对称密码算法。在 2000 年从候选算法中选出了一种名为 Rijndael 的对称密码算法，并将其确定为了 AES。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2018/04/30/cryptography/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2018-04-22T06:29:35.000Z"><a href="/2018/04/22/wechat-speex/">2018-04-22</a></time>
       
       
@@ -76,7 +113,7 @@
     </header>
     <div class="entry">
       
-        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="external">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
+        <p>H5 可以使用微信 jssdk 提供的录音接口，将录音上传到微信的服务器。而后端可以通过<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1444738727" target="_blank" rel="noopener">获取微信录音</a>的接口下载录音。<br>录音有两种格式，一种是 8K 采样率的 amr 格式。还有一种是 16K 采样率的 speex 格式。speex 格式的录音更清晰，当然文件也更大。同样的录音，speex 格式大约是 amr 格式的 4 倍。但同时，amr 格式的录音失真十分严重。如果有播放、语音识别的需求，建议还是采用 speex 格式的录音。<br>不知出于什么考虑，微信对 speex 格式的录音做了加工，得使用 speex 官方解码库结合微信的解码库才能进行转码。<br>下文介绍如何使用 docker 编译可转码微信 speex 的程序。</p>
       
     </div>
     <footer>
@@ -113,13 +150,13 @@
     </header>
     <div class="entry">
       
-        <p><a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js</a> 是通过网页来制作 PPT 的 JavaScript 框架，通过它可以轻松制作精致的网页 PPT。它自身也支持 Markdown。<br>但使用过几次之后，感觉对于日常使用还是稍重了些。每次新建 PPT 都需要复制粘贴 boilerplate code。</p>
-<p><a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md</a> 让你从这些繁琐的步骤中解放出来。它使用 reveal-js 自带的 Markdown 功能，让你只需写 Markdown，其他的事它帮你搞定。</p>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单地说下如何使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir slides &amp;&amp; cd slides</div><div class="line">yarn init -y</div><div class="line">yarn add reveal-md</div><div class="line">yarn exec reveal-md demo</div></pre></td></tr></table></figure></p>
+        <p><a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="noopener">reveal-js</a> 是通过网页来制作 PPT 的 JavaScript 框架，通过它可以轻松制作精致的网页 PPT。它自身也支持 Markdown。<br>但使用过几次之后，感觉对于日常使用还是稍重了些。每次新建 PPT 都需要复制粘贴 boilerplate code。</p>
+<p><a href="https://github.com/webpro/reveal-md" target="_blank" rel="noopener">reveal-md</a> 让你从这些繁琐的步骤中解放出来。它使用 reveal-js 自带的 Markdown 功能，让你只需写 Markdown，其他的事它帮你搞定。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>简单地说下如何使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir slides &amp;&amp; cd slides</span><br><span class="line">yarn init -y</span><br><span class="line">yarn add reveal-md</span><br><span class="line">yarn exec reveal-md demo</span><br></pre></td></tr></table></figure></p>
 <p>此时炫酷的 PPT 网页就在你眼前呈现了。</p>
-<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>标准的 Markdown 语法，默认 <code>---</code> 作为 PPT 页面的分割线。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># Title</div><div class="line"></div><div class="line">* Point 1</div><div class="line">* Point 2</div><div class="line"></div><div class="line">---</div><div class="line"></div><div class="line">## Second slide</div><div class="line"></div><div class="line">&gt; Best quote ever.</div><div class="line"></div><div class="line">Note: speaker notes FTW!</div></pre></td></tr></table></figure></p>
-<h3 id="演示命令"><a href="#演示命令" class="headerlink" title="演示命令"></a>演示命令</h3><p>演示命令 <code>reveal-md</code>，启动本地 server 并使用 reveal.js 渲染 Markdown 文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yarn exec reveal-md demo.md</div></pre></td></tr></table></figure></p>
-<p>更详细的配置请查看 <a href="https://github.com/webpro/reveal-md" target="_blank" rel="external">reveal-md 文档</a> 和 <a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="external">reveal-js 文档</a>。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>标准的 Markdown 语法，默认 <code>---</code> 作为 PPT 页面的分割线。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># Title</span><br><span class="line"></span><br><span class="line">* Point 1</span><br><span class="line">* Point 2</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">## Second slide</span><br><span class="line"></span><br><span class="line">&gt; Best quote ever.</span><br><span class="line"></span><br><span class="line">Note: speaker notes FTW!</span><br></pre></td></tr></table></figure></p>
+<h3 id="演示命令"><a href="#演示命令" class="headerlink" title="演示命令"></a>演示命令</h3><p>演示命令 <code>reveal-md</code>，启动本地 server 并使用 reveal.js 渲染 Markdown 文件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn exec reveal-md demo.md</span><br></pre></td></tr></table></figure></p>
+<p>更详细的配置请查看 <a href="https://github.com/webpro/reveal-md" target="_blank" rel="noopener">reveal-md 文档</a> 和 <a href="https://github.com/hakimel/reveal.js/" target="_blank" rel="noopener">reveal-js 文档</a>。</p>
 
       
     </div>
@@ -153,15 +190,15 @@
     </header>
     <div class="entry">
       
-        <p>最近在开发微信开放平台，需要通过 url 来区别不同的第三方。最简单直接的方法，就是通过 subdomain 来实现。<br>比如有两个第三方 A、B，那么 A 的域名为 A.example.com，B 的域名为 B.example.com。但这次由于 https 证书的问题只能通过 path 来实现，也就是 A 的域名为 www.example.com/A，B 的域名为 www.example.com/B。</p>
+        <p>最近在开发微信开放平台，需要通过 url 来区别不同的第三方。最简单直接的方法，就是通过 subdomain 来实现。<br>比如有两个第三方 A、B，那么 A 的域名为 A.example.com，B 的域名为 B.example.com。但这次由于 https 证书的问题只能通过 path 来实现，也就是 A 的域名为 <a href="http://www.example.com/A，B" target="_blank" rel="noopener">www.example.com/A，B</a> 的域名为 <a href="http://www.example.com/B。" target="_blank" rel="noopener">www.example.com/B。</a></p>
 <p>但通过 path 实现会有一个严重的问题，就是如何保证生成的 url 带有第三方的信息。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span> <span class="keyword">do</span></div><div class="line">  resources <span class="symbol">:orders</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span> <span class="keyword">do</span></span><br><span class="line">  resources <span class="symbol">:orders</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
 <p>上面的配置使用 orders_path 时会报错 <code>missing required keys: [:third_path]</code>。<br>最笨的办法莫过于给所有的 url 手动加上，但这方法随着项目增大会变得不可行。</p>
-<p>我们希望 url 的生成可以更加智能，当访问 url 为 www.example.com/A 时，使用 orders_path 可以自动生成 /A/orders。从逻辑上，这是行得通的。</p>
-<p>首先想到 route 可以添加 default 配置，于是做了以下尝试，可惜报错了。在 route 时只能配置静态的默认值。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># undefined local variable or method `params'</span></div><div class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span>, <span class="symbol">default:</span> &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125; <span class="keyword">do</span></div><div class="line">  resources <span class="symbol">:orders</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>我们希望 url 的生成可以更加智能，当访问 url 为 <a href="http://www.example.com/A" target="_blank" rel="noopener">www.example.com/A</a> 时，使用 orders_path 可以自动生成 /A/orders。从逻辑上，这是行得通的。</p>
+<p>首先想到 route 可以添加 default 配置，于是做了以下尝试，可惜报错了。在 route 时只能配置静态的默认值。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># undefined local variable or method `params'</span></span><br><span class="line">scope <span class="symbol">path:</span> <span class="string">'/:third_party'</span>, <span class="symbol">default:</span> &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125; <span class="keyword">do</span></span><br><span class="line">  resources <span class="symbol">:orders</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 <p>那么，有没有类似的方法，提供 url default 配置的功能呢？这时就轮到 default_url_options 出场了。<br>default_url_options 的用处不仅仅是在 config 时设置默认的 host，每个 Controller 都有该方法，调用 url_helper 时会结合该方法生成最终的 url。</p>
-<p>在对应的 Controller 里添加以下代码，这时调用 orders_path 就会根据域名中的 third_parth 生成对应的域名了。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">default_url_options</span></span></div><div class="line">  &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125;</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
-<p>解决了生成 url 的问题，我们还需要解决测试时 url 的问题。这里我对 ActionController::TestCase 进行了 monkey patch，供大家参考。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ActionController::TestCase</span></span></div><div class="line"></div><div class="line">  alias_method <span class="symbol">:orig_process</span>, <span class="symbol">:process</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(action, <span class="symbol">method:</span> <span class="string">"GET"</span>, <span class="symbol">params:</span> &#123;&#125;, <span class="symbol">session:</span> <span class="literal">nil</span>, <span class="symbol">body:</span> <span class="literal">nil</span>, <span class="symbol">flash:</span> &#123;&#125;, <span class="symbol">format:</span> <span class="literal">nil</span>, <span class="symbol">xhr:</span> <span class="literal">false</span>, <span class="symbol">as:</span> <span class="literal">nil</span>)</span></span></div><div class="line">    <span class="keyword">if</span> @controller.is_a? WechatBaseController</div><div class="line">      params.merge!(&#123;<span class="symbol">app_alias:</span> <span class="string">'test'</span>&#125;)</div><div class="line">    <span class="keyword">end</span></div><div class="line">    orig_process(action, <span class="symbol">method:</span> method, <span class="symbol">params:</span> params, <span class="symbol">session:</span> session, <span class="symbol">body:</span> body, <span class="symbol">flash:</span> flash, <span class="symbol">format:</span> format, <span class="symbol">xhr:</span> xhr, <span class="symbol">as:</span> as)</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<p>在对应的 Controller 里添加以下代码，这时调用 orders_path 就会根据域名中的 third_parth 生成对应的域名了。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">default_url_options</span></span></span><br><span class="line">  &#123;<span class="symbol">third_party:</span> params[<span class="symbol">:third_party</span>]&#125;</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>解决了生成 url 的问题，我们还需要解决测试时 url 的问题。这里我对 ActionController::TestCase 进行了 monkey patch，供大家参考。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ActionController::TestCase</span></span></span><br><span class="line"></span><br><span class="line">  alias_method <span class="symbol">:orig_process</span>, <span class="symbol">:process</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">process</span><span class="params">(action, <span class="symbol">method:</span> <span class="string">"GET"</span>, <span class="symbol">params:</span> &#123;&#125;, <span class="symbol">session:</span> <span class="literal">nil</span>, <span class="symbol">body:</span> <span class="literal">nil</span>, <span class="symbol">flash:</span> &#123;&#125;, <span class="symbol">format:</span> <span class="literal">nil</span>, <span class="symbol">xhr:</span> <span class="literal">false</span>, <span class="symbol">as:</span> <span class="literal">nil</span>)</span></span></span><br><span class="line">    <span class="keyword">if</span> @controller.is_a? WechatBaseController</span><br><span class="line">      params.merge!(&#123;<span class="symbol">app_alias:</span> <span class="string">'test'</span>&#125;)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    orig_process(action, <span class="symbol">method:</span> method, <span class="symbol">params:</span> params, <span class="symbol">session:</span> session, <span class="symbol">body:</span> body, <span class="symbol">flash:</span> flash, <span class="symbol">format:</span> format, <span class="symbol">xhr:</span> xhr, <span class="symbol">as:</span> as)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -196,9 +233,9 @@
     <div class="entry">
       
         <p>最近开发了基于微信的相关项目，主要是微信的网页开发、微信支付以及发送消息这块的内容。项目本身没什么难度，但由于微信封闭的体系、混乱的配置以及分散的文档，爬了不少的坑，这里总结下经验。</p>
-<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>先说说微信的文档。微信的文档不是统一的，比如公众平台技术文档在<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="external">一个网站</a>，而支付文档在<a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="external">另一个网站</a>，但支付文档所使用的 js 的相关文档又在前一个网站。除此之外，还有<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/index.html" target="_blank" rel="external">小程序文档</a>、<a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=open1419318292&amp;token=&amp;lang=zh_CN" target="_blank" rel="external">开放平台文档</a>。从这混乱的文档相信你也能或多或少体会到开发的难处。</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>出于安全性（更多是封闭性）的考虑，微信的配置繁琐且复杂，这里我把整个流程都记录下来以供参考。<br>首先登录公众平台，在开发-基本配置里获得 <code>AppSecret</code> 并保存下来，之后网站就不会再显示开发者密码，只能重置。<br>同样在该页面，配置 IP 白名单。如果你需要接收用户公众号的消息以及事件推送，同一页面添加服务器配置。<br>然后，在设置-公众号设置-功能设置，按照说明对业务域名、JS 接口安全域名、网页授权域名进行设置。<br>如果有微信支付的需求，去<a href="https://pay.weixin.qq.com" target="_blank" rel="external">微信商户平台</a>，商户平台-产品中心-开发配置中设置公众号支付的授权目录。注意，授权目录必须是发起支付网址的上一级目录。举例来说，<br>发起支付的网址为 <code>www.xxx.com/orders/22/pay</code>，那么支付目录就必须为 <code>www.xxx.com/orders/22/</code>，填 <code>www.xxx.com/</code> 或者 <code>www.xxx.com/orders/</code> 都是不行的。再加上支付的授权目录只能填 5 个，发起支付的域名得注意设计。</p>
-<p>PS: 没有公众号的朋友可以通过微信的<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="external">测试号</a>来试验除微信支付以外大部分的功能。</p>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>先说说微信的文档。微信的文档不是统一的，比如公众平台技术文档在<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1445241432" target="_blank" rel="noopener">一个网站</a>，而支付文档在<a href="https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=7_1" target="_blank" rel="noopener">另一个网站</a>，但支付文档所使用的 js 的相关文档又在前一个网站。除此之外，还有<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/index.html" target="_blank" rel="noopener">小程序文档</a>、<a href="https://open.weixin.qq.com/cgi-bin/showdocument?action=dir_list&amp;t=resource/res_list&amp;verify=1&amp;id=open1419318292&amp;token=&amp;lang=zh_CN" target="_blank" rel="noopener">开放平台文档</a>。从这混乱的文档相信你也能或多或少体会到开发的难处。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>出于安全性（更多是封闭性）的考虑，微信的配置繁琐且复杂，这里我把整个流程都记录下来以供参考。<br>首先登录公众平台，在开发-基本配置里获得 <code>AppSecret</code> 并保存下来，之后网站就不会再显示开发者密码，只能重置。<br>同样在该页面，配置 IP 白名单。如果你需要接收用户公众号的消息以及事件推送，同一页面添加服务器配置。<br>然后，在设置-公众号设置-功能设置，按照说明对业务域名、JS 接口安全域名、网页授权域名进行设置。<br>如果有微信支付的需求，去<a href="https://pay.weixin.qq.com" target="_blank" rel="noopener">微信商户平台</a>，商户平台-产品中心-开发配置中设置公众号支付的授权目录。注意，授权目录必须是发起支付网址的上一级目录。举例来说，<br>发起支付的网址为 <code>www.xxx.com/orders/22/pay</code>，那么支付目录就必须为 <code>www.xxx.com/orders/22/</code>，填 <code>www.xxx.com/</code> 或者 <code>www.xxx.com/orders/</code> 都是不行的。再加上支付的授权目录只能填 5 个，发起支付的域名得注意设计。</p>
+<p>PS: 没有公众号的朋友可以通过微信的<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank" rel="noopener">测试号</a>来试验除微信支付以外大部分的功能。</p>
       
     </div>
     <footer>
@@ -273,8 +310,8 @@
     </header>
     <div class="entry">
       
-        <p>FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 <a href="http://www.jianshu.com/p/cca80f341d77" target="_blank" rel="external">FactoryGirl 技巧</a>。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。<br>这里我会对它最基础的方法进行分析，版本为 4.8.0。</p>
-<h3 id="FactoryGirl-define"><a href="#FactoryGirl-define" class="headerlink" title="FactoryGirl.define"></a>FactoryGirl.define</h3><p>先从定义 Factory 开始。下面的代码定义了名为 user 的 Factory，它有一个名为 name 的属性，值为 Kay。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">FactoryGirl.define <span class="keyword">do</span></div><div class="line">  factory <span class="symbol">:user</span> <span class="keyword">do</span></div><div class="line">    name <span class="string">'Kay'</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+        <p>FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 <a href="http://www.jianshu.com/p/cca80f341d77" target="_blank" rel="noopener">FactoryGirl 技巧</a>。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。<br>这里我会对它最基础的方法进行分析，版本为 4.8.0。</p>
+<h3 id="FactoryGirl-define"><a href="#FactoryGirl-define" class="headerlink" title="FactoryGirl.define"></a>FactoryGirl.define</h3><p>先从定义 Factory 开始。下面的代码定义了名为 user 的 Factory，它有一个名为 name 的属性，值为 Kay。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FactoryGirl.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:user</span> <span class="keyword">do</span></span><br><span class="line">    name <span class="string">'Kay'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
       
     </div>
     <footer>
@@ -311,8 +348,14 @@
     </header>
     <div class="entry">
       
-        <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code><br>&gt;<br>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="external">http://www.forta.com/</a>.</p>
-<h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code><br>&gt;<br><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
+        <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code></p>
+<blockquote>
+</blockquote>
+<p>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="noopener">http://www.forta.com/</a>.</p>
+<h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code></p>
+<blockquote>
+</blockquote>
+<p><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
       
     </div>
     <footer>
@@ -351,7 +394,7 @@
       
         <h3 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h3><p>周二发布正式的时候，发生了匪夷所思的事情。<br>打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicaton-745 时会报 404，使得操作没有反应。</p>
 <p>这里简单地说下发布的情况。该服务会发布到 A、B 两台服务器上，nginx 接收请求并转发到 A、B 上的实例。<br>查看正式服务器上的文件发现，A 上存在 application-b1a 文件，B 上存在 application-745 文件。看来 nginx 会查找 服务器 A 上的文件，由于找不到 application-745 而返回 404。先把 B 上的 applicaiton-b1a 复制到 A，临时修复这个问题。</p>
-<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/<span class="regexp">/ 引用 js</span></div><div class="line"><span class="regexp">&lt;%= javascript_include_tag "application" %&gt;</span></div><div class="line"><span class="regexp"></span></div><div class="line"><span class="regexp">/</span><span class="regexp">/ 生成的 html</span></div><div class="line"><span class="regexp">&lt;script src="/assets</span><span class="regexp">/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script</span>&gt;</div></pre></td></tr></table></figure></p>
+<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/ 引用 js</span></span><br><span class="line"><span class="regexp">&lt;%= javascript_include_tag "application" %&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 生成的 html</span></span><br><span class="line"><span class="regexp">&lt;script src="/assets</span><span class="regexp">/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script</span>&gt;</span><br></pre></td></tr></table></figure></p>
       
     </div>
     <footer>
@@ -389,9 +432,9 @@
     <div class="entry">
       
         <p>在 Rails development 环境下，若更改了部分代码，只需要重新发起请求，就能看到最新代码的结果，不需要重启服务器。<br>下文简述 Rails 是如何做到这点的。</p>
-<p>在 <code>config/development.rb</code>，也就是 development 的环境配置文件，我们可以看到不同于其他环境的一行：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># In the development environment your application's code is reloaded on</span></div><div class="line"><span class="comment"># every request.  This slows down response time but is perfect for development</span></div><div class="line"><span class="comment"># since you don't have to restart the webserver when you make code changes.</span></div><div class="line">config.cache_classes = <span class="literal">false</span></div></pre></td></tr></table></figure></p>
+<p>在 <code>config/development.rb</code>，也就是 development 的环境配置文件，我们可以看到不同于其他环境的一行：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># In the development environment your application's code is reloaded on</span></span><br><span class="line"><span class="comment"># every request.  This slows down response time but is perfect for development</span></span><br><span class="line"><span class="comment"># since you don't have to restart the webserver when you make code changes.</span></span><br><span class="line">config.cache_classes = <span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
 <p>正如注释所说的，它会使得 Rails 在每次接收请求时都重新加载源代码。</p>
-<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>我们先从 Rails 的初始化说起，以 Rails 4.2.6 为例。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># rails/application/default_middleware_stack.rb</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_stack</span></span></div><div class="line">    ...</div><div class="line">    <span class="keyword">unless</span> config.cache_classes</div><div class="line">        middleware.use <span class="symbol">:</span><span class="symbol">:ActionDispatch</span><span class="symbol">:</span><span class="symbol">:Reloader</span>, lambda &#123; reload_dependencies? &#125;</div><div class="line">    <span class="keyword">end</span></div><div class="line">    ...</div><div class="line">    private</div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reload_dependencies?</span></span></div><div class="line">      config.reload_classes_only_on_change != <span class="literal">true</span> <span class="params">||</span> app.reloaders.map(&amp;<span class="symbol">:updated?</span>).any?</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>我们先从 Rails 的初始化说起，以 Rails 4.2.6 为例。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rails/application/default_middleware_stack.rb</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_stack</span></span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">unless</span> config.cache_classes</span><br><span class="line">        middleware.use <span class="symbol">:</span><span class="symbol">:ActionDispatch</span><span class="symbol">:</span><span class="symbol">:Reloader</span>, lambda &#123; reload_dependencies? &#125;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    ...</span><br><span class="line">    private</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reload_dependencies?</span></span></span><br><span class="line">      config.reload_classes_only_on_change != <span class="literal">true</span> <span class="params">||</span> app.reloaders.map(&amp;<span class="symbol">:updated?</span>).any?</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
 <p>当 config.cache_classses 为 true 时，middleware 会增加 <code>ActionDispatch::Reloader</code>，而这正是重新加载源代码的关键。<br>ps： middleware 可以通过 <code>rake middleware</code> 来查看。</p>
 <h3 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h3><p>当服务器接收到请求时，中间件 <code>ActionDispatch::Reloader</code> 使用回调 prepare、cleanup 来实现重载源代码。其中 prepare 在处理请求前被调用，cleanup 在处理请求后被调用。</p>
       
@@ -401,56 +444,6 @@
         
           <div class="alignleft">
             <a href="/2017/05/01/rails-dev-reload/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-03-26T09:55:35.000Z"><a href="/2017/03/26/mysql-explain/">2017-03-26</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/03/26/mysql-explain/">MySQL EXPLAIN 解读</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>EXPLAIN 解释了 MySQL 是如何执行 SQL 语句的。使用的方法很简单，在 SQL 语句前加上 <code>EXPLAIN</code> 关键字就可以。<br>下面是一个简单的例子，测试数据在文章末尾。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"># 例 1</div><div class="line">mysql&gt; EXPLAIN SELECT name FROM users WHERE id = 1\G</div><div class="line">*************************** 1. row ***************************</div><div class="line">           id: 1</div><div class="line">  select_type: SIMPLE</div><div class="line">        table: users</div><div class="line">         type: const</div><div class="line">possible_keys: PRIMARY</div><div class="line">          key: PRIMARY</div><div class="line">      key_len: 4</div><div class="line">          ref: const</div><div class="line">         rows: 1</div><div class="line">        Extra: NULL</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure></p>
-<p>EXPLAIN 列的解释：</p>
-<ul>
-<li>id：SELECT 标识符，下面具体分析</li>
-<li>select_type: SELECT 类型，下面会具体分析</li>
-<li>table: 查询所使用的表</li>
-<li>type: JOIN 的类型，下面会具体分析</li>
-<li>possible_keys: 可能使用的索引，但不一定会真正使用</li>
-<li>key: 真正使用的索引</li>
-<li>key_len: 所使用的索引长度</li>
-<li>ref: 与索引比较的列</li>
-<li>rows: 预估需要扫描的行数</li>
-<li>Extra: 额外信息</li>
-</ul>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/03/26/mysql-explain/#more" class="more-link">Read More</a>
           </div>
         
         
@@ -511,7 +504,7 @@
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
   
-    <li><a href="/tags/读书笔记/">读书笔记</a><small>5</small></li>
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
   
   </ul>
 </div>
@@ -529,7 +522,7 @@
 </div>
 <div class="clearfix"></div>
 </footer>
-  <script src="https://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
@@ -555,6 +548,7 @@ var disqus_shortname = 'kay-wu';
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 
 </body>
