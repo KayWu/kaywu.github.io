@@ -8,12 +8,8 @@
   <meta name="author" content="Kay Wu">
   
   <meta name="description" content="匹配单个字符匹配纯文本正则：Ben
-
-
 Hello, my name is Ben. Please visit my website at http://www.forta.com/.
 匹配任意字符. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。正则：sales.
-
-
 sales1.xlsorders3.xlssales2.xlssales3.xlsapac1.xlseurope2.xlsna1.xlsna2.xlssa1.xls">
   
   
@@ -85,31 +81,19 @@ sales1.xlsorders3.xlssales2.xlssales3.xlsapac1.xlseurope2.xlsna1.xlsna2.xlssa1.x
     <div class="entry">
       
         <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code></p>
-<blockquote>
-</blockquote>
 <p>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="noopener">http://www.forta.com/</a>.</p>
 <h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code></p>
-<blockquote>
-</blockquote>
 <p><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
 <a id="more"></a>
 <h3 id="匹配特殊字符"><a href="#匹配特殊字符" class="headerlink" title="匹配特殊字符"></a>匹配特殊字符</h3><p>元字符是一些在正则表达式里有着特殊含义的字符。如英语句号（.）是一个元字符，它可以用来匹配任何一个单个字符。因为元字符在正则表达式里有着特殊的含义，所以这些字符就无法用来代表它们本身。比如你不能使用 . 类匹配 . 本身。<br>在元字符的前面加上一个反斜杠就可以对它进行转移，转义序列 . 将匹配 . 本身。<br>正则：<code>.a.\.xls</code></p>
-<blockquote>
-</blockquote>
 <p>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code></p>
 <h2 id="匹配一组字符"><a href="#匹配一组字符" class="headerlink" title="匹配一组字符"></a>匹配一组字符</h2><h3 id="匹配多个字符中的某一个"><a href="#匹配多个字符中的某一个" class="headerlink" title="匹配多个字符中的某一个"></a>匹配多个字符中的某一个</h3><p>可以使用元字符 [  和 ] 来定义一个字符集合，在使用 [ 和 ] 定义的字符集合里，这两个元字符之间的所有字符都是该集合的组成部分，字符集合的匹配结果是能够与该集合里的任意一个成员想匹配的文本。<br>正则：<code>[ns]a.\.xls</code></p>
-<blockquote>
-</blockquote>
 <p>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code><br>ca1.xls</p>
 <h3 id="利用字符集合区间"><a href="#利用字符集合区间" class="headerlink" title="利用字符集合区间"></a>利用字符集合区间</h3><p>模式 [0-9] 的功能与 [0123456789] 完全等价。</p>
 <p>正则：<code>[ns]a[0-9]\.xls</code></p>
-<blockquote>
-</blockquote>
 <p>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>na1.xls</code><br><code>na2.xls</code><br><code>sa1.xls</code><br>ca1.xls</p>
 <p>其他常用的字符区间：<br>A-Z：匹配从 A 到 Z 的所有大写字母。<br>a-z：匹配从 a 到 z 的所有小写字母。</p>
 <h3 id="取非匹配"><a href="#取非匹配" class="headerlink" title="取非匹配"></a>取非匹配</h3><p>用元字符 ^ 来表明你相对一个字符集合进行取非匹配，也就是除了那个字符集里的字符，其他字符都可以匹配。<br>正则：<code>[ns]a[^0-9]\.xls</code></p>
-<blockquote>
-</blockquote>
 <p>sales1.xls<br>orders3.xls<br>sales2.xls<br>sales3.xls<br>apac1.xls<br>europe2.xls<br><code>sam.xls</code><br>na1.xls<br>na2.xls<br>sa1.xls<br>ca1.xls</p>
 <h3 id="匹配特定的字符类型"><a href="#匹配特定的字符类型" class="headerlink" title="匹配特定的字符类型"></a>匹配特定的字符类型</h3><table>
 <thead>
@@ -138,12 +122,8 @@ sales1.xlsorders3.xlssales2.xlssales3.xlsapac1.xlseurope2.xlsna1.xlsna2.xlssa1.x
 </tbody>
 </table>
 <p>正则：<code>myArray\[\d\]</code></p>
-<blockquote>
-</blockquote>
 <p>var myArray = new Array();<br>…<br>if (<code>myArray[0]</code> == 0) {<br>…<br>}</p>
 <p>正则：<code>\w\d\w\d\w\d</code></p>
-<blockquote>
-</blockquote>
 <p>11213<br><code>A1C2E3</code><br>48075<br>48237<br><code>M1B4F2</code><br>90046<br><code>H1H2H2</code></p>
 <h3 id="匹配空白字符"><a href="#匹配空白字符" class="headerlink" title="匹配空白字符"></a>匹配空白字符</h3><table>
 <thead>
@@ -188,23 +168,17 @@ sales1.xlsorders3.xlssales2.xlssales3.xlsapac1.xlseurope2.xlsna1.xlsna2.xlssa1.x
 </tbody>
 </table>
 <h2 id="重复匹配"><a href="#重复匹配" class="headerlink" title="重复匹配"></a>重复匹配</h2><h3 id="匹配一个或多个字符"><a href="#匹配一个或多个字符" class="headerlink" title="匹配一个或多个字符"></a>匹配一个或多个字符</h3><ul>
-<li>匹配一个或多个字符（至少一个；不匹配零个字符的情况）。<br>正则：<code>\w+@\w+\.\w+</code><blockquote>
-</blockquote>
-Send personal email to <a href="mailto:`ben@forta.com" target="_blank" rel="noopener">`ben@forta.com</a><code>. For questions about a book use</code><a href="mailto:support@forta.com" target="_blank" rel="noopener">support@forta.com</a><code>. Feel free to send unsolicited email to</code><a href="mailto:spam@forta.com" target="_blank" rel="noopener">spam@forta.com</a>` (wouldn’t it be nice if it were that simple, huh?).</li>
+<li>匹配一个或多个字符（至少一个；不匹配零个字符的情况）。<br>正则：<code>\w+@\w+\.\w+</code></li>
 </ul>
+<p>Send personal email to <code>ben@forta.com</code>. For questions about a book use <code>support@forta.com</code>. Feel free to send unsolicited email to <code>spam@forta.com</code> (wouldn’t it be nice if it were that simple, huh?).</p>
 <h3 id="匹配零个或多个字符"><a href="#匹配零个或多个字符" class="headerlink" title="匹配零个或多个字符"></a>匹配零个或多个字符</h3><ul>
-<li>元字符匹配零个或多个字符。<br>正则：<code>\w+[\w.]*@[\w.]+\.\w+</code><blockquote>
-</blockquote>
-Hello, <a href="mailto:`.ben@forta.com" target="_blank" rel="noopener">`.ben@forta.com</a>` is my email address.</li>
+<li>元字符匹配零个或多个字符。<br>正则：<code>\w+[\w.]*@[\w.]+\.\w+</code></li>
 </ul>
+<p>Hello, <code>.ben@forta.com</code> is my email address.</p>
 <h3 id="匹配零个或一个字符"><a href="#匹配零个或一个字符" class="headerlink" title="匹配零个或一个字符"></a>匹配零个或一个字符</h3><p>? 只能匹配一个字符（或字符集合）的零次或一次出现，最多不超过一次。<br>正则：<code>https?://[\w./]+</code></p>
-<blockquote>
-</blockquote>
 <p>The URL is <code>http://www.forta.com/</code>, to connect securely use <code>https://www.forta.com/</code> instead.</p>
 <h3 id="匹配的重复次数"><a href="#匹配的重复次数" class="headerlink" title="匹配的重复次数"></a>匹配的重复次数</h3><p>{3}意味着模式里的前一个字符（或字符集合）必须在原始文本里连续重复出现 3 次才算是一个匹配。<br>{2, 4} 的含义是最少重复 2 次、最多重复 4 次。<br>{3，} 表示至少重复 3 次。</p>
 <h3 id="懒惰型元字符"><a href="#懒惰型元字符" class="headerlink" title="懒惰型元字符"></a>懒惰型元字符</h3><p>正则：<code>&lt;[Bb]&gt;.*&lt;/[Bb]&gt;</code></p>
-<blockquote>
-</blockquote>
 <p>This offer is not available to customers living in <code>&lt;B&gt;AK&lt;/B&gt; and &lt;B&gt;HI&lt;/B&gt;</code>.</p>
 <p>因为 * 和 + 都是所谓的“贪婪型”元字符，它们在进行匹配时的行为模式是多多益善而不是适可而止的，会尽可能地从一段文本的开头一直匹配到这段文本的末尾。<br>在不需要这种“贪婪行为”的时候该怎么办？答案是使用这些元字符的“懒惰型”版本。懒惰型元字符只要给贪婪性元字符加上一个 ? 后缀即可。</p>
 <table>
@@ -230,37 +204,23 @@ Hello, <a href="mailto:`.ben@forta.com" target="_blank" rel="noopener">`.ben@for
 </tbody>
 </table>
 <p>正则：<code>&lt;[Bb]&gt;.*?&lt;/[Bb]&gt;</code></p>
-<blockquote>
-</blockquote>
 <p>This offer is not available to customers living in <code>&lt;B&gt;AK&lt;/B&gt;</code> and <code>&lt;B&gt;HI&lt;/B&gt;</code>.</p>
 <h2 id="位置匹配"><a href="#位置匹配" class="headerlink" title="位置匹配"></a>位置匹配</h2><h3 id="单词边界"><a href="#单词边界" class="headerlink" title="单词边界"></a>单词边界</h3><p>\b 用来匹配一个单词的开始或结尾。<br>简单地说，\b 匹配的是一个这样的位置，这个位置位于一个能够用户构成单词的字符（字母、数字和下划线，也就是与 \w 相匹配的字符）和一个不能用来构成单词的字符（也就是与 \W 相匹配的字符）之间。<br>正则：<code>\bcat\b</code></p>
-<blockquote>
-</blockquote>
 <p>The <code>cat</code> scattered his food all over the room.</p>
-<h3 id="字符串边界"><a href="#字符串边界" class="headerlink" title="字符串边界"></a>字符串边界</h3><p>^ 用来定义字符串开头，\$ 用来定义字符串结尾。<br>注意：不同语言对 ^ \$ 的处理有所不同。比如 Javascript 是按照以上定义实现的，而 Ruby 中 ^ 匹配一行的开始，\$ 匹配一行的结束。具体可参考 <a href="http://www.regular-expressions.info/anchors.html。" target="_blank" rel="noopener">http://www.regular-expressions.info/anchors.html。</a></p>
+<h3 id="字符串边界"><a href="#字符串边界" class="headerlink" title="字符串边界"></a>字符串边界</h3><p>^ 用来定义字符串开头，$ 用来定义字符串结尾。<br>注意：不同语言对 ^ $ 的处理有所不同。比如 Javascript 是按照以上定义实现的，而 Ruby 中 ^ 匹配一行的开始，$ 匹配一行的结束。具体可参考 <a href="http://www.regular-expressions.info/anchors.html。" target="_blank" rel="noopener">http://www.regular-expressions.info/anchors.html。</a></p>
 <h2 id="使用子表达式"><a href="#使用子表达式" class="headerlink" title="使用子表达式"></a>使用子表达式</h2><p>子表达式是一个更大的表达式的一部分，把一个表达式划分为一系列子表达式的目的是为了把那些子表达式当做一个独立元素来使用。子表达式必须用 ( 和 ) 括起来。<br>正则：<code>(19|20)\d{2}</code></p>
-<blockquote>
-</blockquote>
 <p>ID: 042<br>SEX: M<br>DOB: <code>1967</code>-08-17<br>Status: Active</p>
 <p>| 字符表示或操作符，19|20 将匹配数字序列 19 或 20。</p>
 <h2 id="回溯引用：前后一致匹配"><a href="#回溯引用：前后一致匹配" class="headerlink" title="回溯引用：前后一致匹配"></a>回溯引用：前后一致匹配</h2><p>正则：<code>[ ]+(\w+)[ ]+\1</code></p>
-<blockquote>
-</blockquote>
 <p>This is a block <code>of of</code> text, several words here <code>are are</code> repeated, <code>and and</code> they should not be.</p>
-<p>\1 不是一个回溯引用，而它引用的正是前面划分出来的那个子表达式。当 (\w+) 匹配到单词 of 的时候，\1 也匹配单词 of；当 (\w+) 匹配到单词 and 的时候，\1 也匹配单词 and。<br>为了方便理解，可以把回溯引用想象成变量。</p>
+<p>\1 是一个回溯引用，而它引用的正是前面划分出来的那个子表达式。当 (\w+) 匹配到单词 of 的时候，\1 也匹配单词 of；当 (\w+) 匹配到单词 and 的时候，\1 也匹配单词 and。<br>为了方便理解，可以把回溯引用想象成变量。</p>
 <h2 id="前后查找"><a href="#前后查找" class="headerlink" title="前后查找"></a>前后查找</h2><p>前后查找包含的匹配本身并不返回，而是用于确定正确的匹配位置，它并不是匹配结果的一部分。</p>
 <h3 id="向前查找"><a href="#向前查找" class="headerlink" title="向前查找"></a>向前查找</h3><p>从语法上看，一个向前查找模式其实就是一个以 ?= 开头的子表达式，需要匹配的文本跟在 = 后面。</p>
 <p>正则：<code>.+(?=:)</code></p>
-<blockquote>
-</blockquote>
 <p><code>http</code>://<a href="http://www.forta.com/" target="_blank" rel="noopener">www.forta.com/</a><br><code>https</code>://mail.forta.com/<br><code>ftp</code>://ftp.forta.com/</p>
 <p>与子表达的对比。<br>正则：<code>.+(:)</code></p>
-<blockquote>
-</blockquote>
 <p><code>http:</code>//<a href="http://www.forta.com/" target="_blank" rel="noopener">www.forta.com/</a><br><code>https:</code>//mail.forta.com/<br><code>ftp:</code>//ftp.forta.com/</p>
 <h3 id="向后查找"><a href="#向后查找" class="headerlink" title="向后查找"></a>向后查找</h3><p>向后查找，以 ?&lt;= 开头的子表达式。<br>正则： <code>(?=\$)[0-9.]+</code></p>
-<blockquote>
-</blockquote>
 <p>ABC01: $<code>23.45</code><br>Total items found: 4</p>
 <h3 id="对前后查找取非"><a href="#对前后查找取非" class="headerlink" title="对前后查找取非"></a>对前后查找取非</h3><p>负向前查找讲向前查找不与给定模式相匹配的文本，负向后查找将向后查找不与给定模式相匹配的文本。</p>
 <table>
@@ -296,13 +256,9 @@ Hello, <a href="mailto:`.ben@forta.com" target="_blank" rel="noopener">`.ben@for
 </table>
 <h2 id="嵌入条件"><a href="#嵌入条件" class="headerlink" title="嵌入条件"></a>嵌入条件</h2><p>(?(backreference)true-regex)：? 表示这是一个条件，括号里的 backreference 是一个回溯引用， backreference 存在时会执行true-regex。<br>(?(backreference)true-regex|false-regex)： backreference 不存在时会执行 false-regex。</p>
 <h3 id="回溯引用条件"><a href="#回溯引用条件" class="headerlink" title="回溯引用条件"></a>回溯引用条件</h3><p>正则：<code>(\()?\d{3}(?(1)\)|-)\d{3}-\d{4}</code></p>
-<blockquote>
-</blockquote>
 <p><code>123-456-7890</code><br><code>(123)456-7890</code><br>(123)-456-7890<br>(123-456-7890<br>1234567890<br>123 456 7890</p>
-<p>(()? 匹配一个可选的左括号,(?(1))|-) 将根据条件是否满足而去匹配 ) 或者 -。如果 (1) 存在，) 必须被匹配，否则 - 必须被匹配。</p>
+<p><code>(\()?</code> 匹配一个可选的左括号,<code>(?(1)\)|-)</code> 将根据条件是否满足而去匹配 ) 或者 -。如果 (1) 存在，<code>\)</code> 必须被匹配，否则 - 必须被匹配。</p>
 <h3 id="前后查找条件"><a href="#前后查找条件" class="headerlink" title="前后查找条件"></a>前后查找条件</h3><p>前后查找条件的语法与回溯引用条件的语法大同小异，只需把回溯引用替换为一个完整的前后查找表达式就行了。<br>正则：<code>\d{5}(?(?=-)-\d{4})</code></p>
-<blockquote>
-</blockquote>
 <p>11111<br>22222<br>33333-<br>44444-4444</p>
 <p>(?(?=-)-\d{4}) 使用了 ?=- 来匹配（但不消费）一个连字符，如果条件得到满足（那个连字符存在），-\d{4} 将匹配那个连字符和随后的 4 位数字。</p>
 
