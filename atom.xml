@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.xyz/"/>
-  <updated>2018-04-30T11:28:57.000Z</updated>
+  <updated>2019-05-11T15:17:30.000Z</updated>
   <id>http://kaywu.xyz/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kubernetes 使用 Zuul 网关时上游 Tomcat 400 报错问题排查</title>
+    <link href="http://kaywu.xyz/2019/05/05/k8s-zuul-400/"/>
+    <id>http://kaywu.xyz/2019/05/05/k8s-zuul-400/</id>
+    <published>2019-05-05T05:44:18.000Z</published>
+    <updated>2019-05-11T15:17:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The host [zuul.host,zuul.host] is not valid</span><br></pre></td></tr></table></figure></p><p>其中 zuul.host 是 Zuul 服务的域名。</p><p>看到这个报错时，有两个点很奇怪。一是 <code>[zuul.host, zuul.host]</code> 是怎么来的，为什么它重复了一遍。二是为什么 host 的值会是这个，应该是 Tomcat 服务的域名。</p><p>网上搜了一圈，没找到相关资料，只能一步步来挖了。</p><p>由于是 Tomcat 直接报错，未进入 Spring Boot 内部，配置的 Sentry 也没捕捉到该错误，只能通过添加 Tomcat 日志配置打印相应的 Header。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># application.properties</span><br><span class="line">server.tomcat.basedir=logs/tomcat-logs</span><br><span class="line">server.tomcat.accesslog.enabled=true</span><br><span class="line">server.tomcat.accesslog.pattern=%t &quot;%r&quot; %s (%D ms) -Host (%&#123;Host&#125;i) -X-Forwarded-host (%&#123;X-Forwarded-Host&#125;i)</span><br></pre></td></tr></table></figure><p>日志打印出了两个很有意思的值，Host 和 X-Forwarded-Host 的值是同样的，都为 <code>[zuul.host, zuul.host]</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host: [zuul.host, zuul.host]</span><br><span class="line">X-Forwarded-Host: [zuul.host, zuul.host]</span><br></pre></td></tr></table></figure></p><p>这时可以确定，Tomcat 确实收到了一个诡异的请求，由于 Host Header 值无效导致 Tomcat 400 报错。但问题是，这请求是怎么来的呢？只能一步步往前追查，在 Zuul 服务中添加相应的日志配置。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ZuulFilter.java</span></span><br><span class="line">log.info(<span class="string">"LOG_HEADER: &#123;&#125; Host-(&#123;&#125;) X-Forwarded-Host-(&#123;&#125;)"</span>, request.getRequestURI(), request.getHeader(<span class="string">"Host"</span>), request.getHeader(<span class="string">"X-Forwarded-Host"</span>));</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_HEADER: /api/v1/login/app  Host-(zuul.host) X-Forwarded-Host-(zuul.host)</span><br></pre></td></tr></table></figure><p>从日志中可以看出，Zuul 服务接收到的请求 Host 和 X-Forwarded-Host 都为 <code>zuul.host</code>，再加上 Zuul 默认情况下也会为转发的请求添加 X-Forwarded-Host，所以 Tomcat 收到的时候 X-Forwarded-Host 为两次的 <code>zuul.host</code>。现在已经知道 X-Forwarded-Host 的值是如何来的，但 Host 值的原因还没找到。</p><p>没其他线索的情况下，我本地往 Tomcat 服务发送了几次请求，X-Forwarded-Host 的值从零个到多个，发现了些许端倪。在 Tomcat 打印的日志中，Host 和 X-Forwarded-Host 的值都是一样的。而当请求的 X-Forwarded-Host 值零个或一个时，请求返回 200。X-Forwarded-Host 值大于一个时，请求返回 400。这时我有了一个猜想，难道 X-Forwarded-Host 的值会被复制到 Host 吗？</p><p>按照这个想法，找到了相关的 <a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">ISSUE</a>，原来 Ingress 在开启 <code>use-forwarded-headers</code> 后，会将 X-Forwarded-Host 的值复制到 Host，但由于没有考虑 X-Forwarded-Host 为多个值的情况，导致 Host 不合法。这个问题已经在 <code>ingress-nginx</code> 0.24 版本被修复。</p><p>请求的整个流程，如下图所示。<br><img src="/img/ingress.png" alt=""></p><p>找到了问题根源，那解决起来就简单了。有以下三种方法：</p><ol><li>升级 <code>ingress-nginx</code> 至 0.24 及以上版本，从根本上解决这个问题。</li><li>配置 <code>zuul.addProxyHeaders = false</code>，使得 Zuul 不添加额外的 <code>X-Forwarded-Host</code>。</li><li>Zuul 直接使用 Tomcat 服务的 Service Name 进行访问，不经过 Ingress。</li></ol><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">X-Forwarded-Host header is copied into the Host header</a></li><li><a href="https://github.com/kubernetes/ingress-nginx/issues/3790" target="_blank" rel="noopener">Host header copied from X-Forwarded-Host (when forwarded headers are enabled)</a></li><li><a href="https://github.com/kubernetes/ingress-nginx/pull/3950" target="_blank" rel="noopener">Fix forwarded host parsing</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span
+      
+    
+    </summary>
+    
+    
+      <category term="Kubernetes" scheme="http://kaywu.xyz/tags/Kubernetes/"/>
+    
+      <category term="Zuul" scheme="http://kaywu.xyz/tags/Zuul/"/>
+    
+      <category term="Tomcat" scheme="http://kaywu.xyz/tags/Tomcat/"/>
+    
+  </entry>
   
   <entry>
     <title>图解密码技术</title>
@@ -484,31 +511,6 @@
     
     
       <category term="Front-End" scheme="http://kaywu.xyz/tags/Front-End/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Rails &amp; MySQL 使用 emoji 时 Incorrect string value 解决方法</title>
-    <link href="http://kaywu.xyz/2016/12/04/mysql-emoji/"/>
-    <id>http://kaywu.xyz/2016/12/04/mysql-emoji/</id>
-    <published>2016-12-04T09:50:50.000Z</published>
-    <updated>2017-09-10T08:13:51.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 <code>Incorrect string value</code>。<br>仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQL 表来说报错实在是太不应该了。<br>查了之后，才发现原来 MySQL 的 utf-8 是不完全的，只支持 1-3 个字节，而 emoji 的 utf-8 编码大多为 4 个字节。为了支持更多的字符集，MySQL 5.5 推出了编码 utf8mb4，使其可以兼容 4 字节的 emoji。<br>因此，若要让数据库支持 emoji，可以将编码从 utf-8 改为 utf8mb4。</p><p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></span><br><span class="line">    serialize <span class="symbol">:content</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p><p>这时存储 emoji 时，就会先进行 serialize 再存入数据库。由于不是直接以 emoji 的 utf-8 编码存储，MySQL 也就不会报错了。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="noopener">Quick, no-hack emoji support with MySQL &amp; Rails</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 &lt;code&gt;Incorrect string value&lt;/code&gt;。&lt;br&gt;仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQ
-      
-    
-    </summary>
-    
-      <category term="MySQL" scheme="http://kaywu.xyz/categories/MySQL/"/>
-    
-    
-      <category term="MySQL" scheme="http://kaywu.xyz/tags/MySQL/"/>
     
   </entry>
   

@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Kubernetes 使用 Zuul 网关时上游 Tomcat 400 报错问题排查 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：1The host [zuul.host,zuul.host] is not valid
+其中 zuul.host 是 Zuul 服务的域名。
+看到这个报错时，有两个点很奇怪。一">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Kubernetes 使用 Zuul 网关时上游 Tomcat 400 报错问题排查"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-05-05T05:44:18.000Z"><a href="/2019/05/05/k8s-zuul-400/">2019-05-05</a></time>
+      
+      
+  
+    <h1 class="title">Kubernetes 使用 Zuul 网关时上游 Tomcat 400 报错问题排查</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The host [zuul.host,zuul.host] is not valid</span><br></pre></td></tr></table></figure></p>
+<p>其中 zuul.host 是 Zuul 服务的域名。</p>
+<p>看到这个报错时，有两个点很奇怪。一是 <code>[zuul.host, zuul.host]</code> 是怎么来的，为什么它重复了一遍。二是为什么 host 的值会是这个，应该是 Tomcat 服务的域名。</p>
+<p>网上搜了一圈，没找到相关资料，只能一步步来挖了。</p>
+<p>由于是 Tomcat 直接报错，未进入 Spring Boot 内部，配置的 Sentry 也没捕捉到该错误，只能通过添加 Tomcat 日志配置打印相应的 Header。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># application.properties</span><br><span class="line">server.tomcat.basedir=logs/tomcat-logs</span><br><span class="line">server.tomcat.accesslog.enabled=true</span><br><span class="line">server.tomcat.accesslog.pattern=%t &quot;%r&quot; %s (%D ms) -Host (%&#123;Host&#125;i) -X-Forwarded-host (%&#123;X-Forwarded-Host&#125;i)</span><br></pre></td></tr></table></figure>
+<p>日志打印出了两个很有意思的值，Host 和 X-Forwarded-Host 的值是同样的，都为 <code>[zuul.host, zuul.host]</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host: [zuul.host, zuul.host]</span><br><span class="line">X-Forwarded-Host: [zuul.host, zuul.host]</span><br></pre></td></tr></table></figure></p>
+<p>这时可以确定，Tomcat 确实收到了一个诡异的请求，由于 Host Header 值无效导致 Tomcat 400 报错。但问题是，这请求是怎么来的呢？只能一步步往前追查，在 Zuul 服务中添加相应的日志配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ZuulFilter.java</span></span><br><span class="line">log.info(<span class="string">"LOG_HEADER: &#123;&#125; Host-(&#123;&#125;) X-Forwarded-Host-(&#123;&#125;)"</span>, request.getRequestURI(), request.getHeader(<span class="string">"Host"</span>), request.getHeader(<span class="string">"X-Forwarded-Host"</span>));</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_HEADER: /api/v1/login/app  Host-(zuul.host) X-Forwarded-Host-(zuul.host)</span><br></pre></td></tr></table></figure>
+<p>从日志中可以看出，Zuul 服务接收到的请求 Host 和 X-Forwarded-Host 都为 <code>zuul.host</code>，再加上 Zuul 默认情况下也会为转发的请求添加 X-Forwarded-Host，所以 Tomcat 收到的时候 X-Forwarded-Host 为两次的 <code>zuul.host</code>。现在已经知道 X-Forwarded-Host 的值是如何来的，但 Host 值的原因还没找到。</p>
+<p>没其他线索的情况下，我本地往 Tomcat 服务发送了几次请求，X-Forwarded-Host 的值从零个到多个，发现了些许端倪。在 Tomcat 打印的日志中，Host 和 X-Forwarded-Host 的值都是一样的。而当请求的 X-Forwarded-Host 值零个或一个时，请求返回 200。X-Forwarded-Host 值大于一个时，请求返回 400。这时我有了一个猜想，难道 X-Forwarded-Host 的值会被复制到 Host 吗？</p>
+<p>按照这个想法，找到了相关的 <a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">ISSUE</a>，原来 Ingress 在开启 <code>use-forwarded-headers</code> 后，会将 X-Forwarded-Host 的值复制到 Host，但由于没有考虑 X-Forwarded-Host 为多个值的情况，导致 Host 不合法。这个问题已经在 <code>ingress-nginx</code> 0.24 版本被修复。</p>
+<p>请求的整个流程，如下图所示。<br><img src="/img/ingress.png" alt=""></p>
+<p>找到了问题根源，那解决起来就简单了。有以下三种方法：</p>
+<ol>
+<li>升级 <code>ingress-nginx</code> 至 0.24 及以上版本，从根本上解决这个问题。</li>
+<li>配置 <code>zuul.addProxyHeaders = false</code>，使得 Zuul 不添加额外的 <code>X-Forwarded-Host</code>。</li>
+<li>Zuul 直接使用 Tomcat 服务的 Service Name 进行访问，不经过 Ingress。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">X-Forwarded-Host header is copied into the Host header</a></li>
+<li><a href="https://github.com/kubernetes/ingress-nginx/issues/3790" target="_blank" rel="noopener">Host header copied from X-Forwarded-Host (when forwarded headers are enabled)</a></li>
+<li><a href="https://github.com/kubernetes/ingress-nginx/pull/3950" target="_blank" rel="noopener">Fix forwarded host parsing</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Kubernetes/">Kubernetes</a>, <a href="/tags/Zuul/">Zuul</a>, <a href="/tags/Tomcat/">Tomcat</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+  
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
+  
+    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2019 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+</body>
+</html>

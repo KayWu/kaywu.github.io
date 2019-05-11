@@ -66,6 +66,45 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-12-04T09:50:50.000Z"><a href="/2016/12/04/mysql-emoji/">2016-12-04</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/12/04/mysql-emoji/">Rails &amp; MySQL 使用 emoji 时 Incorrect string value 解决方法</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 <code>Incorrect string value</code>。<br>仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQL 表来说报错实在是太不应该了。<br>查了之后，才发现原来 MySQL 的 utf-8 是不完全的，只支持 1-3 个字节，而 emoji 的 utf-8 编码大多为 4 个字节。为了支持更多的字符集，MySQL 5.5 推出了编码 utf8mb4，使其可以兼容 4 字节的 emoji。<br>因此，若要让数据库支持 emoji，可以将编码从 utf-8 改为 utf8mb4。</p>
+<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></span><br><span class="line">    serialize <span class="symbol">:content</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>这时存储 emoji 时，就会先进行 serialize 再存入数据库。由于不是直接以 emoji 的 utf-8 编码存储，MySQL 也就不会报错了。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="noopener">Quick, no-hack emoji support with MySQL &amp; Rails</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-11-27T10:15:49.000Z"><a href="/2016/11/27/rails-form-for/">2016-11-27</a></time>
       
       
@@ -411,45 +450,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-24T07:34:37.000Z"><a href="/2016/07/24/Performance-Improvement/">2016-07-24</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/24/Performance-Improvement/">Android 性能优化实践小记</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>说来惭愧，看过那么多 Android 性能优化的文章，但这块实战经验微乎其微。抱着已经看过猪跑了，怎么着也得吃上猪肉的心态，尝试去解决某页面的卡顿。实践下来觉得是一次不错的经验，写文章记录下。</p>
-<h2 id="发现卡顿"><a href="#发现卡顿" class="headerlink" title="发现卡顿"></a>发现卡顿</h2><p>在解决卡顿之前，你得发现哪里卡顿。这里多亏了 <a href="https://github.com/markzhai/AndroidPerformanceMonitor" target="_blank" rel="noopener">BlockCanary</a>，它是 Android 上一个性能监控组件，能很方便地发现卡顿的原因。<br>下面是 BlockCanary 显示卡顿信息的截图。<br><img src="/img/performance_improve_0.png" alt=""><br>可以看出，卡顿是由于 DateHelper.parseString 而引起的。<br>那接下来让我们看看 parseString 的具体代码。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">parseString</span><span class="params">(String dateString)</span> </span>&#123;</span><br><span class="line">    SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>, Locale.getDefault());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> dateFormat.parse(dateString);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>很简单的一段代码，将规定格式的 String 转换为 Date 对象，简单到貌似没有可以出错及优化的空间。<br>至此我们陷入了一个死胡同。我们查找到了疑似卡顿的原因，但是无法确认也不知如何优化。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/07/24/Performance-Improvement/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -485,6 +485,12 @@
   
     <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
+  
+    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+  
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
@@ -493,7 +499,23 @@
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
@@ -509,7 +531,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2018 Kay Wu
+  &copy; 2019 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

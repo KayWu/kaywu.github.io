@@ -66,6 +66,48 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-05-01T10:04:50.000Z"><a href="/2017/05/01/rails-dev-reload/">2017-05-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/05/01/rails-dev-reload/">Rails 如何在开发模式下重新加载源代码</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>在 Rails development 环境下，若更改了部分代码，只需要重新发起请求，就能看到最新代码的结果，不需要重启服务器。<br>下文简述 Rails 是如何做到这点的。</p>
+<p>在 <code>config/development.rb</code>，也就是 development 的环境配置文件，我们可以看到不同于其他环境的一行：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># In the development environment your application's code is reloaded on</span></span><br><span class="line"><span class="comment"># every request.  This slows down response time but is perfect for development</span></span><br><span class="line"><span class="comment"># since you don't have to restart the webserver when you make code changes.</span></span><br><span class="line">config.cache_classes = <span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
+<p>正如注释所说的，它会使得 Rails 在每次接收请求时都重新加载源代码。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>我们先从 Rails 的初始化说起，以 Rails 4.2.6 为例。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># rails/application/default_middleware_stack.rb</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_stack</span></span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">unless</span> config.cache_classes</span><br><span class="line">        middleware.use <span class="symbol">:</span><span class="symbol">:ActionDispatch</span><span class="symbol">:</span><span class="symbol">:Reloader</span>, lambda &#123; reload_dependencies? &#125;</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    ...</span><br><span class="line">    private</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reload_dependencies?</span></span></span><br><span class="line">      config.reload_classes_only_on_change != <span class="literal">true</span> <span class="params">||</span> app.reloaders.map(&amp;<span class="symbol">:updated?</span>).any?</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>当 config.cache_classses 为 true 时，middleware 会增加 <code>ActionDispatch::Reloader</code>，而这正是重新加载源代码的关键。<br>ps： middleware 可以通过 <code>rake middleware</code> 来查看。</p>
+<h3 id="处理请求"><a href="#处理请求" class="headerlink" title="处理请求"></a>处理请求</h3><p>当服务器接收到请求时，中间件 <code>ActionDispatch::Reloader</code> 使用回调 prepare、cleanup 来实现重载源代码。其中 prepare 在处理请求前被调用，cleanup 在处理请求后被调用。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/05/01/rails-dev-reload/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-03-26T09:55:35.000Z"><a href="/2017/03/26/mysql-explain/">2017-03-26</a></time>
       
       
@@ -465,45 +507,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-12-04T09:50:50.000Z"><a href="/2016/12/04/mysql-emoji/">2016-12-04</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/12/04/mysql-emoji/">Rails &amp; MySQL 使用 emoji 时 Incorrect string value 解决方法</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>当在 charset 为 utf-8 的 MySQL 中插入 emoji 时，数据库会报错 <code>Incorrect string value</code>。<br>仔细一想，这很奇怪。因为 emoji 本身可以通过 utf-8 来表示，作为 utf-8 的 MySQL 表来说报错实在是太不应该了。<br>查了之后，才发现原来 MySQL 的 utf-8 是不完全的，只支持 1-3 个字节，而 emoji 的 utf-8 编码大多为 4 个字节。为了支持更多的字符集，MySQL 5.5 推出了编码 utf8mb4，使其可以兼容 4 字节的 emoji。<br>因此，若要让数据库支持 emoji，可以将编码从 utf-8 改为 utf8mb4。</p>
-<p>对于新创建的表这样没有问题，但对于旧有的表来说更改字符集代价很大。有没有一个更简单的方法来实现呢？<br>对 Rails 来说是有的。可以通过 <code>serialize</code> 来实现。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Post</span> &lt; ActiveRecord::Base</span></span><br><span class="line">    serialize <span class="symbol">:content</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<p>这时存储 emoji 时，就会先进行 serialize 再存入数据库。由于不是直接以 emoji 的 utf-8 编码存储，MySQL 也就不会报错了。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://dev.firmafon.dk/blog/quick-no-hack-emoji-support-with-mysql-rails/" target="_blank" rel="noopener">Quick, no-hack emoji support with MySQL &amp; Rails</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -539,6 +542,12 @@
   
     <li><a href="/tags/Java/">Java</a><small>3</small></li>
   
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
+  
+    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+  
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
@@ -547,7 +556,23 @@
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
   
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
+  
+    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
@@ -563,7 +588,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2018 Kay Wu
+  &copy; 2019 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
