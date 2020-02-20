@@ -66,6 +66,133 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-12-25T09:45:15.000Z"><a href="/2016/12/25/dom/">2016-12-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/12/25/dom/">DOM 事件流</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><p>“DOM2级事件”规定的事件流包括三个阶段：</p>
+<ol>
+<li>事件捕获阶段</li>
+<li>处于目标阶段</li>
+<li>事件冒泡阶段</li>
+</ol>
+<p>事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。事件捕获的用意在于在事件到达预定目标之前捕获它。<br>事件冒泡指事件开始时由最具体的元素接收，然后逐级向上传播到较为不具体的节点。</p>
+<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="noopener">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
+<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</span><br><span class="line">&lt;/ui&gt;</span><br></pre></td></tr></table></figure></p>
+<p>以上面的 HTML 代码为例，按照传统的做法，若要使每个列表项单击后执行相关操作，则需要分别为它们各自添加 click 事件，共 3 个事件。若后续增加了更多的列表项，还需额外为它们添加相应的事件。<br>而使用事件委托，则只需在 <code>&lt;ul&gt;</code> 上添加 click 事件即可。由于所有列表项都是这个元素的子节点，而且它们的事件会冒泡，所以单击事件最终会被 <code>&lt;ul&gt;</code> 的事件处理。与前面的传统做法相比，事件委托占用的内存更小且更为便捷。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>JavaScript 高级程序设计 第 13 章</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-12-18T09:18:19.000Z"><a href="/2016/12/18/factory-girl/">2016-12-18</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/12/18/factory-girl/">FactoryGirl 技巧</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="简洁地设置-Association"><a href="#简洁地设置-Association" class="headerlink" title="简洁地设置 Association"></a>简洁地设置 Association</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    association <span class="symbol">:author</span>, <span class="symbol">factory:</span> <span class="symbol">:author</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可以省略其 factory 的设置。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    auther</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:approved_post</span> <span class="keyword">do</span></span><br><span class="line">    approved <span class="literal">true</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">approved_post = create(<span class="symbol">:approved_post</span>)</span><br><span class="line">approved_post.title    <span class="comment"># =&gt; "A title"</span></span><br><span class="line">approved_post.approved <span class="comment"># =&gt; true</span></span><br></pre></td></tr></table></figure>
+<p>也能明确指定 parent。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">factory <span class="symbol">:approved_post</span>, <span class="symbol">parent:</span> <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  approved <span class="literal">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/12/18/factory-girl/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-12-16T09:48:31.000Z"><a href="/2016/12/16/js-equal/">2016-12-16</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/12/16/js-equal/">Javascript == 和 === 区别</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>最主要的区别，== 会在比较前进行转化，而 === 比较前不进行转化。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var result1 = (&apos;55&apos; == 55) // true，因为转换后相等</span><br><span class="line">var result2 = (&apos;55&apos; === 55) // false，因为不同的数据类型不相等</span><br></pre></td></tr></table></figure></p>
+<h2 id="相等"><a href="#相等" class="headerlink" title="相等 =="></a>相等 ==</h2><p>相等操作符会先转换操作数（通常称为强制转型），然后再比较它们的相等性。</p>
+<p>在转换时：<br>如果有一个操作数是布尔值，则在比较相等性之前将其转换为数值—— false 为 0，true 为 1。<br>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值。<br>如果一个操作数是对象，另一个操作数不是，则调用对象的 valueOf() 方法，用得到的基本类型值按照前面的规则进行比较。</p>
+<p>在比较时：<br>null 和 undefined 是相等的。<br>要比较相等性之前，不能将 null 和 undefined 转换成其他任何值。<br>如果有一个操作数是 NaN（两个 NaN也是），则相等操作符返回 false。<br>如果两个操作数都是对象，则比较它们是不是同一个对象。如果指向同一个对象则返回 true。</p>
+<h2 id="全等"><a href="#全等" class="headerlink" title="全等 ==="></a>全等 ===</h2><p>除了在比较之前不转换操作数之外，全等和不全等操作符与相等和不相等操作符没有什么区别。它只在两个操作数未经转换就相等的情况下返回 true。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>JavaScript 高级程序设计 P52</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-12-04T09:50:50.000Z"><a href="/2016/12/04/mysql-emoji/">2016-12-04</a></time>
       
       
@@ -334,122 +461,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape-Drawable/">2016-08-28</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/08/28/Shape-Drawable/">从代码创建 Shape Drawable</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>平时一直是用 xml 来写 Shape Drawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
-<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">shape</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:shape</span>=<span class="string">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">corners</span> <span class="attr">android:radius</span>=<span class="string">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">stroke</span> <span class="attr">android:width</span>=<span class="string">"2px"</span> <span class="attr">android:color</span>=<span class="string">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
-<p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/08/28/Shape-Drawable/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-08-14T15:54:09.000Z"><a href="/2016/08/14/Single-Number/">2016-08-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/08/14/Single-Number/">Single Number</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="Single-Number"><a href="#Single-Number" class="headerlink" title="Single Number"></a><a href="https://leetcode.com/problems/single-number/" target="_blank" rel="noopener">Single Number</a></h2><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
-<p>Note:<br>Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?</p>
-<p>题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。<br>这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。<br>按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/08/14/Single-Number/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-31T08:48:06.000Z"><a href="/2016/07/31/Counting-Bits/">2016-07-31</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/31/Counting-Bits/">Counting Bits</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><a href="https://leetcode.com/problems/counting-bits/" target="_blank" rel="noopener">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/07/31/Counting-Bits/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -479,17 +490,17 @@
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
   
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
-    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
-  
-    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -505,18 +516,6 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
-  
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
@@ -531,7 +530,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2019 Kay Wu
+  &copy; 2020 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

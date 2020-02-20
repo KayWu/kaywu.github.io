@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>Kubernetes 通过 Ingress 实现灰度发布以及 CI 流程 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="ingress-nginx 在 0.22 添加了灰度发布的功能，可以通过简单的配置实现。这篇文章主要讲解如何配置以及如何和 CI 流程结合。PS：简单说明下，我司的发布流程是通过 Gitlab 和 Kubernetes 实现的。在 Gitlab - Operations - Kubernetes 添加 Kubernetes 相关配置，在 .gitlab-ci.yml 配置 CI 流程，在 Gitlab CI Variables 里配置敏感信息。
+Ingress 配置Ingress 需要增加的配置比较简单，只需要添加几个 annotation 就可以。123# ingress annotationnginx.ingress.kubernetes.io/canary: &#34;true&#34;nginx.ingress.kubernetes.io/canary-weight: &#34;20&#34;
+上面的配置表示开启 ingress canary 功能，设置的流量为 20%。除了基本的配置之外，还可以根据 Header、Cookie 进行流量配置，可以参考官方文档。
+接下来，只要发布的服务和原来的服务 Ingress host 保持一致就可以。现在发往 http://example.beta.com 的请求，有 80% 的流量发往原服务，有 20% 的流量发往新的服务。
+123456789101112# .gitlab-ci.ymldeploy_beta:  &amp;lt;&amp;lt;: *DEPLOY  environment:    name: beta    url: http://example.beta.com deploy_beta_canary:  &amp;lt;&amp;lt;: *DEPLOY  environment:    name: beta-canary    url: http://example.beta.com">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Kubernetes 通过 Ingress 实现灰度发布以及 CI 流程"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-07-25T07:05:11.000Z"><a href="/2019/07/25/kubernetes-ingress/">2019-07-25</a></time>
+      
+      
+  
+    <h1 class="title">Kubernetes 通过 Ingress 实现灰度发布以及 CI 流程</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>ingress-nginx 在 0.22 添加了灰度发布的功能，可以通过简单的配置实现。这篇文章主要讲解如何配置以及如何和 CI 流程结合。<br>PS：简单说明下，我司的发布流程是通过 Gitlab 和 Kubernetes 实现的。在 Gitlab - Operations - Kubernetes 添加 Kubernetes 相关配置，在 .gitlab-ci.yml 配置 CI 流程，在 Gitlab CI Variables 里配置敏感信息。</p>
+<h2 id="Ingress-配置"><a href="#Ingress-配置" class="headerlink" title="Ingress 配置"></a>Ingress 配置</h2><p>Ingress 需要增加的配置比较简单，只需要添加几个 annotation 就可以。<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ingress annotation</span></span><br><span class="line"><span class="string">nginx.ingress.kubernetes.io/canary:</span> <span class="string">"true"</span></span><br><span class="line"><span class="string">nginx.ingress.kubernetes.io/canary-weight:</span> <span class="string">"20"</span></span><br></pre></td></tr></table></figure></p>
+<p>上面的配置表示开启 ingress canary 功能，设置的流量为 20%。除了基本的配置之外，还可以根据 Header、Cookie 进行流量配置，可以参考<a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>接下来，只要发布的服务和原来的服务 Ingress host 保持一致就可以。现在发往 <a href="http://example.beta.com" target="_blank" rel="noopener">http://example.beta.com</a> 的请求，有 80% 的流量发往原服务，有 20% 的流量发往新的服务。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .gitlab-ci.yml</span></span><br><span class="line"><span class="attr">deploy_beta:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">beta</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.beta.com</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">deploy_beta_canary:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">beta-canary</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.beta.com</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="CI-流程的改造"><a href="#CI-流程的改造" class="headerlink" title="CI 流程的改造"></a>CI 流程的改造</h2><p>上面只是说明了如何进行配置，但如何与原来的 CI 流程结合是一个需要解决的问题，比如环境变量的配置、灰度发布流程。接下来一一讨论。</p>
+<h3 id="环境变量的配置"><a href="#环境变量的配置" class="headerlink" title="环境变量的配置"></a>环境变量的配置</h3><p>由于我司 deployment 的 release 是由项目名以及 Gitlab environment 组成的，我这边通过区分灰度发布的 environment 使得 deployment 的 release 不同。但这会导致原先在 Gitlab CI 上配置的环境变量失效，需要对原来的配置进行修改。在原来的环境后添加通配符 *，可以使得灰度发布的服务也能使用之前的环境变量配置。<br><img src="/img/gitlab-variables.png" alt=""><br>当然也可以通过更改 deployment 的 release 规则达到同样的效果，不需要修改 Gitlab 环境变量的配置。</p>
+<h3 id="发布流程"><a href="#发布流程" class="headerlink" title="发布流程"></a>发布流程</h3><p>考虑到灰度发布后，需要进行正常的发布，我个人倾向于使用同一分支进行灰度发布和正常发布的操作，而不是使用一个例外的分支进行灰度发布，这样可以避免重复构建，也能减少对原来 CI 流程的影响。</p>
+<p>这是 master 分支在添加了灰度发布功能后的 pipeline，添加了 deploy_production_canary，stop_production_canary 等 manual action，通过点击就可执行灰度发布、撤销灰度发布的功能。<br><img src="/img/gitlab-ci-deploy.png" alt=""></p>
+<p>如果都在同一分支上进行灰度发布和正常发布，那么是如何区分这两个操作的？</p>
+<p>可以通过在 Gitlab CI 的灰度发布上添加 CANARY_RELEASE 表明是灰度发布，然后在 CI 发布脚本中根据该变量添加相关的 ingress 配置。以下是 .gitlab-ci.yml 代码示例。</p>
+<p>因为灰度发布的流量是由 CANARY_WEIGHT 控制的，当要修改灰度流量比例时，我们只需要在 CI Variables 更改 CANARY_WEIGHT 的值，然后再次点击 deploy。</p>
+<p>可以通过执行 kubectl describe ingress ${ingress name} 来确认 CANARY_WEIGHT 是否生效。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .gitlab-ci.yml</span></span><br><span class="line"> </span><br><span class="line"><span class="string">.deploy:</span> <span class="meta">&amp;DEPLOY</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY_BASE</span></span><br><span class="line"><span class="attr">  script:</span></span><br><span class="line">    <span class="comment"># 在 CANARY_RELEASE 为 true 时，向 ingress 添加 nginx.ingress.kubernetes.io/canary=true 以及 nginx.ingress.kubernetes.io/canary-weight=$CANARY_WEIGHT 的配置。</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">if</span> <span class="string">[</span> <span class="string">$CANARY_RELEASE</span> <span class="string">==</span> <span class="string">'true'</span> <span class="string">];</span> <span class="string">then</span> <span class="string">export</span> <span class="string">HELM_ARGS="$HELM_ARGS,ingress.annotations.nginx\.ingress\.kubernetes\.io/canary=true,ingress.annotations.nginx\.ingress\.kubernetes\.io/canary-weight=$CANARY_WEIGHT";</span> <span class="string">fi</span></span><br><span class="line"> </span><br><span class="line"><span class="string">.deploy_canary:</span> <span class="meta">&amp;DEPLOY_CANARY</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  variables:</span></span><br><span class="line">    <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY_BASE_VARIABLES</span></span><br><span class="line">    <span class="comment"># CANARY_RELEASE 表示为灰度发布。CANARY_WEIGHT 为配置灰度发布的流量比例。</span></span><br><span class="line"><span class="attr">    CANARY_RELEASE:</span> <span class="string">'true'</span></span><br><span class="line"><span class="attr">    CANARY_WEIGHT:</span> <span class="string">'10'</span></span><br><span class="line"><span class="attr">  when:</span> <span class="string">manual</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">deploy_production:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">production</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.internal-k8s.com</span></span><br><span class="line"><span class="attr">  when:</span> <span class="string">manual</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">master</span></span><br><span class="line"><span class="attr">  tags:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">production</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">deploy_production_canary:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY_CANARY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">production-canary</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.internal-k8s.com</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">master</span></span><br><span class="line"><span class="attr">  tags:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">production</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">stop_production_canary:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*STOP_DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">production-canary</span></span><br><span class="line"><span class="attr">    action:</span> <span class="string">stop</span></span><br><span class="line"><span class="attr">  only:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">master</span></span><br><span class="line"><span class="attr">  tags:</span></span><br><span class="line"><span class="bullet">    -</span> <span class="string">production</span></span><br></pre></td></tr></table></figure>
+<p>在灰度发布一段时间后，需要全量发布时，步骤如下：</p>
+<ol>
+<li>执行 deploy_production</li>
+<li>待 production 的 pod 发布完毕后，执行 stop_production_canary，将灰度发布的 pod 删除。此时线上的情况就跟直接执行 deploy_production 的情况相同。</li>
+</ol>
+<p>当你第一次 deploy_production_canary 时，可能会发现没有部署到生产环境，而是部署到开发环境的 Kubernetes。那你需要更改 Gitlab - Operations - Kubernetes 的配置，将生产环境 Kubernetes cluster 的 Environment scope 从 production 改为 production*。</p>
+<h3 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h3><p>当线上有两个版本的服务存在时，我们需要能区分这个请求到底是哪个版本的服务。可以通过在灰度发布的版本上添加特殊的 Header 来区分的。Spring 的示例代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// values.yaml</span></span><br><span class="line">CANARY_RELEASE: <span class="keyword">false</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// application.properties</span></span><br><span class="line">spring.account-service.canary-release=$&#123;CANARY_RELEASE:<span class="keyword">false</span>&#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty</span>(name = <span class="string">"spring.account-service.canary-release"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CanaryConfig</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CanaryFilter <span class="title">canaryFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> CanaryFilter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CanaryFilter</span> <span class="keyword">extends</span> <span class="title">OncePerRequestFilter</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doFilterInternal</span><span class="params">(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        response.addHeader(<span class="string">"From-Canary"</span>, <span class="string">"true"</span>);</span><br><span class="line">        filterChain.doFilter(request, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以在 Grafana 添加图表使各个 Pod 接收的请求量可视化，Query 如下。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">sum(increase(http_server_requests_seconds_count&#123;kubernetes_pod_name=~"$app_name-$env.+"&#125;[2m]))</span> <span class="string">by</span> <span class="string">(kubernetes_pod_name)</span></span><br></pre></td></tr></table></figure>
+<h3 id="分支策略"><a href="#分支策略" class="headerlink" title="分支策略"></a>分支策略</h3><p>灰度发布不走单独的分支，按原来的分支流程走。<br><img src="/img/canary-branch.png" alt=""></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary" target="_blank" rel="noopener">https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary</a></li>
+<li><a href="https://www.elvinefendi.com/2018/11/25/canary-deployment-with-ingress-nginx.html" target="_blank" rel="noopener">https://www.elvinefendi.com/2018/11/25/canary-deployment-with-ingress-nginx.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
+  
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+</body>
+</html>

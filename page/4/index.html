@@ -66,6 +66,122 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-08-28T02:48:34.000Z"><a href="/2016/08/28/Shape-Drawable/">2016-08-28</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/08/28/Shape-Drawable/">从代码创建 Shape Drawable</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>平时一直是用 xml 来写 Shape Drawable，但由于这次的背景是会根据状态变化不同的颜色，xml 就不能满足要求了。得从代码来构造相关的 Drawable 对象。</p>
+<p>相关 xml 代码如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">shape</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:shape</span>=<span class="string">"rectangle"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">corners</span> <span class="attr">android:radius</span>=<span class="string">"10dp"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">stroke</span> <span class="attr">android:width</span>=<span class="string">"2px"</span> <span class="attr">android:color</span>=<span class="string">"#ff000000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">shape</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>查看有个相关类叫 ShapeDrawable，根据里面的 Api 实现了类似的效果。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> radius = DensityUtil.dip2px(<span class="keyword">this</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">float</span>[] outerR = <span class="keyword">new</span> <span class="keyword">float</span>[]&#123;radius, radius, radius, radius, radius, radius, radius, radius&#125;;</span><br><span class="line">RoundRectShape rr = <span class="keyword">new</span> RoundRectShape(outerR, <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">ShapeDrawable drawable = <span class="keyword">new</span> ShapeDrawable(rr);</span><br><span class="line">drawable.getPaint().setColor(<span class="number">0xff333333</span>);</span><br><span class="line">drawable.getPaint().setStyle(Paint.Style.STROKE);</span><br><span class="line">drawable.getPaint().setStrokeWidth(<span class="number">2</span>);</span><br><span class="line">code.setBackgroundDrawable(drawable);</span><br></pre></td></tr></table></figure></p>
+<p>除了代码上相对繁琐之外，还有一点，ShapeDrawable 对 StrokeWidth 的处理不够完善，在边缘处的 Stroke 只显示了一半。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/08/28/Shape-Drawable/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-08-14T15:54:09.000Z"><a href="/2016/08/14/Single-Number/">2016-08-14</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/08/14/Single-Number/">Single Number</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="Single-Number"><a href="#Single-Number" class="headerlink" title="Single Number"></a><a href="https://leetcode.com/problems/single-number/" target="_blank" rel="noopener">Single Number</a></h2><p>Given an array of integers, every element appears twice except for one. Find that single one.</p>
+<p>Note:<br>Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?</p>
+<p>题目很简单，但有难度的是不使用额外空间。也就是说要使用一些比较 trick 的方法。<br>这让我想到以前碰到的一题，交换 Array 中两元素的位置，同样不使用额外空间，最后解法是使用 bitwise operation。<br>按照这思路去解题的话，很快就想到 xor 运算，相同得 0，不同得 1，题目就引刃而解了。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/08/14/Single-Number/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-07-31T08:48:06.000Z"><a href="/2016/07/31/Counting-Bits/">2016-07-31</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/31/Counting-Bits/">Counting Bits</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><a href="https://leetcode.com/problems/counting-bits/" target="_blank" rel="noopener">Counting Bits</a><br>Given a non negative integer number num. For every numbers i in the range 0 ≤ i ≤ num calculate the number of 1’s in their binary representation and return them as an array. For num = 5 you should return [0,1,1,2,1,2].<br>给定一个非负整数 num，返回一个数组，数组中的值为 0 到 num 间相对应整数其二进制表示中 1 的个数。举例来说，若 num 为 5，则返回的数组为 [0,1,1,2,1,2]。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/07/31/Counting-Bits/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-24T07:34:37.000Z"><a href="/2016/07/24/Performance-Improvement/">2016-07-24</a></time>
       
       
@@ -328,117 +444,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-15T06:44:29.000Z"><a href="/2016/05/15/Closure/">2016-05-15</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/15/Closure/">闭包是什么</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>闭包是什么？《Functional programming using standard ML》是这么定义的：一个包含了自由变量的开放表达式，它和该自由变量的约束环境组合在一起后，实现了一种封闭的状态。第一遍看时完全不知道它在说啥。自由变量？开放表达式？约束环境？但在理解了之后，发现闭包确实是这么回事。但在理解闭包之前，我们需要知道一些基础性的概念。让我们先从命名说起。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/05/15/Closure/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-07T00:45:29.000Z"><a href="/2016/05/07/App-Development/">2016-05-07</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/07/App-Development/">读《App 研发录》</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>去年出了不少 Android 相关的好书，如《Android 开发艺术探索》、《Android 源码设计模式》。如果说以上书是专注于代码，《App 研发录》则是专注于经验，没有踩过坑的人很难体会到这本书的魅力。<br>我自己也是经常看着看着，发现这个问题碰到过，赶紧看看作者是怎么做的然后汲取经验。<br>下文是自己在阅读过程中的一些思考和笔记。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/05/07/App-Development/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-01T11:43:01.000Z"><a href="/2016/05/01/Maven-aar-source/">2016-05-01</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/01/Maven-aar-source/">为 aar 关联源代码</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>不知大家是否注意过，在使用 aar 时，若是本地的 aar 包，打开相关源码是反编译后的文件。而如果是引用的如 jcenter 的库，就能阅读详尽的源代码。两者的区别是什么呢？<br>如果大家有尝试过上传 library 到 jcenter 或 maven 就会知道，除了 aar 文件之外，还要上传相应的 sources、javadoc 以及 pom 文件，就像 <a href="https://bintray.com/bintray/jcenter/com.yalantis%3Aucrop/1.5.0/view#files/com/yalantis/ucrop/1.5.0" target="_blank" rel="noopener">ucrop</a> 所显示的那样。gradle 在下载依赖时，也会包括 sources、javadoc 等文件，而 sources 文件正是使我们能够阅读源代码的真正原因。<br>那么，如何为 aar 文件添加 sources 支持呢？一种方法是添加 aar 的同时手工导入相应的 sources 文件，另一种则是将 aar、sources 上传到仓库然后通过 gradle 导入。这里说明第二种方法的使用。<br>由于上传到 maven、jcenter 都需要额外的步骤，为方便起见，我们搭建一个本地 Maven 仓库来讲解。如何搭建仓库可以参考 <a href="http://jeroenmols.com/blog/2015/08/06/artifactory/" target="_blank" rel="noopener">A PRIVATE MAVEN REPOSITORY FOR ANDROID IN 30 MIN</a>，有<a href="http://www.devtf.cn/?p=1079" target="_blank" rel="noopener">中文翻译</a>。后续对 build.gradle 的说明会建立在该文章的基础上。</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/05/01/Maven-aar-source/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -468,17 +473,17 @@
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
   
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
-    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
-  
-    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -494,18 +499,6 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
-  
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
@@ -520,7 +513,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2019 Kay Wu
+  &copy; 2020 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

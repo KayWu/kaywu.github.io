@@ -66,6 +66,88 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2019-11-29T02:30:00.000Z"><a href="/2019/11/29/gc-optimize/">2019-11-29</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2019/11/29/gc-optimize/">记一次 GC 优化</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>近一段时间，项目 account-service 出现高峰期经常性报警的问题，且发布越久情况愈发严重。</p>
+<p>从 Service Metrics 图表 来看，报警的时段 account-service 确实存在大量接口超时的情况，且单一时间集中于某一个 Pod 上。<br><img src="/img/response-time.png" alt=""></p>
+<p>观察 Grafana 上的图标，发现在该时间段 Pod 出现 Major GC 时间增加的情况，高达几秒，猜测是由于 GC 所引发的接口超时现象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// prometheus 查询</span><br><span class="line">increase(jvm_gc_pause_seconds_sum&#123;kubernetes_pod_name=~&quot;$app_name-$env-.+&quot;, action=&quot;end of major GC&quot;&#125;[2m])</span><br></pre></td></tr></table></figure>
+<p>那么接下来我们要解决两个问题，一是 GC 为什么会花费这么长的时间，二是情况为什么会变得严重。<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2019/11/29/gc-optimize/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-07-25T07:05:11.000Z"><a href="/2019/07/25/kubernetes-ingress/">2019-07-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2019/07/25/kubernetes-ingress/">Kubernetes 通过 Ingress 实现灰度发布以及 CI 流程</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>ingress-nginx 在 0.22 添加了灰度发布的功能，可以通过简单的配置实现。这篇文章主要讲解如何配置以及如何和 CI 流程结合。<br>PS：简单说明下，我司的发布流程是通过 Gitlab 和 Kubernetes 实现的。在 Gitlab - Operations - Kubernetes 添加 Kubernetes 相关配置，在 .gitlab-ci.yml 配置 CI 流程，在 Gitlab CI Variables 里配置敏感信息。</p>
+<h2 id="Ingress-配置"><a href="#Ingress-配置" class="headerlink" title="Ingress 配置"></a>Ingress 配置</h2><p>Ingress 需要增加的配置比较简单，只需要添加几个 annotation 就可以。<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ingress annotation</span></span><br><span class="line"><span class="string">nginx.ingress.kubernetes.io/canary:</span> <span class="string">"true"</span></span><br><span class="line"><span class="string">nginx.ingress.kubernetes.io/canary-weight:</span> <span class="string">"20"</span></span><br></pre></td></tr></table></figure></p>
+<p>上面的配置表示开启 ingress canary 功能，设置的流量为 20%。除了基本的配置之外，还可以根据 Header、Cookie 进行流量配置，可以参考<a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#canary" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>接下来，只要发布的服务和原来的服务 Ingress host 保持一致就可以。现在发往 <a href="http://example.beta.com" target="_blank" rel="noopener">http://example.beta.com</a> 的请求，有 80% 的流量发往原服务，有 20% 的流量发往新的服务。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># .gitlab-ci.yml</span></span><br><span class="line"><span class="attr">deploy_beta:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">beta</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.beta.com</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">deploy_beta_canary:</span></span><br><span class="line">  <span class="string">&lt;&lt;:</span> <span class="meta">*DEPLOY</span></span><br><span class="line"><span class="attr">  environment:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">beta-canary</span></span><br><span class="line"><span class="attr">    url:</span> <span class="attr">http://example.beta.com</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2019/07/25/kubernetes-ingress/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2019-05-05T05:44:18.000Z"><a href="/2019/05/05/k8s-zuul-400/">2019-05-05</a></time>
       
       
@@ -79,27 +161,48 @@
         <p>在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The host [zuul.host,zuul.host] is not valid</span><br></pre></td></tr></table></figure></p>
 <p>其中 zuul.host 是 Zuul 服务的域名。</p>
 <p>看到这个报错时，有两个点很奇怪。一是 <code>[zuul.host, zuul.host]</code> 是怎么来的，为什么它重复了一遍。二是为什么 host 的值会是这个，应该是 Tomcat 服务的域名。</p>
-<p>网上搜了一圈，没找到相关资料，只能一步步来挖了。</p>
-<p>由于是 Tomcat 直接报错，未进入 Spring Boot 内部，配置的 Sentry 也没捕捉到该错误，只能通过添加 Tomcat 日志配置打印相应的 Header。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># application.properties</span><br><span class="line">server.tomcat.basedir=logs/tomcat-logs</span><br><span class="line">server.tomcat.accesslog.enabled=true</span><br><span class="line">server.tomcat.accesslog.pattern=%t &quot;%r&quot; %s (%D ms) -Host (%&#123;Host&#125;i) -X-Forwarded-host (%&#123;X-Forwarded-Host&#125;i)</span><br></pre></td></tr></table></figure>
-<p>日志打印出了两个很有意思的值，Host 和 X-Forwarded-Host 的值是同样的，都为 <code>[zuul.host, zuul.host]</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host: [zuul.host, zuul.host]</span><br><span class="line">X-Forwarded-Host: [zuul.host, zuul.host]</span><br></pre></td></tr></table></figure></p>
-<p>这时可以确定，Tomcat 确实收到了一个诡异的请求，由于 Host Header 值无效导致 Tomcat 400 报错。但问题是，这请求是怎么来的呢？只能一步步往前追查，在 Zuul 服务中添加相应的日志配置。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ZuulFilter.java</span></span><br><span class="line">log.info(<span class="string">"LOG_HEADER: &#123;&#125; Host-(&#123;&#125;) X-Forwarded-Host-(&#123;&#125;)"</span>, request.getRequestURI(), request.getHeader(<span class="string">"Host"</span>), request.getHeader(<span class="string">"X-Forwarded-Host"</span>));</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_HEADER: /api/v1/login/app  Host-(zuul.host) X-Forwarded-Host-(zuul.host)</span><br></pre></td></tr></table></figure>
-<p>从日志中可以看出，Zuul 服务接收到的请求 Host 和 X-Forwarded-Host 都为 <code>zuul.host</code>，再加上 Zuul 默认情况下也会为转发的请求添加 X-Forwarded-Host，所以 Tomcat 收到的时候 X-Forwarded-Host 为两次的 <code>zuul.host</code>。现在已经知道 X-Forwarded-Host 的值是如何来的，但 Host 值的原因还没找到。</p>
-<p>没其他线索的情况下，我本地往 Tomcat 服务发送了几次请求，X-Forwarded-Host 的值从零个到多个，发现了些许端倪。在 Tomcat 打印的日志中，Host 和 X-Forwarded-Host 的值都是一样的。而当请求的 X-Forwarded-Host 值零个或一个时，请求返回 200。X-Forwarded-Host 值大于一个时，请求返回 400。这时我有了一个猜想，难道 X-Forwarded-Host 的值会被复制到 Host 吗？</p>
-<p>按照这个想法，找到了相关的 <a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">ISSUE</a>，原来 Ingress 在开启 <code>use-forwarded-headers</code> 后，会将 X-Forwarded-Host 的值复制到 Host，但由于没有考虑 X-Forwarded-Host 为多个值的情况，导致 Host 不合法。这个问题已经在 <code>ingress-nginx</code> 0.24 版本被修复。</p>
-<p>请求的整个流程，如下图所示。<br><img src="/img/ingress.png" alt=""></p>
-<p>找到了问题根源，那解决起来就简单了。有以下三种方法：</p>
-<ol>
-<li>升级 <code>ingress-nginx</code> 至 0.24 及以上版本，从根本上解决这个问题。</li>
-<li>配置 <code>zuul.addProxyHeaders = false</code>，使得 Zuul 不添加额外的 <code>X-Forwarded-Host</code>。</li>
-<li>Zuul 直接使用 Tomcat 服务的 Service Name 进行访问，不经过 Ingress。</li>
-</ol>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2019/05/05/k8s-zuul-400/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-02-20T15:27:03.000Z"><a href="/2019/02/20/gitlab-ci-fail-artifacts/">2019-02-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2019/02/20/gitlab-ci-fail-artifacts/">Gitlab CI 失败时如何保留案发现场</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>我一直很喜欢 Gitlab CI，它功能强大，扩展性强，像是自动化部署、打包发布这些对它来说都是小菜一碟。但有时候它也不是那么方便。比如 CI 测试失败的时候，我只能通过 console log 去查看到底是哪几个测试出了问题。而更详细的测试报告，虽然设置为了 artifacts，但由于 job 是失败的就没有保留下来。</p>
+<p>之后在 review 同事代码时，我发现了同事对此的骚操作。测试失败后会重新触发另一个测试 job，与之前不同的是会在跑之前设置 <code>set +e</code>，使得即使测试失败了该步的最后状态仍然是成功的，从而保留了宝贵的测试报告。</p>
+<p>你以为我想夸的是同事的骚操作吗？虽然他的 shell 功力确实很强，但这不是重点。一个偶然的机会，我在看 <a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">Gitlab CI 文档</a>时发现了 artifacts 有个参数 when，默认为 on_success，仅在 job 成功时才上传 artifacts。而只要改成 always,无论 job 成功与否都会上传 artifacts。困扰已久的问题竟然就通过这么一个小小的参数就解决了。</p>
+<p>这提醒了我们，看官方文档是多么的重要。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://github.com/kubernetes/ingress-nginx/issues/2463" target="_blank" rel="noopener">X-Forwarded-Host header is copied into the Host header</a></li>
-<li><a href="https://github.com/kubernetes/ingress-nginx/issues/3790" target="_blank" rel="noopener">Host header copied from X-Forwarded-Host (when forwarded headers are enabled)</a></li>
-<li><a href="https://github.com/kubernetes/ingress-nginx/pull/3950" target="_blank" rel="noopener">Fix forwarded host parsing</a></li>
+<li><a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">GitLab CI/CD Pipeline Configuration Reference</a></li>
 </ul>
 
       
@@ -352,123 +455,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-06-28T09:21:20.000Z"><a href="/2017/06/28/factory-girl-analysis/">2017-06-28</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/06/28/factory-girl-analysis/">FactoryGirl 源码浅析</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 <a href="http://www.jianshu.com/p/cca80f341d77" target="_blank" rel="noopener">FactoryGirl 技巧</a>。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。<br>这里我会对它最基础的方法进行分析，版本为 4.8.0。</p>
-<h3 id="FactoryGirl-define"><a href="#FactoryGirl-define" class="headerlink" title="FactoryGirl.define"></a>FactoryGirl.define</h3><p>先从定义 Factory 开始。下面的代码定义了名为 user 的 Factory，它有一个名为 name 的属性，值为 Kay。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FactoryGirl.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:user</span> <span class="keyword">do</span></span><br><span class="line">    name <span class="string">'Kay'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/06/28/factory-girl-analysis/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-05-30T09:37:21.000Z"><a href="/2017/05/30/regex/">2017-05-30</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/05/30/regex/">正则表达式必知必会</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code></p>
-<p>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="noopener">http://www.forta.com/</a>.</p>
-<h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code></p>
-<p><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/05/30/regex/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-05-14T10:00:27.000Z"><a href="/2017/05/14/rails-js-compress/">2017-05-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/05/14/rails-js-compress/">Rails 多台服务器上 js 不一致的问题</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h3 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h3><p>周二发布正式的时候，发生了匪夷所思的事情。<br>打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicaton-745 时会报 404，使得操作没有反应。</p>
-<p>这里简单地说下发布的情况。该服务会发布到 A、B 两台服务器上，nginx 接收请求并转发到 A、B 上的实例。<br>查看正式服务器上的文件发现，A 上存在 application-b1a 文件，B 上存在 application-745 文件。看来 nginx 会查找 服务器 A 上的文件，由于找不到 application-745 而返回 404。先把 B 上的 applicaiton-b1a 复制到 A，临时修复这个问题。</p>
-<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/ 引用 js</span></span><br><span class="line"><span class="regexp">&lt;%= javascript_include_tag "application" %&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 生成的 html</span></span><br><span class="line"><span class="regexp">&lt;script src="/assets</span><span class="regexp">/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script</span>&gt;</span><br></pre></td></tr></table></figure></p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/05/14/rails-js-compress/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -496,17 +482,17 @@
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
   
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
-    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
-  
-    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -522,18 +508,6 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
-  
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
@@ -548,7 +522,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2019 Kay Wu
+  &copy; 2020 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

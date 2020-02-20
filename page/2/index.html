@@ -66,6 +66,123 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-06-28T09:21:20.000Z"><a href="/2017/06/28/factory-girl-analysis/">2017-06-28</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/06/28/factory-girl-analysis/">FactoryGirl 源码浅析</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>FactoryGirl 是我个人十分喜欢的 Gem，它能很方便地模拟测试数据。使用技巧可见 <a href="http://www.jianshu.com/p/cca80f341d77" target="_blank" rel="noopener">FactoryGirl 技巧</a>。出于兴趣我研究了下它的源代码，说实话比想象得要复杂。由于 FactoryGirl 配置的灵活性以及 Ruby 本身的语言特点，使得它代码整体上比较飘逸。<br>这里我会对它最基础的方法进行分析，版本为 4.8.0。</p>
+<h3 id="FactoryGirl-define"><a href="#FactoryGirl-define" class="headerlink" title="FactoryGirl.define"></a>FactoryGirl.define</h3><p>先从定义 Factory 开始。下面的代码定义了名为 user 的 Factory，它有一个名为 name 的属性，值为 Kay。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FactoryGirl.define <span class="keyword">do</span></span><br><span class="line">  factory <span class="symbol">:user</span> <span class="keyword">do</span></span><br><span class="line">    name <span class="string">'Kay'</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/06/28/factory-girl-analysis/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-05-30T09:37:21.000Z"><a href="/2017/05/30/regex/">2017-05-30</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/05/30/regex/">正则表达式必知必会</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="匹配单个字符"><a href="#匹配单个字符" class="headerlink" title="匹配单个字符"></a>匹配单个字符</h2><h3 id="匹配纯文本"><a href="#匹配纯文本" class="headerlink" title="匹配纯文本"></a>匹配纯文本</h3><p>正则：<code>Ben</code></p>
+<p>Hello, my name is <code>Ben</code>. Please visit my website at <a href="http://www.forta.com/" target="_blank" rel="noopener">http://www.forta.com/</a>.</p>
+<h3 id="匹配任意字符"><a href="#匹配任意字符" class="headerlink" title="匹配任意字符"></a>匹配任意字符</h3><p>. 匹配任意单个字符。在绝大多数的正则表达式实现里，. 只能匹配除换行符以外的任何单个字符。<br>正则：<code>sales.</code></p>
+<p><code>sales1</code>.xls<br>orders3.xls<br><code>sales2</code>.xls<br><code>sales3</code>.xls<br>apac1.xls<br>europe2.xls<br>na1.xls<br>na2.xls<br>sa1.xls</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/05/30/regex/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-05-14T10:00:27.000Z"><a href="/2017/05/14/rails-js-compress/">2017-05-14</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/05/14/rails-js-compress/">Rails 多台服务器上 js 不一致的问题</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="发现问题"><a href="#发现问题" class="headerlink" title="发现问题"></a>发现问题</h3><p>周二发布正式的时候，发生了匪夷所思的事情。<br>打开发布的网页，有一定的几率操作会没有反应。但在测试的时候却从没有这个问题发生。通过调试工具查看网页，发现一半的网页会加载 application-b1a 开头的文件，而另一半会加载 application-745 开头的文件。加载 applicaton-745 时会报 404，使得操作没有反应。</p>
+<p>这里简单地说下发布的情况。该服务会发布到 A、B 两台服务器上，nginx 接收请求并转发到 A、B 上的实例。<br>查看正式服务器上的文件发现，A 上存在 application-b1a 文件，B 上存在 application-745 文件。看来 nginx 会查找 服务器 A 上的文件，由于找不到 application-745 而返回 404。先把 B 上的 applicaiton-b1a 复制到 A，临时修复这个问题。</p>
+<h3 id="排查原因"><a href="#排查原因" class="headerlink" title="排查原因"></a>排查原因</h3><p>为什么两个服务器上生成的 js 文件名会不一致？我们先简单地回顾下 Asset Pipeline 生成 js 的过程。正式环境上， Asset Pipeline 会预编译文件，生成类似于 <code>application-908e25f4bf641868d8683022a5b62f54.js</code> 的文件。其中 908e 这串表示摘要，是根据文件的内容生成的 MD5，当 js 文件发生改变时生成的摘要也会发生变化。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/ 引用 js</span></span><br><span class="line"><span class="regexp">&lt;%= javascript_include_tag "application" %&gt;</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">/</span><span class="regexp">/ 生成的 html</span></span><br><span class="line"><span class="regexp">&lt;script src="/assets</span><span class="regexp">/application-908e25f4bf641868d8683022a5b62f54.js"&gt;&lt;/script</span>&gt;</span><br></pre></td></tr></table></figure></p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/05/14/rails-js-compress/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2017-05-01T10:04:50.000Z"><a href="/2017/05/01/rails-dev-reload/">2017-05-01</a></time>
       
       
@@ -380,133 +497,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-12-25T09:45:15.000Z"><a href="/2016/12/25/dom/">2016-12-25</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/12/25/dom/">DOM 事件流</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><p>“DOM2级事件”规定的事件流包括三个阶段：</p>
-<ol>
-<li>事件捕获阶段</li>
-<li>处于目标阶段</li>
-<li>事件冒泡阶段</li>
-</ol>
-<p>事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。事件捕获的用意在于在事件到达预定目标之前捕获它。<br>事件冒泡指事件开始时由最具体的元素接收，然后逐级向上传播到较为不具体的节点。</p>
-<p><img src="/img/event_flow.png" alt="event_flow.png-69.4kB"><br>来源：<a href="https://www.w3.org/TR/DOM-Level-3-Events/#event-flow" target="_blank" rel="noopener">W3C</a><br>以上图的 HTML 页面为例，单击 <code>&lt;td&gt;</code> 会按照上图所示顺序触发事件。</p>
-<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><p>事件委托利用了事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul&gt;</span><br><span class="line">    &lt;li&gt;TODO 1&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 2&lt;/li&gt;</span><br><span class="line">    &lt;li&gt;TODO 3&lt;/li&gt;</span><br><span class="line">&lt;/ui&gt;</span><br></pre></td></tr></table></figure></p>
-<p>以上面的 HTML 代码为例，按照传统的做法，若要使每个列表项单击后执行相关操作，则需要分别为它们各自添加 click 事件，共 3 个事件。若后续增加了更多的列表项，还需额外为它们添加相应的事件。<br>而使用事件委托，则只需在 <code>&lt;ul&gt;</code> 上添加 click 事件即可。由于所有列表项都是这个元素的子节点，而且它们的事件会冒泡，所以单击事件最终会被 <code>&lt;ul&gt;</code> 的事件处理。与前面的传统做法相比，事件委托占用的内存更小且更为便捷。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li>JavaScript 高级程序设计 第 13 章</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-12-18T09:18:19.000Z"><a href="/2016/12/18/factory-girl/">2016-12-18</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/12/18/factory-girl/">FactoryGirl 技巧</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h3 id="简洁地设置-Association"><a href="#简洁地设置-Association" class="headerlink" title="简洁地设置 Association"></a>简洁地设置 Association</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    association <span class="symbol">:author</span>, <span class="symbol">factory:</span> <span class="symbol">:author</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
-<p>我们可以通过以上来设置相关的 association，但如果 association 的名字与它 factory 的名称是相同的，我们就可以省略其 factory 的设置。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">    auther</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h3 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"></span><br><span class="line">  factory <span class="symbol">:approved_post</span> <span class="keyword">do</span></span><br><span class="line">    approved <span class="literal">true</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">approved_post = create(<span class="symbol">:approved_post</span>)</span><br><span class="line">approved_post.title    <span class="comment"># =&gt; "A title"</span></span><br><span class="line">approved_post.approved <span class="comment"># =&gt; true</span></span><br></pre></td></tr></table></figure>
-<p>也能明确指定 parent。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">factory <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  title <span class="string">"A title"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">factory <span class="symbol">:approved_post</span>, <span class="symbol">parent:</span> <span class="symbol">:post</span> <span class="keyword">do</span></span><br><span class="line">  approved <span class="literal">true</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/12/18/factory-girl/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-12-16T09:48:31.000Z"><a href="/2016/12/16/js-equal/">2016-12-16</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/12/16/js-equal/">Javascript == 和 === 区别</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>最主要的区别，== 会在比较前进行转化，而 === 比较前不进行转化。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var result1 = (&apos;55&apos; == 55) // true，因为转换后相等</span><br><span class="line">var result2 = (&apos;55&apos; === 55) // false，因为不同的数据类型不相等</span><br></pre></td></tr></table></figure></p>
-<h2 id="相等"><a href="#相等" class="headerlink" title="相等 =="></a>相等 ==</h2><p>相等操作符会先转换操作数（通常称为强制转型），然后再比较它们的相等性。</p>
-<p>在转换时：<br>如果有一个操作数是布尔值，则在比较相等性之前将其转换为数值—— false 为 0，true 为 1。<br>如果一个操作数是字符串，另一个操作数是数值，在比较相等性之前先将字符串转换为数值。<br>如果一个操作数是对象，另一个操作数不是，则调用对象的 valueOf() 方法，用得到的基本类型值按照前面的规则进行比较。</p>
-<p>在比较时：<br>null 和 undefined 是相等的。<br>要比较相等性之前，不能将 null 和 undefined 转换成其他任何值。<br>如果有一个操作数是 NaN（两个 NaN也是），则相等操作符返回 false。<br>如果两个操作数都是对象，则比较它们是不是同一个对象。如果指向同一个对象则返回 true。</p>
-<h2 id="全等"><a href="#全等" class="headerlink" title="全等 ==="></a>全等 ===</h2><p>除了在比较之前不转换操作数之外，全等和不全等操作符与相等和不相等操作符没有什么区别。它只在两个操作数未经转换就相等的情况下返回 true。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li>JavaScript 高级程序设计 P52</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -536,17 +526,17 @@
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
   
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
-    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
-  
-    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -562,18 +552,6 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
-  
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
@@ -588,7 +566,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2019 Kay Wu
+  &copy; 2020 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

@@ -9,7 +9,7 @@
   
   <meta name="description" content="在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：1The host [zuul.host,zuul.host] is not valid
 其中 zuul.host 是 Zuul 服务的域名。
-看到这个报错时，有两个点很奇怪。一">
+看到这个报错时，有两个点很奇怪。一是 [zuul.host, zuul.host] 是怎么来的，为什么它重复了一遍。二是为什么 host 的值会是这个，应该是 Tomcat 服务的域名。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -82,6 +82,7 @@
         <p>在 Kubernetes 里，使用 Zuul 转发请求到上游的 Tomcat 服务时，Tomcat 报了一个很诡异的错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The host [zuul.host,zuul.host] is not valid</span><br></pre></td></tr></table></figure></p>
 <p>其中 zuul.host 是 Zuul 服务的域名。</p>
 <p>看到这个报错时，有两个点很奇怪。一是 <code>[zuul.host, zuul.host]</code> 是怎么来的，为什么它重复了一遍。二是为什么 host 的值会是这个，应该是 Tomcat 服务的域名。</p>
+<a id="more"></a>
 <p>网上搜了一圈，没找到相关资料，只能一步步来挖了。</p>
 <p>由于是 Tomcat 直接报错，未进入 Spring Boot 内部，配置的 Sentry 也没捕捉到该错误，只能通过添加 Tomcat 日志配置打印相应的 Header。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># application.properties</span><br><span class="line">server.tomcat.basedir=logs/tomcat-logs</span><br><span class="line">server.tomcat.accesslog.enabled=true</span><br><span class="line">server.tomcat.accesslog.pattern=%t &quot;%r&quot; %s (%D ms) -Host (%&#123;Host&#125;i) -X-Forwarded-host (%&#123;X-Forwarded-Host&#125;i)</span><br></pre></td></tr></table></figure>
@@ -155,17 +156,17 @@
   
     <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
   
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
   
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
-    <li><a href="/tags/Java/">Java</a><small>3</small></li>
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
-    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>1</small></li>
-  
-    <li><a href="/tags/Kubernetes-zuul-tomcat/">Kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/Kuberneteszuul-tomcat/">Kuberneteszuul tomcat</a><small>0</small></li>
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -181,18 +182,6 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/kubernetes/">kubernetes</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul/">kubernetes zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/kubernetes-zuul-tomcat/">kubernetes zuul tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/tomcat/">tomcat</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul/">zuul</a><small>0</small></li>
-  
-    <li><a href="/tags/zuul-tomcat/">zuul tomcat</a><small>0</small></li>
-  
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   
     <li><a href="/tags/编程/">编程</a><small>3</small></li>
@@ -207,7 +196,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2019 Kay Wu
+  &copy; 2020 Kay Wu
   
   <br>
   许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>

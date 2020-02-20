@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>记一次 GC 优化 | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="现象近一段时间，项目 account-service 出现高峰期经常性报警的问题，且发布越久情况愈发严重。
+从 Service Metrics 图表 来看，报警的时段 account-service 确实存在大量接口超时的情况，且单一时间集中于某一个 Pod 上。
+观察 Grafana 上的图标，发现在该时间段 Pod 出现 Major GC 时间增加的情况，高达几秒，猜测是由于 GC 所引发的接口超时现象。
+12// prometheus 查询increase(jvm_gc_pause_seconds_sum&amp;#123;kubernetes_pod_name=~&amp;quot;$app_name-$env-.+&amp;quot;, action=&amp;quot;end of major GC&amp;quot;&amp;#125;[2m])
+那么接下来我们要解决两个问题，一是 GC 为什么会花费这么长的时间，二是情况为什么会变得严重。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="记一次 GC 优化"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2019-11-29T02:30:00.000Z"><a href="/2019/11/29/gc-optimize/">2019-11-29</a></time>
+      
+      
+  
+    <h1 class="title">记一次 GC 优化</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h2><p>近一段时间，项目 account-service 出现高峰期经常性报警的问题，且发布越久情况愈发严重。</p>
+<p>从 Service Metrics 图表 来看，报警的时段 account-service 确实存在大量接口超时的情况，且单一时间集中于某一个 Pod 上。<br><img src="/img/response-time.png" alt=""></p>
+<p>观察 Grafana 上的图标，发现在该时间段 Pod 出现 Major GC 时间增加的情况，高达几秒，猜测是由于 GC 所引发的接口超时现象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// prometheus 查询</span><br><span class="line">increase(jvm_gc_pause_seconds_sum&#123;kubernetes_pod_name=~&quot;$app_name-$env-.+&quot;, action=&quot;end of major GC&quot;&#125;[2m])</span><br></pre></td></tr></table></figure>
+<p>那么接下来我们要解决两个问题，一是 GC 为什么会花费这么长的时间，二是情况为什么会变得严重。<br><a id="more"></a></p>
+<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><p>GC，也就是垃圾收集器，是有很多选择的，比较常见的有 Serial GC、CMS、Parallel GC、G1 等。Java 8 中 server 模式下默认的 GC 为 Parallel GC，由于 account-service 未对 GC 做任何特殊的配置，所以这也是 account-service 所使用的 GC。</p>
+<p>Parallel GC 又被称作吞吐量优先的 GC，其特点是新生代和老年代 GC 都是并行进行的。而 CMS、G1 是以停顿时间优先考虑的，会为了减少停顿时间而牺牲一定的性能。</p>
+<p>这话怎么理解呢？打个简单的比方，使用 Parallel GC 的话，一分钟可以处理请求 100 个，但最长时间的 GC 可能高达 1s。而使用 CMS、G1 的话处理的请求只有 90 个，但最长时间的 GC 控制在 200ms 以内。PS：以上数据仅做说明，不具实际意义。</p>
+<p>而 account-service 作为 API server，响应时间的优先更高，为了避免 GC 带来的数秒停顿的问题，应该选择 CMS 或 G1。其实 Java 8 API server 都需要更换默认的 GC，因为高达秒级别的停顿基本不可承受。而 Java 9 之后就没这种坑了，默认的 GC 变成了 G1。</p>
+<p>那么 CMS 和 G1 我们应该选哪个呢？我做了本地测试，发现在 account-service 上 CMS、G1 性能上没有大的差异，由于 CMS 在 Java 9 之后被标记成 deprecated，所以选择了 G1。</p>
+<p>通过如下的启动命令切换 GC 到 G1。PS：不要显式设置新生代的大小，这会导致 G1 目标时间这个参数失效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UseG1GC -jar $APP_JAR</span><br></pre></td></tr></table></figure>
+<p>上线后观察了一段时间，目前 GC 均在 200ms 以内，高峰期因为 GC 而报警的情况没有再出现了。</p>
+<h3 id="深挖"><a href="#深挖" class="headerlink" title="深挖"></a>深挖</h3><p>目前为止我们解决了第一个问题，接下来深挖第二个问题。</p>
+<p>如果说报警是由于 GC 带来的长时间停顿影响的，那么报警变得频繁很有可能是因为 GC 变得更加频繁了。这时在 Grafana 观察到，随着时间， Live Data 越来越高。Live Data 表示老年代在 full GC 后所占用的空间，一直上涨表明 Server 可能存在内存泄漏问题，有一部内存无法释放且随着时间占用的空间越来越大。</p>
+<p><img src="/img/live-data.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// prometheus 查询</span><br><span class="line">jvm_gc_live_data_size_bytes&#123;kubernetes_pod_name=~&quot;$app_name-$env-.+&quot;&#125;</span><br></pre></td></tr></table></figure>
+<p>从线上 dump heap 并通过 MAT 分析。PS：线上 dump heap 会引发线上服务一段时间内停止工作，可以通过灰度发布进行流量分配的方式降低对线上的影响。</p>
+<p>发现主要有两个问题，一是 org.hibernate.internal.SessionFactoryImp 占用了 120 MB 的内存。二是其中一个 ThreadPool 中的 Thread 的 ThreadLocalMap 在不断增长。</p>
+<p>查询完相关资料后，发现第一个问题是因为 Hibernate 的 QueryPlanCache。Hibernate 内部维护了 HQL 到 Query Plan 的缓存，默认大小 2048 个。但是 in 查询参数数量的不同会导致多个不同的 Query Plan。比如 select <em> from User where id in (:id0) 和 select </em> from User where id in (:id0, id1) 是两个 Query Plan。而 account-service 本身 in 查询的数量不少，使得这块占用了不小的堆内存。这问题可以通过配置 spring.jpa.properties.hibernate.query.in_clause_parameter_padding=true(hibernate 5.2.18 及以上生效)，使 Hibernate 的 in 查询根据 2 的倍数，也就是 1-2-4-8-16 生成 Query Plan，减少相关内存占用。关于该问题的详细分析，可参考 <a href="https://stackoverflow.com/questions/31557076/spring-hibernate-query-plan-cache-memory-usage" target="_blank" rel="noopener">Query Plan Cache Memory usage</a> 和 <a href="https://vladmihalcea.com/improve-statement-caching-efficiency-in-clause-parameter-padding" target="_blank" rel="noopener">How to improve statement caching efficiency with IN clause parameter padding</a>。</p>
+<p>第二个通过 MAT 查到 ThreadLocalMap 中的 io.opentracing.util.ThreadLocalScope 没有释放，每一次 AysncTask 的执行都会使得 ThreadLocalScope 增加一个 span。由于 account-service 没有使用到 jaeger 的相应功能，是老版本基础库的依赖引入了相关的包。新版本的基础库将 opentracing 相关的功能独立成另一个包，通过升级解决了这个内存泄漏问题。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>Java Server 可以通过切换 GC 为 G1 或 CMS 来降低停顿时间。</li>
+<li>使用 Hibernate 并且 in 查询很多的 Server 可以通过配置 spring.jpa.properties.hibernate.query.in_clause_parameter_padding 来降低 QueryPlanCache 所占用的内存。</li>
+<li>通过 Live Data Size 观察是否有内存泄漏情况，通过 MAT 分析内存泄漏的原因。</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Java/">Java</a>, <a href="/tags/GC/">GC</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
+  
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+</body>
+</html>
