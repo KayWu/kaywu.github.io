@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2020-03-12T03:16:36.000Z"><a href="/2020/03/12/distributed-system-mapreduce/">2020-03-12</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2020/03/12/distributed-system-mapreduce/">MIT 6.824 分布式系统笔记 — MapReduce</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>最近抽空学了下 MIT 的著名分布式系统课 <a href="[http://nil.csail.mit.edu/6.824/2020/schedule.html]">6.824</a>。这次 MIT 终于加上了课堂录像。有兴趣的同学可以去学下，熟悉的国外计算机的味道。读论文，上课，写 Lab，每个 Lab 还有详细的测试。让我不经回忆起刚开始学算法公开课的时候，在被虐中成长。</p>
+<p>刚学到第三节课，做下笔记。我最近越发发现，写了笔记的不容易忘，正是好记性不如烂笔头。即使笔记写得有种给自己看的意思，还是尽量写写看。</p>
+<p>前三节课主要讲了分布式的一些基本概念，比如容错性、性能和一致性的矛盾，Go 相关知识，还有两个 Case Study，MapReduce 和 GFS。MapReduce 和 GFS 都是 Google 大数据的三驾马车，这让我对这门课充满了敬意，刚开始就学这个。后来读了论文之后，发现确实没想象中的难。</p>
+<p>MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处理大量的数据，而这已经超出了单机的承载能力，所以你必须先将数据分块，然后使用大量的机器进行并行计算，最后再汇总结果。但你作为个开发者，不想每次都考虑任务的分发和调度的问题，只想处理和数据有关的逻辑，而把其他的事情都交给框架处理，而这就是 MapReduce。<br>MapReduce 将过程分成两部，第一步 Map，对数据进行处理得出中间结果。第二部 Reduce，对中间结果进行汇总。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Abstract view of a MapReduce job</span><br><span class="line">  input is (already) split into M files</span><br><span class="line">  Input1 -&gt; Map -&gt; a,1 b,1</span><br><span class="line">  Input2 -&gt; Map -&gt;     b,1</span><br><span class="line">  Input3 -&gt; Map -&gt; a,1     c,1</span><br><span class="line">                    |   |   |</span><br><span class="line">                    |   |   -&gt; Reduce -&gt; c,1</span><br><span class="line">                    |   -----&gt; Reduce -&gt; b,2</span><br><span class="line">                    ---------&gt; Reduce -&gt; a,2</span><br></pre></td></tr></table></figure></p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2020/03/12/distributed-system-mapreduce/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2019-11-29T02:30:00.000Z"><a href="/2019/11/29/gc-optimize/">2019-11-29</a></time>
       
       
@@ -169,46 +209,6 @@
           <div class="alignleft">
             <a href="/2019/05/05/k8s-zuul-400/#more" class="more-link">Read More</a>
           </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2019-02-20T15:27:03.000Z"><a href="/2019/02/20/gitlab-ci-fail-artifacts/">2019-02-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2019/02/20/gitlab-ci-fail-artifacts/">Gitlab CI 失败时如何保留案发现场</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>我一直很喜欢 Gitlab CI，它功能强大，扩展性强，像是自动化部署、打包发布这些对它来说都是小菜一碟。但有时候它也不是那么方便。比如 CI 测试失败的时候，我只能通过 console log 去查看到底是哪几个测试出了问题。而更详细的测试报告，虽然设置为了 artifacts，但由于 job 是失败的就没有保留下来。</p>
-<p>之后在 review 同事代码时，我发现了同事对此的骚操作。测试失败后会重新触发另一个测试 job，与之前不同的是会在跑之前设置 <code>set +e</code>，使得即使测试失败了该步的最后状态仍然是成功的，从而保留了宝贵的测试报告。</p>
-<p>你以为我想夸的是同事的骚操作吗？虽然他的 shell 功力确实很强，但这不是重点。一个偶然的机会，我在看 <a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">Gitlab CI 文档</a>时发现了 artifacts 有个参数 when，默认为 on_success，仅在 job 成功时才上传 artifacts。而只要改成 always,无论 job 成功与否都会上传 artifacts。困扰已久的问题竟然就通过这么一个小小的参数就解决了。</p>
-<p>这提醒了我们，看官方文档是多么的重要。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">GitLab CI/CD Pipeline Configuration Reference</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
         
         
       
@@ -486,13 +486,13 @@
   
     <li><a href="/tags/Git/">Git</a><small>1</small></li>
   
-    <li><a href="/tags/Gitlab-CI/">Gitlab CI</a><small>1</small></li>
-  
     <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
   
     <li><a href="/tags/Java/">Java</a><small>4</small></li>
   
     <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
+  
+    <li><a href="/tags/MapReduce/">MapReduce</a><small>1</small></li>
   
     <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
   
@@ -507,6 +507,8 @@
     <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/分布式系统/">分布式系统</a><small>1</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   

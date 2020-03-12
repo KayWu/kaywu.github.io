@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kaywu.xyz/"/>
-  <updated>2020-02-20T16:24:43.000Z</updated>
+  <updated>2020-03-12T07:01:29.000Z</updated>
   <id>http://kaywu.xyz/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MIT 6.824 分布式系统笔记 — MapReduce</title>
+    <link href="http://kaywu.xyz/2020/03/12/distributed-system-mapreduce/"/>
+    <id>http://kaywu.xyz/2020/03/12/distributed-system-mapreduce/</id>
+    <published>2020-03-12T03:16:36.000Z</published>
+    <updated>2020-03-12T07:01:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近抽空学了下 MIT 的著名分布式系统课 <a href="[http://nil.csail.mit.edu/6.824/2020/schedule.html]">6.824</a>。这次 MIT 终于加上了课堂录像。有兴趣的同学可以去学下，熟悉的国外计算机的味道。读论文，上课，写 Lab，每个 Lab 还有详细的测试。让我不经回忆起刚开始学算法公开课的时候，在被虐中成长。</p><p>刚学到第三节课，做下笔记。我最近越发发现，写了笔记的不容易忘，正是好记性不如烂笔头。即使笔记写得有种给自己看的意思，还是尽量写写看。</p><p>前三节课主要讲了分布式的一些基本概念，比如容错性、性能和一致性的矛盾，Go 相关知识，还有两个 Case Study，MapReduce 和 GFS。MapReduce 和 GFS 都是 Google 大数据的三驾马车，这让我对这门课充满了敬意，刚开始就学这个。后来读了论文之后，发现确实没想象中的难。</p><p>MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处理大量的数据，而这已经超出了单机的承载能力，所以你必须先将数据分块，然后使用大量的机器进行并行计算，最后再汇总结果。但你作为个开发者，不想每次都考虑任务的分发和调度的问题，只想处理和数据有关的逻辑，而把其他的事情都交给框架处理，而这就是 MapReduce。<br>MapReduce 将过程分成两部，第一步 Map，对数据进行处理得出中间结果。第二部 Reduce，对中间结果进行汇总。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Abstract view of a MapReduce job</span><br><span class="line">  input is (already) split into M files</span><br><span class="line">  Input1 -&gt; Map -&gt; a,1 b,1</span><br><span class="line">  Input2 -&gt; Map -&gt;     b,1</span><br><span class="line">  Input3 -&gt; Map -&gt; a,1     c,1</span><br><span class="line">                    |   |   |</span><br><span class="line">                    |   |   -&gt; Reduce -&gt; c,1</span><br><span class="line">                    |   -----&gt; Reduce -&gt; b,2</span><br><span class="line">                    ---------&gt; Reduce -&gt; a,2</span><br></pre></td></tr></table></figure></p><a id="more"></a><p>其实 MapReduce 本质是分治的分布式应用，隐藏了使用者不需要关心的分发调度、容错等细节。接下来来看下它是怎么实现的。<br><img src="/img/mapreduce-execution.jpg" alt="MapReduce 流程总览"><br>该图来自于 <a href="[http://nil.csail.mit.edu/6.824/2020/papers/mapreduce.pdf]">MapReduce 论文</a>，显示了 MapReduce 是如何工作的。我们先不关注任何细节，最简单地讲下它的流程。<br>有一个 master 节点，它负责将 map 或者 reduce 的任务分发给 worker，worker 执行完任务后将结果提交给 master，之后再进行分发-执行-提交的循环，直至所有任务都完成。在这过程中，worker 不需要知道其他信息，只需要完成 master 分发的任务即可。而 master 是统筹一切的关键，它需要分配任务，保存提交结果，记录每个任务的状态，判断整个任务的完成情况。<br>接下来我们讨论下 master 的一些细节。master 将 map 或者 reduce 的任务分发给空闲的 worker 去执行，具体是 map 或者 reduce 由整个任务的完成情况来决定。若是所有 map 任务都已经完成，那么就会分发 reduce 任务。master 会通过探活来监控 worker 的运行情况，如果发现 worker 无法响应，则会把分配给该 worker 的任务重新进行分配。这增强了容错性，因为在大量机器的情况下单一机器出错几乎是个必然事件。但这同时会导致一个任务被执行多次。 MapReduce 通过提交结果的原子性来避免该影响。如果之前已经有 worker 提交了该任务，那么之后的提交将被忽略。<br>除此之外，还有很多细节的优化，比如 master 在分配任务时会考虑输入数据与 worker 之间的距离，来减少数据传输的时间以及对中心路由器的压力。当临近 map 或 reduce 阶段结束的时候，为了减少个别任务未完成的影响，master 会对未完成的任务进行再分配。更多细节还是看论文来得实在，我就不多讲了。</p><p>从上面的分析可以看出 MapReduce 其实并不复杂，Lab1 就是要求你用 go 来实现一个简易的 MapReduce。代码虽然不多，写完了还是很有成就感的。</p><p>上面讲了 MapReduce 的优点，但 MapReduce 还是有一定的局限性的。像是工作中对大数据的处理大多是多个阶段的，因此需要用户使用多次 MapReduce 自行串联。此外，MapReduce 也不支持基于实时数据流的数据处理。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="[http://nil.csail.mit.edu/6.824/2020/schedule.html]">6.824 分布式系统</a></li><li><a href="[http://nil.csail.mit.edu/6.824/2020/papers/mapreduce.pdf]">MapReduce 论文</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近抽空学了下 MIT 的著名分布式系统课 &lt;a href=&quot;[http://nil.csail.mit.edu/6.824/2020/schedule.html]&quot;&gt;6.824&lt;/a&gt;。这次 MIT 终于加上了课堂录像。有兴趣的同学可以去学下，熟悉的国外计算机的味道。读论文，上课，写 Lab，每个 Lab 还有详细的测试。让我不经回忆起刚开始学算法公开课的时候，在被虐中成长。&lt;/p&gt;
+&lt;p&gt;刚学到第三节课，做下笔记。我最近越发发现，写了笔记的不容易忘，正是好记性不如烂笔头。即使笔记写得有种给自己看的意思，还是尽量写写看。&lt;/p&gt;
+&lt;p&gt;前三节课主要讲了分布式的一些基本概念，比如容错性、性能和一致性的矛盾，Go 相关知识，还有两个 Case Study，MapReduce 和 GFS。MapReduce 和 GFS 都是 Google 大数据的三驾马车，这让我对这门课充满了敬意，刚开始就学这个。后来读了论文之后，发现确实没想象中的难。&lt;/p&gt;
+&lt;p&gt;MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处理大量的数据，而这已经超出了单机的承载能力，所以你必须先将数据分块，然后使用大量的机器进行并行计算，最后再汇总结果。但你作为个开发者，不想每次都考虑任务的分发和调度的问题，只想处理和数据有关的逻辑，而把其他的事情都交给框架处理，而这就是 MapReduce。&lt;br&gt;MapReduce 将过程分成两部，第一步 Map，对数据进行处理得出中间结果。第二部 Reduce，对中间结果进行汇总。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Abstract view of a MapReduce job&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  input is (already) split into M files&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  Input1 -&amp;gt; Map -&amp;gt; a,1 b,1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  Input2 -&amp;gt; Map -&amp;gt;     b,1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  Input3 -&amp;gt; Map -&amp;gt; a,1     c,1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    |   |   |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    |   |   -&amp;gt; Reduce -&amp;gt; c,1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    |   -----&amp;gt; Reduce -&amp;gt; b,2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                    ---------&amp;gt; Reduce -&amp;gt; a,2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="分布式系统" scheme="http://kaywu.xyz/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/"/>
+    
+      <category term="MapReduce" scheme="http://kaywu.xyz/tags/MapReduce/"/>
+    
+  </entry>
   
   <entry>
     <title>记一次 GC 优化</title>
@@ -89,29 +114,6 @@
       <category term="Zuul" scheme="http://kaywu.xyz/tags/Zuul/"/>
     
       <category term="Tomcat" scheme="http://kaywu.xyz/tags/Tomcat/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Gitlab CI 失败时如何保留案发现场</title>
-    <link href="http://kaywu.xyz/2019/02/20/gitlab-ci-fail-artifacts/"/>
-    <id>http://kaywu.xyz/2019/02/20/gitlab-ci-fail-artifacts/</id>
-    <published>2019-02-20T15:27:03.000Z</published>
-    <updated>2020-02-20T16:36:51.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>我一直很喜欢 Gitlab CI，它功能强大，扩展性强，像是自动化部署、打包发布这些对它来说都是小菜一碟。但有时候它也不是那么方便。比如 CI 测试失败的时候，我只能通过 console log 去查看到底是哪几个测试出了问题。而更详细的测试报告，虽然设置为了 artifacts，但由于 job 是失败的就没有保留下来。</p><p>之后在 review 同事代码时，我发现了同事对此的骚操作。测试失败后会重新触发另一个测试 job，与之前不同的是会在跑之前设置 <code>set +e</code>，使得即使测试失败了该步的最后状态仍然是成功的，从而保留了宝贵的测试报告。</p><p>你以为我想夸的是同事的骚操作吗？虽然他的 shell 功力确实很强，但这不是重点。一个偶然的机会，我在看 <a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">Gitlab CI 文档</a>时发现了 artifacts 有个参数 when，默认为 on_success，仅在 job 成功时才上传 artifacts。而只要改成 always,无论 job 成功与否都会上传 artifacts。困扰已久的问题竟然就通过这么一个小小的参数就解决了。</p><p>这提醒了我们，看官方文档是多么的重要。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="[https://docs.gitlab.com/ee/ci/yaml/README.html#artifactswhen]">GitLab CI/CD Pipeline Configuration Reference</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;我一直很喜欢 Gitlab CI，它功能强大，扩展性强，像是自动化部署、打包发布这些对它来说都是小菜一碟。但有时候它也不是那么方便。比如 CI 测试失败的时候，我只能通过 console log 去查看到底是哪几个测试出了问题。而更详细的测试报告，虽然设置为了 artifa
-      
-    
-    </summary>
-    
-    
-      <category term="Gitlab CI" scheme="http://kaywu.xyz/tags/Gitlab-CI/"/>
     
   </entry>
   
