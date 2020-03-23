@@ -86,7 +86,7 @@ MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处�
 <p>MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处理大量的数据，而这已经超出了单机的承载能力，所以你必须先将数据分块，然后使用大量的机器进行并行计算，最后再汇总结果。但你作为个开发者，不想每次都考虑任务的分发和调度的问题，只想处理和数据有关的逻辑，而把其他的事情都交给框架处理，而这就是 MapReduce。<br>MapReduce 将过程分成两部，第一步 Map，对数据进行处理得出中间结果。第二部 Reduce，对中间结果进行汇总。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Abstract view of a MapReduce job</span><br><span class="line">  input is (already) split into M files</span><br><span class="line">  Input1 -&gt; Map -&gt; a,1 b,1</span><br><span class="line">  Input2 -&gt; Map -&gt;     b,1</span><br><span class="line">  Input3 -&gt; Map -&gt; a,1     c,1</span><br><span class="line">                    |   |   |</span><br><span class="line">                    |   |   -&gt; Reduce -&gt; c,1</span><br><span class="line">                    |   -----&gt; Reduce -&gt; b,2</span><br><span class="line">                    ---------&gt; Reduce -&gt; a,2</span><br></pre></td></tr></table></figure></p>
 <a id="more"></a>
 <p>其实 MapReduce 本质是分治的分布式应用，隐藏了使用者不需要关心的分发调度、容错等细节。接下来来看下它是怎么实现的。<br><img src="/img/mapreduce-execution.jpg" alt="MapReduce 流程总览"><br>该图来自于 <a href="[http://nil.csail.mit.edu/6.824/2020/papers/mapreduce.pdf]">MapReduce 论文</a>，显示了 MapReduce 是如何工作的。我们先不关注任何细节，最简单地讲下它的流程。<br>有一个 master 节点，它负责将 map 或者 reduce 的任务分发给 worker，worker 执行完任务后将结果提交给 master，之后再进行分发-执行-提交的循环，直至所有任务都完成。在这过程中，worker 不需要知道其他信息，只需要完成 master 分发的任务即可。而 master 是统筹一切的关键，它需要分配任务，保存提交结果，记录每个任务的状态，判断整个任务的完成情况。<br>接下来我们讨论下 master 的一些细节。master 将 map 或者 reduce 的任务分发给空闲的 worker 去执行，具体是 map 或者 reduce 由整个任务的完成情况来决定。若是所有 map 任务都已经完成，那么就会分发 reduce 任务。master 会通过探活来监控 worker 的运行情况，如果发现 worker 无法响应，则会把分配给该 worker 的任务重新进行分配。这增强了容错性，因为在大量机器的情况下单一机器出错几乎是个必然事件。但这同时会导致一个任务被执行多次。 MapReduce 通过提交结果的原子性来避免该影响。如果之前已经有 worker 提交了该任务，那么之后的提交将被忽略。<br>除此之外，还有很多细节的优化，比如 master 在分配任务时会考虑输入数据与 worker 之间的距离，来减少数据传输的时间以及对中心路由器的压力。当临近 map 或 reduce 阶段结束的时候，为了减少个别任务未完成的影响，master 会对未完成的任务进行再分配。更多细节还是看论文来得实在，我就不多讲了。</p>
-<p>从上面的分析可以看出 MapReduce 其实并不复杂，Lab1 就是要求你用 go 来实现一个简易的 MapReduce。代码虽然不多，写完了还是很有成就感的。</p>
+<p>从上面的分析可以看出 MapReduce 其实并不复杂，Lab1 就是要求你用 go 来实现一个简易的 MapReduce。代码难度不高，需要注意的有几点，一是分发任务、提交任务时注意原子性，master 可以通过加锁来保证这点。二是分发任务时需要判断整个任务的阶段，是 map 还是 reduce。有一个 corner case，是所有 map 都已分发完成但有部分未完成的情况下，如果开始 reduce 会导致最后结果不完整，我在这边就踩了坑。三是需要定时去刷下任务的状态，如果某个任务超过一定时间没有完成的话，需要重新将该任务的状态变为可分发。master 可以通过 channel 定时刷新来解决这点。写完了还是很有成就感的。</p>
 <p>上面讲了 MapReduce 的优点，但 MapReduce 还是有一定的局限性的。像是工作中对大数据的处理大多是多个阶段的，因此需要用户使用多次 MapReduce 自行串联。此外，MapReduce 也不支持基于实时数据流的数据处理。</p>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
 <li><a href="[http://nil.csail.mit.edu/6.824/2020/schedule.html]">6.824 分布式系统</a></li>
@@ -159,6 +159,8 @@ MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处�
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
+    <li><a href="/tags/Raft/">Raft</a><small>1</small></li>
+  
     <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
@@ -169,7 +171,7 @@ MapReduce 是为了解决大规模数据的计算问题。简单来讲你要处�
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/分布式系统/">分布式系统</a><small>1</small></li>
+    <li><a href="/tags/分布式系统/">分布式系统</a><small>2</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   

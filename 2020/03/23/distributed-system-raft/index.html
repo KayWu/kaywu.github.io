@@ -1,0 +1,264 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="LmQ9SCZE5kbkyLAvfkDlSKP0kXVrXGSzVvWI8kgCCgQ" />
+  
+  <title>MIT 6.824 分布式系统笔记 — Raft | Kay Wu&#39;s blog</title>
+  <meta name="author" content="Kay Wu">
+  
+  <meta name="description" content="先简单介绍下 Raft 是什么。Raft 是一种共识算法，解决的是分布式系统对某个提案，大部分节点达成一致意见的过程。上面这样讲感觉很抽象，我们举一个具体的例子。
+12345        server       _________c1 -&amp;gt; | (k, v1) |c2 -&amp;gt; | (k, v2) |      |_________|
+假如我们有一个分布式的 KV 系统，有两个客户端 c1, c2，有两个服务端 s1, s2。客户端向服务端发请求修改 k 的值。如上所示，c1 发出将 k 修改为 v1 的请求，c2 发出将 k 修改为 v2 的请求。那么请问这个 KV 系统 k 的值最后为多少呢？
+你肯定会说这依赖于 v1 和 v2 的顺序，v1 先 v2 后则最终值为 v2，反之则为 v1。但这要求 v1 和 v2 之间是有顺序关系的。一种做法是给 v1、v2 附上一个顺序，比如 vector clock。
+还有一种更简单的做法，就是我们让其中一个 server 作为 leader 处理请求，而在单一 server 上，命令执行是自然有序的，之后我们再把这种次序转发给其他 server 就可以了。
+但这又带来了其他的问题，怎么确定这个 leader 呢？简单点的可以直接固定一个，但这就会导致 leader 挂掉后群龙无首。我们也可以让服务器选一个 leader 出来，leader 挂掉后剩下的服务器再次选举就可以了。而这时，就轮到 Raft 出场了，Raft 会选举出一个 leader 出来，leader 执行的命令会以 log 的形式传给剩下的 server，使 server 的状态保持一致。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MIT 6.824 分布式系统笔记 — Raft"/>
+  <meta property="og:site_name" content="Kay Wu&#39;s blog"/>
+
+  
+    <meta property="og:image" content=""/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Kay Wu&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-75043389-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Kay Wu&#39;s blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+      <li><a href="/atom.xml">RSS</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2020-03-23T03:03:57.000Z"><a href="/2020/03/23/distributed-system-raft/">2020-03-23</a></time>
+      
+      
+  
+    <h1 class="title">MIT 6.824 分布式系统笔记 — Raft</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>先简单介绍下 Raft 是什么。Raft 是一种共识算法，解决的是分布式系统对某个提案，大部分节点达成一致意见的过程。<br>上面这样讲感觉很抽象，我们举一个具体的例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">        server</span><br><span class="line">       _________</span><br><span class="line">c1 -&gt; | (k, v1) |</span><br><span class="line">c2 -&gt; | (k, v2) |</span><br><span class="line">      |_________|</span><br></pre></td></tr></table></figure>
+<p>假如我们有一个分布式的 KV 系统，有两个客户端 c1, c2，有两个服务端 s1, s2。客户端向服务端发请求修改 k 的值。如上所示，c1 发出将 k 修改为 v1 的请求，c2 发出将 k 修改为 v2 的请求。那么请问这个 KV 系统 k 的值最后为多少呢？</p>
+<p>你肯定会说这依赖于 v1 和 v2 的顺序，v1 先 v2 后则最终值为 v2，反之则为 v1。但这要求 v1 和 v2 之间是有顺序关系的。一种做法是给 v1、v2 附上一个顺序，比如 vector clock。</p>
+<p>还有一种更简单的做法，就是我们让其中一个 server 作为 leader 处理请求，而在单一 server 上，命令执行是自然有序的，之后我们再把这种次序转发给其他 server 就可以了。</p>
+<p>但这又带来了其他的问题，怎么确定这个 leader 呢？简单点的可以直接固定一个，但这就会导致 leader 挂掉后群龙无首。我们也可以让服务器选一个 leader 出来，leader 挂掉后剩下的服务器再次选举就可以了。而这时，就轮到 Raft 出场了，Raft 会选举出一个 leader 出来，leader 执行的命令会以 log 的形式传给剩下的 server，使 server 的状态保持一致。</p>
+<a id="more"></a>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>可以先看 <a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">Raft 动画演示</a> 来直观地了解这一过程。</p>
+<p>Raft 将时间分阶段，用 term 来表示。我们先说同一个 term 中发生的事，再讲不同 term 之间发生的事。</p>
+<p>Raft 把 server 分为三种状态，candidate（候选人），follower（追随者）, leader（领导者）。</p>
+<p>在 term 1 开始的时候，所有的 server 都是 follower 的状态。follower 会记录接收 leader 消息的最近时间，如果间隔超过 timeout，则会从 follower 变为 candidate 开始新一轮选举。</p>
+<p>什么是选举呢？其实就是给其他 server 发消息（RequestVote）让它们投自己当 leader。假设 3 个 server，s1 开始选举，发消息给 s2、s3 让它们投 s1 为 leader。假设 s2 之前没有投过其他人，且 s1 符合条件，s2 就回复给 s1，好的，我投你。s1 一看选我的人（包括自己）超过半数，s1 就将状态改为 leader。</p>
+<p>此时 s1 作为 leader 接收客户端的请求。当接收到客户端的请求 cmd1 时，s1 首先在自己的 log 上加上 <code>Entry(cmd1)</code>，然后发送包含这条 Entry 的 RPC（AppendEntries RPC，以下简称为 AE）给 s2、s3。</p>
+<p>s2、s3 收到 <code>AE(cmd1)</code>，发现符合条件，将状态从 candidate 变为 follower，并在自己的 log 上加上 <code>Entry(cmd1)</code>，然后回复给 s1 表示收到了。当 s1 收到超过半数（包括自己）的回复时，就可以 commit 这条 <code>Entry(cmd1)</code>，之后就可以 apply（执行）了。</p>
+<p>当 s1 收到 cmd2 后，会做同样的事情，在 log 上添加 <code>Entry(cmd2)</code>，并发送 AE 给 s2、s3。<br>s2、s3 接收到 AE 之后，除了保存 log 并回复，它们还发现前一条 Entry 已经可以 commit 了。于是他们就追随 leader 的脚步，对 <code>Entry(cmd1)</code> 进行 commit，然后 apply。</p>
+<p>上面讲的就是同一个 term 中发生的事了。leader 接收请求，通过 log 发送给 follower，如果半数以上的 follower 收到，就 commit 该条 log，之后 apply。follower 会在之后的请求中了解 leader 的 commit 情况，进行 commit 之后 apply。<br>如果某个 follower 在 timeout 之内没有接收到 leader 的消息，就会将 term + 1，开始新的选举。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">s1 start election</span><br><span class="line">s1 -&gt; s2 RequestVote RPC(term 1, latest log info)</span><br><span class="line">s1 -&gt; s3 RequestVote RPC(term 1, latest log info)</span><br><span class="line">s1 &lt;- s2 say yes</span><br><span class="line">s1 &lt;- s3 network loss</span><br><span class="line">s1 become leader</span><br><span class="line">c -&gt; s1 cmd1</span><br><span class="line">s1 add Entry(index 1, cmd1, term 1) in its log</span><br><span class="line">s1 -&gt; s2 AE(cmd1, term 1, leaderCommit 0) RPC</span><br><span class="line">s1 -&gt; s3 AE(cmd1, term 1, leaderCommit 0) RPC</span><br><span class="line">s1 &lt;- s2 received, add Entry(index 1, cmd1, term 1) in its log, s2 change to follower</span><br><span class="line">s1 &lt;- s3 received, add Entry(index 1, cmd1, term 1) in its log, s3 change to follower</span><br><span class="line">s1 commit Entry(index 1, cmd1, term 1), later apply</span><br><span class="line">c -&gt; s1 cmd2</span><br><span class="line">s1 add Entry(index 2, cmd2, term 1) in its log</span><br><span class="line">s1 -&gt; s2 AE(cmd2, term 1, leaderCommit 1) RPC</span><br><span class="line">s1 -&gt; s3 AE(cmd2, term 1, leaderCommit 1) RPC</span><br><span class="line">s1 &lt;- s2 received, add Entry(index 2, cmd2, term 1) in its log, commit Entry(index 1, cmd1, term 1), later apply</span><br><span class="line">s1 &lt;- s3 received, add Entry(index 2, cmd2, term 1) in its log, commit Entry(index 1, cmd1, term 1), later apply</span><br></pre></td></tr></table></figure>
+<h2 id="细节"><a href="#细节" class="headerlink" title="细节"></a>细节</h2><p>了解了流程之后，我发现 Raft 还是挺容易理解的。但在写了 Lab 2 Raft 之后，我才发现里面隐藏了那么多的细节。<br>下面使用 FAQ 来举例说明 Raft 的细节。</p>
+<ol>
+<li>选举一定会成功吗？不成功会怎样？</li>
+</ol>
+<p>选举不一定会成功。比如有 5 个 server, 同一时刻 s1、s2、s3 都开始新的选举，s1 获得 s4 的支持，s2 获得 s5 的支持，在这时候没有一个 server 获得的票数超过半数，选举没有成功。server 会在 timeout 后重新开始新一轮的选举。同时为了减少同时开始选举造成的选票分散的情况，server 会在每一次判断是否需要选举时设置一个随机的 timeout 而不是一直使用固定的 timeout。</p>
+<ol start="2">
+<li>server 接收到其他 server 的选举请求时，会拒绝吗？</li>
+</ol>
+<p>Raft 的选举不像现实中的选举，它采取的是先到先得的策略，你先告诉我让我投你，符合条件的话我就投你，不再投其他人。<br>这边详细说明会拒绝的情况, RequestVote 表示选举请求：</p>
+<ul>
+<li>1) RequestVote.term &lt; server.currentTerm。选举请求的 term 落后了，server 会拒绝，并返回 server.currentTerm 以供其他 server 更新。</li>
+<li>2) server 暂未投票给其他人或者投的正是 RequestVote 中的 candidate，并且 candidate 的 log 不能落后于 server 的 log，即 <code>lastCandidateLog.term &gt; lastserverLog.term || (lastCandidateLog.term == lastserverLog.term &amp;&amp; lastCandidateLog.index &gt;= lastserverLog.index)</code>，返回 yes。<br>这里我们说明下第 2 点对于 log 的要求，它保证了不会有不符合条件的 server 选举成为 leader。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># log 下面的 1 表示该 log entry 的 term 为 1</span><br><span class="line">(1)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1     1</span><br><span class="line">s2     1</span><br><span class="line">s3     1</span><br><span class="line"></span><br><span class="line">(2)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1     1    1</span><br><span class="line">s2     1    1</span><br><span class="line">s3     1</span><br><span class="line"></span><br><span class="line">(3)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1     1    1</span><br><span class="line">s2     1</span><br><span class="line">s3     1</span><br></pre></td></tr></table></figure>
+<p>假设 s1 为 leader，<code>Entry(index 1, term 1)</code> 已经全部复制到 3 个 server 上了，如 (1) 所示。</p>
+<p>s1 又添加了 <code>Entry(index 2, term 1)</code>，该 Entry 只被复制到 s2 上，s1 就挂了，示例 (2)。在这种情况下，s1 有可能已经 apply 过 <code>Entry(index 2, term 1)</code>。所以 <code>Entry(index 2, term 1)</code> 不能被覆盖。<br>而第 2 点对 log 的要求，使得 s3 不可能成为 leader。即使 s3 开始了新一轮选举，s2 由于 s3 的 log 落后于自己，不会投票给 s3。在 s1 挂了的情况下只有 s2 有可能成为新的 Leader，从而使得 <code>Entry(index 2, term 1)</code> 被保留。</p>
+<p>如果 <code>Entry(index 2, term 1)</code> 如 (3) 所示，在这种情况下，s1 不可能 apply 过 <code>Entry(index 2, term1)</code>。s2、s3 都有可能成为新的 leader。</p>
+<ol start="3">
+<li>如果一条 log entry 被复制到超过半数以上的机子上，是否可以认为这个 log entry 是可以被 commit 的？</li>
+</ol>
+<p>绝大部分情况是的。但存在一个例外，也就是 <a href="http://nil.csail.mit.edu/6.824/2020/papers/raft-extended.pdf" target="_blank" rel="noopener">Raft Exteded</a> 里 Figure 8 所提到的。如果这个 log entry 的 term 比 currentTerm 小，存在被覆盖的可能。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">(1)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1(l)  1    2</span><br><span class="line">s2     1    2</span><br><span class="line">s3     1</span><br><span class="line">s4     1</span><br><span class="line">s5     1</span><br><span class="line"></span><br><span class="line">(2)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1     1    2</span><br><span class="line">s2     1    2</span><br><span class="line">s3     1</span><br><span class="line">s4     1</span><br><span class="line">s5(l)  1    3</span><br><span class="line"></span><br><span class="line">(3)</span><br><span class="line">index  1    2     3</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1(l)  1    2     4</span><br><span class="line">s2     1    2</span><br><span class="line">s3     1    2</span><br><span class="line">s4     1</span><br><span class="line">s5     1    3</span><br><span class="line"></span><br><span class="line">(4)</span><br><span class="line">index  1    2</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1     1    3</span><br><span class="line">s2     1    3</span><br><span class="line">s3     1    3</span><br><span class="line">s4     1    3</span><br><span class="line">s5(l)  1    3</span><br><span class="line"></span><br><span class="line">(3)</span><br><span class="line">index  1    2     3</span><br><span class="line">server log</span><br><span class="line">------------------------</span><br><span class="line">s1(l)  1    2     4</span><br><span class="line">s2     1    2     4</span><br><span class="line">s3     1    2     4</span><br><span class="line">s4     1</span><br><span class="line">s5     1    3</span><br></pre></td></tr></table></figure>
+<p>(1) s1 成为 term 2 的 leader，添加了 <code>Entry(index 2, term 2)</code> 到 s1，s2。<br>(2) s1 挂了，s5 成为 term 3 的 leader，添加了 <code>Entry(index 2, term 3)</code> 到 s5。<br>(3) s5 挂了，s1 成为 term 4 的 leader，添加了 <code>Entry(index 3, term 4)</code> 到 s1。<br>下面有两种可能<br>(4) s1 挂了，s5 成为 term 5 的 leader，将 <code>Entry(index 2, term 2)</code> 复制到所有 server。<br>(5) s1 没挂，将 <code>Entry(index 2, term 2)</code>、<code>Entry(index 3, term 4)</code> 复制到所有 server。</p>
+<p>我们分析下，如果 s1 在 (3) 的情况下把 <code>Entry(index 2, term 2)</code> commit 并且 apply 了，之后又出现 (4) 的情况，就会导致 server 之间状态的不一致，s1 执行了 <code>Entry(index 2, term2)</code>，而其他 server 都没有。<br>因此 server 不能依赖于过去 term 中的 log entry 进行 commit。</p>
+<p>做 Lab 2 时一定要多看看论文的 Figure 2，等我踩了无数的坑之后，才发现这上面讲的真是字字珠玑，漏一个条件多 Debug 半天。<br>Debug 时一定要打详细的日志，不然排查问题只能靠猜想了。下面是我日志的示例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">252403ms 0 read persist[term 0, votedFor -1, log length 0]</span><br><span class="line">252406ms 1 read persist[term 0, votedFor -1, log length 0]</span><br><span class="line">252408ms 2 read persist[term 0, votedFor -1, log length 0]</span><br><span class="line">253015ms 0 begin term 1 election, before state follower</span><br><span class="line">253018ms 0-&gt;1 Vote[id 1, term 1, lastLogIndex 0, lastLogTerm 0]</span><br><span class="line">253022ms 0-&gt;2 Vote[id 2, term 1, lastLogIndex 0, lastLogTerm 0]</span><br><span class="line">253027ms 0-&gt;2 Vote[id 2, term 1, lastLogIndex 0, lastLogTerm 0] Reply[true, term 1]</span><br><span class="line">253028ms 0 now I&apos;m the leader with term 1</span><br><span class="line">253029ms 0-&gt;1 Vote[id 1, term 1, lastLogIndex 0, lastLogTerm 0] Reply[true, term 1]</span><br><span class="line">253030ms 0-&gt;1 AE[id 3, term 1, prevLogIndex 0, prevLogTerm 0, commit 0, cmd 0]</span><br><span class="line">253030ms 0-&gt;2 AE[id 4, term 1, prevLogIndex 0, prevLogTerm 0, commit 0, cmd 0]</span><br><span class="line">253036ms 0-&gt;2 AE[id 4, term 1, prevLogIndex 0, prevLogTerm 0, commit 0, cmd 0] Reply[true, term 1, XTerm 0, XIndex 0, XLen 0]</span><br><span class="line">253036ms 0-&gt;1 AE[id 3, term 1, prevLogIndex 0, prevLogTerm 0, commit 0, cmd 0] Reply[true, term 1, XTerm 0, XIndex 0, XLen 0]</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">Raft 动画演示</a></li>
+<li><a href="http://nil.csail.mit.edu/6.824/2020/papers/raft-extended.pdf" target="_blank" rel="noopener">Raft Extended</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/分布式系统/">分布式系统</a>, <a href="/tags/Raft/">Raft</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:kaywu.xyz">
+  </form>
+</div>
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Algorithms/">Algorithms</a><small>3</small></li>
+  
+    <li><a href="/tags/Android/">Android</a><small>14</small></li>
+  
+    <li><a href="/tags/Front-End/">Front-End</a><small>2</small></li>
+  
+    <li><a href="/tags/GC/">GC</a><small>1</small></li>
+  
+    <li><a href="/tags/Git/">Git</a><small>1</small></li>
+  
+    <li><a href="/tags/Gradle/">Gradle</a><small>1</small></li>
+  
+    <li><a href="/tags/Java/">Java</a><small>4</small></li>
+  
+    <li><a href="/tags/Kubernetes/">Kubernetes</a><small>2</small></li>
+  
+    <li><a href="/tags/MapReduce/">MapReduce</a><small>1</small></li>
+  
+    <li><a href="/tags/MySQL/">MySQL</a><small>3</small></li>
+  
+    <li><a href="/tags/Python/">Python</a><small>2</small></li>
+  
+    <li><a href="/tags/Raft/">Raft</a><small>1</small></li>
+  
+    <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
+  
+    <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
+  
+    <li><a href="/tags/Tomcat/">Tomcat</a><small>1</small></li>
+  
+    <li><a href="/tags/Tools/">Tools</a><small>2</small></li>
+  
+    <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
+  
+    <li><a href="/tags/分布式系统/">分布式系统</a><small>2</small></li>
+  
+    <li><a href="/tags/微信/">微信</a><small>2</small></li>
+  
+    <li><a href="/tags/编程/">编程</a><small>3</small></li>
+  
+    <li><a href="/tags/读书笔记/">读书笔记</a><small>6</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2020 Kay Wu
+  
+  <br>
+  许可协议：<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">署名-非商业性使用-相同方式共享 4.0</a><br>
+  转载请保留原文链接及作者<br>
+</div>
+<div class="clearfix"></div>
+</footer>
+  <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'kay-wu';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+
+</body>
+</html>

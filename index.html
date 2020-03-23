@@ -66,6 +66,48 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2020-03-23T03:03:57.000Z"><a href="/2020/03/23/distributed-system-raft/">2020-03-23</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2020/03/23/distributed-system-raft/">MIT 6.824 分布式系统笔记 — Raft</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>先简单介绍下 Raft 是什么。Raft 是一种共识算法，解决的是分布式系统对某个提案，大部分节点达成一致意见的过程。<br>上面这样讲感觉很抽象，我们举一个具体的例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">        server</span><br><span class="line">       _________</span><br><span class="line">c1 -&gt; | (k, v1) |</span><br><span class="line">c2 -&gt; | (k, v2) |</span><br><span class="line">      |_________|</span><br></pre></td></tr></table></figure>
+<p>假如我们有一个分布式的 KV 系统，有两个客户端 c1, c2，有两个服务端 s1, s2。客户端向服务端发请求修改 k 的值。如上所示，c1 发出将 k 修改为 v1 的请求，c2 发出将 k 修改为 v2 的请求。那么请问这个 KV 系统 k 的值最后为多少呢？</p>
+<p>你肯定会说这依赖于 v1 和 v2 的顺序，v1 先 v2 后则最终值为 v2，反之则为 v1。但这要求 v1 和 v2 之间是有顺序关系的。一种做法是给 v1、v2 附上一个顺序，比如 vector clock。</p>
+<p>还有一种更简单的做法，就是我们让其中一个 server 作为 leader 处理请求，而在单一 server 上，命令执行是自然有序的，之后我们再把这种次序转发给其他 server 就可以了。</p>
+<p>但这又带来了其他的问题，怎么确定这个 leader 呢？简单点的可以直接固定一个，但这就会导致 leader 挂掉后群龙无首。我们也可以让服务器选一个 leader 出来，leader 挂掉后剩下的服务器再次选举就可以了。而这时，就轮到 Raft 出场了，Raft 会选举出一个 leader 出来，leader 执行的命令会以 log 的形式传给剩下的 server，使 server 的状态保持一致。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2020/03/23/distributed-system-raft/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2020-03-12T03:16:36.000Z"><a href="/2020/03/12/distributed-system-mapreduce/">2020-03-12</a></time>
       
       
@@ -417,44 +459,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2017-07-13T09:23:30.000Z"><a href="/2017/07/13/core-tech/">2017-07-13</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/07/13/core-tech/">互联网创业核心技术：构建可伸缩的 Web 应用</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>《互联网创业核心技术：构建可伸缩的 Web 应用》整本书围绕“可伸缩”三个字，对 Web 应用的每一层展开了全面细致的解说。<br>如果你和我一样，对负载均衡、水平伸缩之类的概念不是很了解，或者不清楚它在整个架构中的使用，那么你应该来读下这本书。<br>读完之后你会发现架构这东西是有迹可循的，是围绕一系列基本的原则建立起来的。</p>
-<p>一图胜千言，这本书不仅有着易懂的语言，而且有大量简洁的示意图。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/07/13/core-tech/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -498,6 +502,8 @@
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
+    <li><a href="/tags/Raft/">Raft</a><small>1</small></li>
+  
     <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
@@ -508,7 +514,7 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/分布式系统/">分布式系统</a><small>1</small></li>
+    <li><a href="/tags/分布式系统/">分布式系统</a><small>2</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   

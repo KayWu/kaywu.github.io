@@ -66,6 +66,46 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-01-08T10:13:24.000Z"><a href="/2017/01/08/rails-etag/">2017-01-08</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/01/08/rails-etag/">Rails ETag 应用</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="使用-ETag-验证缓存"><a href="#使用-ETag-验证缓存" class="headerlink" title="使用 ETag 验证缓存"></a>使用 ETag 验证缓存</h2><p><img src="/img/etag.png" alt="etag.png-27.9kB"><br>来源：<a href="http://mohanraj-nagasamy.github.io/blog/2014/02/22/browser-cache-how-etags-works-in-rails-3-and-rails-4/" target="_blank" rel="noopener">Browser Cache: How ETags Works in Rails 3 and Rails 4</a><br>可以把 ETag 看成是响应的 token，客户端在下一个同样的请求中将其发送给服务器。服务器通过 token 来判断资源是否进行修改。若未修改，则返回 <code>304 Not Modified</code>，使客户端不需再去下载与缓存中已有的完全相同的字节。</p>
+<h2 id="fresh-when"><a href="#fresh-when" class="headerlink" title="fresh_when"></a>fresh_when</h2><p>在 Rails 中，我们可以通过 <code>stale</code> 或 <code>fresh_when</code> 方法来显式地使用 ETag。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProductsController</span> &lt; ApplicationController</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># This will automatically send back a :not_modified if the request is fresh,</span></span><br><span class="line">  <span class="comment"># and will render the default template (product.*) if it's stale.</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">show</span></span></span><br><span class="line">    @product = Product.find(params[<span class="symbol">:id</span>])</span><br><span class="line">    fresh_when <span class="symbol">last_modified:</span> @product.published_at.utc, <span class="symbol">etag:</span> @product</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
+<p>上例中通过 <a href="mailto:`@product.publishe" target="_blank" rel="noopener">`@product.publishe</a>d_at.utc` 来判断资源是否过期。</p>
+<h2 id="默认开启的-ETag"><a href="#默认开启的-ETag" class="headerlink" title="默认开启的 ETag"></a>默认开启的 ETag</h2><p>最近才发现不用 fresh_when 返回的请求也会自带 ETag，查了下原来 Rails 框架默认使用 Rack::ETag middleware，会自动给无 ETag 的 response 根据其 body 添加上 ETag。</p>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2017/01/08/rails-etag/#more" class="more-link">Read More</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-12-25T09:45:15.000Z"><a href="/2016/12/25/dom/">2016-12-25</a></time>
       
       
@@ -422,45 +462,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-09-06T14:36:27.000Z"><a href="/2016/09/06/blog-speed-up/">2016-09-06</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/09/06/blog-speed-up/">Hexo 博客加速实践</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>最近打开博客的速度特别特别慢。慢到怎样的程度呢？打开篇文章要花 60s 以上，还经常死机。虽然博客没什么人看，但作为本博客最忠实的用户，实在不能忍。就花了点时间排查原因，优化速度。</p>
-<h2 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h2><p>由于博客使用 Hexo 托管在 Github Pages 上，都是些静态文件的显示，速度慢的原因大致就是资源的加载速度问题。使用 Chrome Console 的 Network 工具，发现有一个发送到 fonts.useso.com 请求持续了几十秒。<br>然后在 Hexo 相应的 Theme 文件下使用<code>grep -rI fonts.useso.com .</code> 搜索相关字符串，发现了相关的 css 文件。<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">font-title = "Lato", Helvetica Neue, Helvetica, Arial, sans-serif</span><br><span class="line">@<span class="keyword">import</span> url(<span class="string">"//fonts.useso.com/css?family=Lato:400,400italic"</span>)</span><br></pre></td></tr></table></figure></p>
-<p>当初搭建博客的时候，为了提升加载速度将字体源从 google fonts 替换为 360 提供的前端公共库 CDN，也就是 fonts.useso.com。没想到现在变得这么不稳定。搜了下国内没有好的替换源，再加上 Lato 字体也就一处使用，索性删了。<br>再次打开 kaywu.github.io，发送到 fonts.useso.com 的请求没有了，速度果然快了不少。<br>但是，这还不够。<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/09/06/blog-speed-up/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -506,6 +507,8 @@
   
     <li><a href="/tags/Python/">Python</a><small>2</small></li>
   
+    <li><a href="/tags/Raft/">Raft</a><small>1</small></li>
+  
     <li><a href="/tags/Rails/">Rails</a><small>8</small></li>
   
     <li><a href="/tags/Ruby/">Ruby</a><small>4</small></li>
@@ -516,7 +519,7 @@
   
     <li><a href="/tags/Zuul/">Zuul</a><small>1</small></li>
   
-    <li><a href="/tags/分布式系统/">分布式系统</a><small>1</small></li>
+    <li><a href="/tags/分布式系统/">分布式系统</a><small>2</small></li>
   
     <li><a href="/tags/微信/">微信</a><small>2</small></li>
   

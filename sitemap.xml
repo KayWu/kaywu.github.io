@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://kaywu.xyz/2020/03/23/distributed-system-raft/</loc>
+    
+    <lastmod>2020-03-23T09:41:54.444Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2020/03/12/distributed-system-mapreduce/</loc>
     
-    <lastmod>2020-03-12T07:01:29.000Z</lastmod>
+    <lastmod>2020-03-23T02:52:55.978Z</lastmod>
     
   </url>
   
@@ -93,13 +100,6 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2015/12/12/Programmming-Language-Concepts/</loc>
-    
-    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2015/11/30/The-Way-To-Program/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
@@ -107,7 +107,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2015/04/04/GoogleMusicPlayer/</loc>
+    <loc>http://kaywu.xyz/2015/12/12/Programmming-Language-Concepts/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
     
@@ -121,7 +121,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
+    <loc>http://kaywu.xyz/2015/04/04/GoogleMusicPlayer/</loc>
     
     <lastmod>2017-10-10T15:25:40.000Z</lastmod>
     
@@ -135,6 +135,13 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2016/05/15/Closure/</loc>
+    
+    <lastmod>2017-10-10T15:25:40.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2017/09/10/wechat-development/</loc>
     
     <lastmod>2017-09-17T15:40:42.000Z</lastmod>
@@ -142,7 +149,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/06/10/git-submodule-vs-git-subtree/</loc>
+    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -170,21 +177,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/02/28/PacketCapture/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://kaywu.xyz/2016/05/29/ThreadPoolExecutor/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -198,49 +191,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/03/06/Java-Generic/</loc>
+    <loc>http://kaywu.xyz/2016/09/06/blog-speed-up/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/07/17/Android-Storage-Note/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/03/13/Java-Exception/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/12/25/dom/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2017/06/28/factory-girl-analysis/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/12/18/factory-girl/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/07/03/fragment/</loc>
+    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -254,21 +212,63 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/05/01/Maven-aar-source/</loc>
+    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/12/16/js-equal/</loc>
+    <loc>http://kaywu.xyz/2016/03/13/Java-Exception/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/07/24/Performance-Improvement/</loc>
+    <loc>http://kaywu.xyz/2015/04/05/LayoutInfalter/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2017/06/28/factory-girl-analysis/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/07/03/fragment/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/06/10/git-submodule-vs-git-subtree/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/12/18/factory-girl/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/02/28/PacketCapture/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/03/06/Java-Generic/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -282,7 +282,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
+    <loc>http://kaywu.xyz/2016/12/16/js-equal/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -290,6 +290,13 @@
   
   <url>
     <loc>http://kaywu.xyz/2016/10/16/meta-programming/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/12/04/mysql-emoji/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -317,7 +324,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2015/04/05/LayoutInfalter/</loc>
+    <loc>http://kaywu.xyz/2016/05/01/Maven-aar-source/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -338,7 +345,21 @@
   </url>
   
   <url>
+    <loc>http://kaywu.xyz/2017/01/15/rails-select-vs-pluck/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://kaywu.xyz/2016/11/27/rails-form-for/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/07/17/Android-Storage-Note/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -352,7 +373,14 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2017/01/15/rails-select-vs-pluck/</loc>
+    <loc>http://kaywu.xyz/2016/04/03/Python-OpenPyXL/</loc>
+    
+    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://kaywu.xyz/2016/07/24/Performance-Improvement/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -360,20 +388,6 @@
   
   <url>
     <loc>http://kaywu.xyz/2016/03/20/Python-LiveReload/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/05/07/App-Development/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/04/03/Python-OpenPyXL/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
@@ -394,14 +408,7 @@
   </url>
   
   <url>
-    <loc>http://kaywu.xyz/2016/03/27/Android-Support-Annotation/</loc>
-    
-    <lastmod>2017-09-10T08:13:51.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://kaywu.xyz/2016/04/17/Android-Screen-On/</loc>
+    <loc>http://kaywu.xyz/2016/12/25/dom/</loc>
     
     <lastmod>2017-09-10T08:13:51.000Z</lastmod>
     
